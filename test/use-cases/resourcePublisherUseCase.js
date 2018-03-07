@@ -69,7 +69,7 @@ describe('ResourcePublisherUseCase', function(){
     })
 
     function givenSuccessfullPublish() {
-      publisher.publish = sinon.stub().resolves('Ok.');
+      publisher.publishResourceValue = sinon.stub().resolves('Ok.');
     }
 
     function whenPublishTemperatureWithNumber(){

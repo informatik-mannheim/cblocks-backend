@@ -22,14 +22,14 @@ class Registry{
     return co(function*(){
         let o = yield that.getObject(objectID);
 
-        if( that.objectHasResource(o, resourceID) )
+        if( that._objectHasResource(o, resourceID) )
           return Promise.resolve(o['resources'][resourceID]);
 
         return Promise.reject(new Error("Resource can't be found."));
     });
   }
 
-  objectHasResource(object, resourceID){
+  _objectHasResource(object, resourceID){
     if( object.hasOwnProperty('resources') && object['resources'].hasOwnProperty(resourceID))
       return true;
     return false;

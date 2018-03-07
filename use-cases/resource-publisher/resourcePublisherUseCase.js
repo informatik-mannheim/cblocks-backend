@@ -12,7 +12,7 @@ class ResourcePublisherUseCase{
     return co(function*(){
       yield that.registry.validate(objectID, resourceID, data);
 
-      return yield that.publisher.publish(objectID, instanceID, resourceID, data);
+      return yield that.publisher.publishResourceValue(objectID, instanceID, resourceID, data);
     })
   }
 }
