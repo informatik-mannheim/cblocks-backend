@@ -13,5 +13,9 @@
     "chai-as-promised": "^7.1.1",
     "mocha": "^5.0.2",
     "sinon": "^4.4.2"
+  },
+  "dependencies": {
+    "co": "^4.6.0",
+    "jsonschema": "^1.2.2"
   }
 }

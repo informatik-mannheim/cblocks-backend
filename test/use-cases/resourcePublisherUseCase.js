@@ -4,7 +4,7 @@ let expect = chai.expect;
 chai.use(chaiAsPromised);
 let sinon = require('sinon');
 
-let ResourcePublisherUseCase = require('../../use-cases/resource-publisher/ResourcePublisherUseCase');
+let ResourcePublisherUseCase = require('../../use-cases/resource-publisher/resourcePublisherUseCase');
 
 describe('ResourcePublisherUseCase', function(){
   let resourcePublisherUseCase;
@@ -55,7 +55,7 @@ describe('ResourcePublisherUseCase', function(){
     }
 
     function whenPublishTemperatureWithBool(){
-      resourcePublisherUseCase.publish(3303, 0, 0, true);
+      promise = resourcePublisherUseCase.publish(3303, 0, 0, true);
     }
 
     it('should publish if validation resolves', function(){
