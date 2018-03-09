@@ -12,18 +12,18 @@ let promise;
 
 describe("MQTT Publisher", function(){
   describe("publishResourceValue", function(){
-    it('should resolve', function(){
+    it('should resolve', function(done){
       givenMQTTPublisher();
 
       whenPublishTemperature();
 
-      shouldResolve();
+      shouldCallMqttClient(done);
     })
   })
 
   function givenMQTTPublisher(){
     client.publish = sinon.spy();
-    
+
     mqttPublisher = new MQTTPublisher(client, util);
   }
 
@@ -31,7 +31,10 @@ describe("MQTT Publisher", function(){
     promise = mqttPublisher.publishResourceValue(3303, 0, 0, 33.2);
   }
 
-  function shouldResolve() {
-    expect(promise).to.be.fulfilled;
+  function shouldCallMqttClient(done){
+    promise.then(function(){
+        expect(client.publish.calledWith('3303/0/0', '33.2'))
+        done()
+    })
   }
 })

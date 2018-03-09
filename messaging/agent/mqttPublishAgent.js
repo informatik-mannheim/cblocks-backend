@@ -1,4 +1,4 @@
-class MQTTAgent{
+class MQTTPublishAgent{
   constructor(client, util, resourcePublisherUseCase){
     this.client = client;
     this.util = util;
@@ -31,4 +31,4 @@ class MQTTAgent{
   }
 }
 
-module.exports = MQTTAgent;
+module.exports = MQTTPublishAgent;

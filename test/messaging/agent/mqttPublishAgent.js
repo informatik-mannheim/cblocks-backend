@@ -6,15 +6,15 @@ let sinon = require('sinon');
 
 let client = {};
 let util = require('../../../messaging/util/mqttUtil.js');
-let MQTTAgent = require('../../../messaging/agent/mqttAgent.js');
-let mqttAgent = {};
+let MQTTPublishAgent = require('../../../messaging/agent/mqttPublishAgent.js');
+let mqttPublishAgent = {};
 let resourcePublisherUseCase = {};
 let promise;
 
 describe('MQTT Agent', function(){
   describe('start', function(){
     it('should subscribe to resource outputs and listen for messages', function(){
-      givenMQTTAgent();
+      givenMQTTPublishAgent();
 
       whenStart();
 
@@ -23,16 +23,16 @@ describe('MQTT Agent', function(){
     })
   })
 
-  function givenMQTTAgent() {
+  function givenMQTTPublishAgent() {
     client.publish = sinon.spy();
     client.subscribe = sinon.spy();
     client.on = sinon.spy();
 
-    mqttAgent = new MQTTAgent(client, util, resourcePublisherUseCase);
+    mqttPublishAgent = new MQTTPublishAgent(client, util, resourcePublisherUseCase);
   }
 
   function whenStart() {
-    mqttAgent.start();
+    mqttPublishAgent.start();
   }
 
   function shouldSubscribeToResourceOutputs(){
@@ -46,7 +46,7 @@ describe('MQTT Agent', function(){
   describe('_onMessage', function(){
     it('delegates publish to use case and does nothing if successfull', function(done){
       givenSuccessfullPublisher();
-      givenMQTTAgent();
+      givenMQTTPublishAgent();
 
       whenTemperatureSensorChange();
 
@@ -55,7 +55,7 @@ describe('MQTT Agent', function(){
 
     it('delegates publish to use case and publishes error message if failure', function(done){
       givenUnsuccessfullPublisher();
-      givenMQTTAgent();
+      givenMQTTPublishAgent();
 
       whenTemperatureSensorChange();
 
@@ -69,7 +69,7 @@ describe('MQTT Agent', function(){
   }
 
   function whenTemperatureSensorChange() {
-    mqttAgent._onMessage("internal/3303/0/0/output", 33.2);
+    mqttPublishAgent._onMessage("internal/3303/0/0/output", 33.2);
   }
 
   function shouldCallResourcePublisherUseCase(done){

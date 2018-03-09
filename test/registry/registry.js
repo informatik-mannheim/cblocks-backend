@@ -62,12 +62,12 @@ describe('Registry', function(){
     })
 
     function givenNoObjects(){
-      db.find = sinon.stub().rejects(new Error('Not found.'))
-      db.findOne = sinon.stub().rejects(new Error('Not found.'))
+      db.find = sinon.stub().resolves(null)
+      db.findOne = sinon.stub().resolves(null)
     }
 
     function shouldReject(){
-      expect(promise).to.be.rejectedWith('Not found.');
+      expect(promise).to.be.rejectedWith('cBlock does not exist.');
     }
   })
 
