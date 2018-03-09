@@ -6,31 +6,23 @@ class Registry{
     this.validator = validator;
   }
 
-  getObject(objectID){
-    let that = this;
+  async getObject(objectID){
+    let o = await this.collection.findOne({"objectID": objectID});
 
-    return (async () => {
-      let o = await that.collection.findOne({"objectID": objectID});
+    if(o === null){
+      throw new Error("cBlock does not exist.")
+    }
 
-      if(o === null){
-        throw new Error("cBlock does not exist.")
-      }
-
-      return o;
-    })()
+    return o;
   }
 
-  getResource(objectID, resourceID){
-    let that = this;
+  async getResource(objectID, resourceID){ //TODO: remove ugly async stuff
+    let o = await this.getObject(objectID);
 
-    return (async () => {
-      let o = await that.getObject(objectID);
+    if( this._objectHasResource(o, resourceID) )
+      return o['resources'][resourceID];
 
-      if( that._objectHasResource(o, resourceID) )
-        return o['resources'][resourceID];
-
-      throw new Error("Resource can't be found.");
-    })()
+    throw new Error("Resource can't be found.");
   }
 
   _objectHasResource(object, resourceID){
@@ -39,35 +31,27 @@ class Registry{
     return false;
   }
 
-  validate(objectID, resourceID, data){
-    let that = this;
+  async validate(objectID, resourceID, data){
+    let r = await this.getResource(objectID, resourceID);
 
-    return (async () => {
-      let r = await that.getResource(objectID, resourceID);
+    let result = this.validator.validate(data, r.schema);
 
-      let result = that.validator.validate(data, r.schema);
+    if(result.valid) return;
 
-      if(result.valid) return;
-
-      throw new Error(result.errors[0].stack);
-    })()
+    throw new Error(result.errors[0].stack);
   }
 
-  validateWrite(objectID, resourceID, data){
-    let that = this;
+  async validateWrite(objectID, resourceID, data){
+    let r = await this.getResource(objectID, resourceID);
 
-    return (async () => {
-      let r = await that.getResource(objectID, resourceID);
+    if(!r.is_writeable)
+      throw new Error('Resource is not writable.')
 
-      if(!r.is_writeable)
-        throw new Error('Resource is not writable.')
+    let result = this.validator.validate(data, r.schema);
 
-      let result = that.validator.validate(data, r.schema);
+    if(result.valid) return;
 
-      if(result.valid) return;
-
-      throw new Error(result.errors[0].stack);
-    })()
+    throw new Error(result.errors[0].stack);
   }
 }
 

@@ -4,14 +4,10 @@ class ResourcePublisherUseCase{
     this.publisher = publisher;
   }
 
-  publish(objectID, instanceID, resourceID, data){
-    var that = this;
+  async publish(objectID, instanceID, resourceID, data){
+    await this.registry.validate(objectID, resourceID, data);
 
-    return (async () => {
-      await that.registry.validate(objectID, resourceID, data);
-
-      return await that.publisher.publishResourceValue(objectID, instanceID, resourceID, data);
-    })()
+    return await this.publisher.publishResourceValue(objectID, instanceID, resourceID, data);
   }
 }
 
