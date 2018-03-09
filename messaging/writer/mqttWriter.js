@@ -21,14 +21,14 @@ class MQTTWriter{
     let data = JSON.parse(message)
     let clientID = this.util.getClientIDInResponseTopic(topic);
 
-    if(this._isInPendingWrites(clientID, data.requestID)){
-      this._resolvePending(clientID, data.requestID)
-    }
+    this._resolvePending(clientID, data.requestID)
   }
 
   _resolvePending(clientID, requestID){
-    this.pendingWrites[clientID][requestID].resolve()
-    delete this.pendingWrites[clientID][requestID]
+    if(this._isInPendingWrites(clientID, requestID)){
+      this.pendingWrites[clientID][requestID].resolve()
+      delete this.pendingWrites[clientID][requestID]
+    }
   }
 
   _isInPendingWrites(clientID, requestID){
@@ -73,14 +73,14 @@ class MQTTWriter{
   }
 
   _timeout(clientID, requestID){
-    if(this._isInPendingWrites(clientID, requestID)){
-      this._rejectPending(clientID, requestID, "Timeout.")
-    }
+    this._rejectPending(clientID, requestID, "Timeout.")
   }
 
   _rejectPending(clientID, requestID, reason){
-    this.pendingWrites[clientID][requestID].reject(new Error(reason))
-    delete this.pendingWrites[clientID][requestID]
+    if(this._isInPendingWrites(clientID, requestID)){
+      this.pendingWrites[clientID][requestID].reject(new Error(reason))
+      delete this.pendingWrites[clientID][requestID]
+    }
   }
 }
 
