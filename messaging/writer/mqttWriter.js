@@ -1,10 +1,9 @@
 let Deferred = require('promise-defer')
 
 const responseTopic = '+/responses'
-const writeTimeoutMS = 2000;
 
 class MQTTWriter{
-  constructor(client, util){
+  constructor(client, util, writeTimeoutMS){
     this.client = client;
     this.util = util;
     this.pendingWrites = {};
@@ -53,7 +52,7 @@ class MQTTWriter{
 
       this._addToPendingWrites(deferred, clientID, data.requestID)
 
-      setTimeout(this._timeout.bind(this, clientID, data.requestID), writeTimeoutMS);
+      this._setTimer(clientID, data.requestID);
     }
 
     f()
@@ -72,8 +71,10 @@ class MQTTWriter{
     this.pendingWrites[clientID][requestID] = deferred
   }
 
-  _timeout(clientID, requestID){
-    this._rejectPending(clientID, requestID, "Timeout.")
+  _setTimer(clientID, requestID){
+    setTimeout(function () {
+      this._rejectPending(clientID, requestID, "Timeout.")
+    }.bind(this), this.writeTimeoutMS);
   }
 
   _rejectPending(clientID, requestID, reason){
