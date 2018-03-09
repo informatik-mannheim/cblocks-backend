@@ -7,7 +7,7 @@ let ipso = {};
 
 describe("MQTT Util", function(){
   describe("getResourceOutputTopic", function(){
-    it("should be of form objectID/instanceID/resourceID", function(){
+    it("should be of form objectID/instanceID/resourceID/output", function(){
       whenGetResourceOutputTopicForTemperature();
 
       shouldBeOfIPSOForm();
@@ -20,6 +20,22 @@ describe("MQTT Util", function(){
 
   function shouldBeOfIPSOForm() {
     expect(topic).to.equal('3303/0/1/output')
+  }
+
+  describe('getResourceInputTopic', function(){
+    it('should be of form clientID/objectID/instanceID/resourceID/input', function(){
+      whenGetResourceInputTopicForLED()
+
+      shouldBeOfIPSOFormWithClientAndInput()
+    })
+  })
+
+  function whenGetResourceInputTopicForLED(){
+    topic = mqttUtil.getResourceInputTopic("client", 3304, 0, 1);
+  }
+
+  function shouldBeOfIPSOFormWithClientAndInput(){
+    expect(topic).to.equal('client/3304/0/1/input')
   }
 
   describe("decomposeResourceTopic", function(){
@@ -65,5 +81,30 @@ describe("MQTT Util", function(){
 
   function shouldBeOfIPSOFormWithError(){
     expect(topic).to.be.equal("3303/0/1/output/errors");
+  }
+
+  describe("getClientIDInResponseTopic", function(){
+    it('should get client if correct format', function(){
+      whenGetClientFromValidResponseTopic()
+
+      shouldGetClientID()
+    })
+
+    it('should throw error if malformed', function(){
+      whenGetClientFromInvalidResponseTopicShouldThrowError()
+    })
+  })
+
+  function whenGetClientFromValidResponseTopic(){
+    clientID = mqttUtil.getClientIDInResponseTopic("mqttFX/responses")
+  }
+
+  function shouldGetClientID(){
+    expect(clientID).to.equal("mqttFX")
+  }
+
+  function whenGetClientFromInvalidResponseTopicShouldThrowError(){
+    expect(() => mqttUtil.getClientIDInResponseTopic("mqttFX/asdf")).to.throw("Invalid response topic.")
+    expect(() => mqttUtil.getClientIDInResponseTopic("/responses")).to.throw("Invalid response topic.")
   }
 })

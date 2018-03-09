@@ -9,7 +9,7 @@ class Registry{
   getObject(objectID){
     let that = this;
 
-    return (async function(){
+    return (async () => {
       let o = await that.collection.findOne({"objectID": objectID});
 
       if(o === null){
@@ -23,7 +23,7 @@ class Registry{
   getResource(objectID, resourceID){
     let that = this;
 
-    return (async function(){
+    return (async () => {
       let o = await that.getObject(objectID);
 
       if( that._objectHasResource(o, resourceID) )
@@ -42,7 +42,7 @@ class Registry{
   validate(objectID, resourceID, data){
     let that = this;
 
-    return (async function(){
+    return (async () => {
       let r = await that.getResource(objectID, resourceID);
 
       let result = that.validator.validate(data, r.schema);
@@ -56,9 +56,9 @@ class Registry{
   validateWrite(objectID, resourceID, data){
     let that = this;
 
-    return (async function(){
+    return (async () => {
       let r = await that.getResource(objectID, resourceID);
-      
+
       if(!r.is_writeable)
         throw new Error('Resource is not writable.')
 

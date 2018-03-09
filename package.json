@@ -20,6 +20,7 @@
     "config": "^1.30.0",
     "jsonschema": "^1.2.2",
     "mongodb": "^3.0.4",
-    "mqtt": "^2.16.0"
+    "mqtt": "^2.16.0",
+    "promise-defer": "^1.0.0"
   }
 }
