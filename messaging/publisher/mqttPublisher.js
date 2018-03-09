@@ -5,7 +5,7 @@ class MQTTPublisher{
   }
 
   publishResourceValue(objectID, instanceID, resourceID, data){
-    this.client.publish(this.util.getResourceOutputTopic(objectID, instanceID, resourceID), data);
+    this.client.publish(this.util.getResourceOutputTopic(objectID, instanceID, resourceID), JSON.stringify(data));
     return Promise.resolve();
   }
 }

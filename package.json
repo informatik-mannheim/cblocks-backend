@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "index.js",
     "test": "mocha --recursive"
   },
   "author": "",
@@ -16,6 +17,9 @@
   },
   "dependencies": {
     "co": "^4.6.0",
-    "jsonschema": "^1.2.2"
+    "config": "^1.30.0",
+    "jsonschema": "^1.2.2",
+    "mongodb": "^3.0.4",
+    "mqtt": "^2.16.0"
   }
 }

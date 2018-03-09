@@ -1,32 +1,36 @@
 let co = require('co');
 
 class Registry{
-  constructor(db, validator){
-    this.db = db;
+  constructor(collection, validator){
+    this.collection = collection;
     this.validator = validator;
   }
 
   getObject(objectID){
     let that = this;
 
-    return co(function*(){
-      let o = yield that.db.find({"objectID": objectID});
+    return (async function(){
+      let o = await that.collection.findOne({"objectID": objectID});
+
+      if(o === null){
+        throw new Error("cBlock does not exist.")
+      }
 
       return o;
-    })
+    })()
   }
 
   getResource(objectID, resourceID){
     let that = this;
 
-    return co(function*(){
-        let o = yield that.getObject(objectID);
+    return (async function(){
+      let o = await that.getObject(objectID);
 
-        if( that._objectHasResource(o, resourceID) )
-          return Promise.resolve(o['resources'][resourceID]);
+      if( that._objectHasResource(o, resourceID) )
+        return o['resources'][resourceID];
 
-        return Promise.reject(new Error("Resource can't be found."));
-    });
+      throw new Error("Resource can't be found.");
+    })()
   }
 
   _objectHasResource(object, resourceID){
@@ -38,16 +42,15 @@ class Registry{
   validate(objectID, resourceID, data){
     let that = this;
 
-    return co(function*(){
-      let r = yield that.getResource(objectID, resourceID);
+    return (async function(){
+      let r = await that.getResource(objectID, resourceID);
 
       let result = that.validator.validate(data, r.schema);
 
-      if(result.valid)
-        return Promise.resolve();
-      else
-        return Promise.reject(new Error(result.errors[0].stack));
-    })
+      if(result.valid) return;
+
+      throw new Error(result.errors[0].stack);
+    })()
   }
 }
 

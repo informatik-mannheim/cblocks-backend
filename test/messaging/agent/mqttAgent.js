@@ -21,16 +21,10 @@ describe('MQTT Agent', function(){
       shouldSubscribeToResourceOutputs();
       shouldListenToMessages();
     })
-
-    // it('delegates publish to use case and does nothing if successfull', function(){
-    //   givenSuccessfullPublisher();
-    //   givenMQTTAgent();
-    //
-    //   whenTemperatureSensorChange
-    // })
   })
 
   function givenMQTTAgent() {
+    client.publish = sinon.spy();
     client.subscribe = sinon.spy();
     client.on = sinon.spy();
 
@@ -47,5 +41,53 @@ describe('MQTT Agent', function(){
 
   function shouldListenToMessages() {
     expect(client.on.calledOnce).to.be.true;
+  }
+
+  describe('_onMessage', function(){
+    it('delegates publish to use case and does nothing if successfull', function(done){
+      givenSuccessfullPublisher();
+      givenMQTTAgent();
+
+      whenTemperatureSensorChange();
+
+      shouldCallResourcePublisherUseCase(done);
+    })
+
+    it('delegates publish to use case and publishes error message if failure', function(done){
+      givenUnsuccessfullPublisher();
+      givenMQTTAgent();
+
+      whenTemperatureSensorChange();
+
+      shouldPublishErrorMessage(done);
+    })
+  })
+
+  function givenSuccessfullPublisher(){
+    resourcePublisherUseCase.publish = sinon.stub();
+    resourcePublisherUseCase.publish.resolves();
+  }
+
+  function whenTemperatureSensorChange() {
+    mqttAgent._onMessage("internal/3303/0/0/output", 33.2);
+  }
+
+  function shouldCallResourcePublisherUseCase(done){
+    setTimeout(function () {
+      expect(resourcePublisherUseCase.publish.calledWith(3303, 0, 0, 33.2)).to.be.true;
+      done()
+    }, 20);
+  }
+
+  function givenUnsuccessfullPublisher(){
+    resourcePublisherUseCase.publish = sinon.stub();
+    resourcePublisherUseCase.publish.rejects(new Error("Some Error."));
+  }
+
+  function shouldPublishErrorMessage(done){
+    setTimeout(function () {
+      expect(client.publish.called).to.be.true;
+      done()
+    }, 20);
   }
 })

@@ -12,17 +12,17 @@ let promise;
 
 describe('Registry', function(){
   function givenTemperatureObject() {
-    db.find = sinon.stub();
+    db.findOne = sinon.stub();
 
-    db.find.withArgs({'objectID': 3303}).resolves(stubs.temperature);
+    db.findOne.withArgs({'objectID': 3303}).resolves(stubs.temperature);
   }
 
   function givenTemperatureObjectWithNoResources(){
     let tempWithoutResources = Object.assign({}, stubs.temperature);
     delete tempWithoutResources['resources'];
 
-    db.find = sinon.stub();
-    db.find.withArgs({'objectID': 3303}).resolves(tempWithoutResources);
+    db.findOne = sinon.stub();
+    db.findOne.withArgs({'objectID': 3303}).resolves(tempWithoutResources);
   }
 
   function givenRegistry(){
@@ -63,6 +63,7 @@ describe('Registry', function(){
 
     function givenNoObjects(){
       db.find = sinon.stub().rejects(new Error('Not found.'))
+      db.findOne = sinon.stub().rejects(new Error('Not found.'))
     }
 
     function shouldReject(){

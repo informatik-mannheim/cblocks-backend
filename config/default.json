@@ -1,0 +1,11 @@
+{
+  "mqtt": {
+    "host": "broker.shiftr.io",
+    "username": "cdae7db6",
+    "password": "a762129fdb021a34"
+  },
+  "mongo": {
+    "url": "mongodb://localhost:27017",
+    "db": "cblocks"
+  }
+}
