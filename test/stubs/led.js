@@ -1,13 +1,13 @@
 module.exports = {
-  "objectID": 3303,
-  "name": "Temperature Sensor",
+  "objectID": 3304,
+  "name": "LED Stripe",
   "resources": {
     0: {
       "resourceID": 0,
-      "name": "Current Temperature",
-      "is_writeable": false,
+      "name": "On/Off",
+      "is_writeable": true,
       "schema": {
-        "type": "number",
+        "type": "boolean",
         "additionalProperties": false
       }
     }

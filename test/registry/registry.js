@@ -29,6 +29,10 @@ describe('Registry', function(){
     registry = new Registry(db, new Validator());
   }
 
+  function shouldResolve() {
+    expect(promise).to.be.fulfilled;
+  }
+
   describe('getObject', function(){
     it('should resolve if object exists', function(done){
       givenTemperatureObject();
@@ -122,10 +126,6 @@ describe('Registry', function(){
       promise = registry.validate(3303, 0, 33.2);
     }
 
-    function shouldResolve() {
-      expect(promise).to.be.fulfilled;
-    }
-
     it('should reject if data is invalid', function(){
       givenTemperatureObject();
       givenRegistry();
@@ -141,6 +141,44 @@ describe('Registry', function(){
 
     function shouldRejectWithValidationError() {
       expect(promise).to.be.rejectedWith("instance is not of a type(s) number");
+    }
+  })
+
+  describe('validateWrite', function(){
+    it('should reject if resource is not writable', function(){
+      givenTemperatureObject();
+      givenRegistry();
+
+      whenValidateWriteTemperatureWithNumber();
+
+      shouldRejectWithResourceIsNotWritable();
+    })
+
+    function whenValidateWriteTemperatureWithNumber(){
+      promise = registry.validateWrite(3303, 0, 33.2);
+    }
+
+    function shouldRejectWithResourceIsNotWritable(){
+      expect(promise).to.be.rejectedWith("Resource is not writable.");
+    }
+
+    it('should resolve if resource is writable and correct format', function(){
+      givenLEDObject()
+      givenRegistry()
+
+      whenValidateWriteLedOn()
+
+      shouldResolve()
+    })
+
+    function givenLEDObject(){
+      db.findOne = sinon.stub();
+
+      db.findOne.withArgs({'objectID': 3304}).resolves(stubs.led);
+    }
+
+    function whenValidateWriteLedOn() {
+      promise = registry.validateWrite(3304, 0, true);
     }
   })
 })

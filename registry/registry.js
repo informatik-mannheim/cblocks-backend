@@ -52,6 +52,23 @@ class Registry{
       throw new Error(result.errors[0].stack);
     })()
   }
+
+  validateWrite(objectID, resourceID, data){
+    let that = this;
+
+    return (async function(){
+      let r = await that.getResource(objectID, resourceID);
+      
+      if(!r.is_writeable)
+        throw new Error('Resource is not writable.')
+
+      let result = that.validator.validate(data, r.schema);
+
+      if(result.valid) return;
+
+      throw new Error(result.errors[0].stack);
+    })()
+  }
 }
 
 module.exports = Registry;
