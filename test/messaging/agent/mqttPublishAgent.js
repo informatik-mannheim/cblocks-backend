@@ -90,4 +90,20 @@ describe('MQTT Agent', function(){
       done()
     }, 20);
   }
+
+  describe('_isOutputMessage', function(){
+    it('returns true for output message', function(){
+      whenIsOutputMessage();
+
+      shouldReturnTrue();
+    })
+  })
+
+  function whenIsOutputMessage(){
+    isOutputMessage = mqttPublishAgent._isOutputMessage("internal/3303/0/0/output")
+  }
+
+  function shouldReturnTrue(){
+    expect(isOutputMessage).to.be.true;
+  }
 })
