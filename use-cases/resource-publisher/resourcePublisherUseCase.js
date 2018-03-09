@@ -1,5 +1,3 @@
-let co = require('co');
-
 class ResourcePublisherUseCase{
   constructor(registry, publisher) {
     this.registry = registry;
@@ -9,11 +7,11 @@ class ResourcePublisherUseCase{
   publish(objectID, instanceID, resourceID, data){
     var that = this;
 
-    return co(function*(){
-      yield that.registry.validate(objectID, resourceID, data);
+    return (async () => {
+      await that.registry.validate(objectID, resourceID, data);
 
-      return yield that.publisher.publishResourceValue(objectID, instanceID, resourceID, data);
-    })
+      return await that.publisher.publishResourceValue(objectID, instanceID, resourceID, data);
+    })()
   }
 }
 

@@ -4,14 +4,13 @@ let expect = chai.expect;
 chai.use(chaiAsPromised);
 let sinon = require('sinon');
 
-let ResourcePublisherUseCase = require('../../use-cases/resource-publisher/resourcePublisherUseCase');
+let ResourcePublisherUseCase = require('../../../use-cases/resource-publisher/resourcePublisherUseCase');
+let resourcePublisherUseCase;
+let registry = {};
+let publisher = {};
+let promise = {};
 
 describe('ResourcePublisherUseCase', function(){
-  let resourcePublisherUseCase;
-  let registry = {};
-  let publisher = {};
-  let promise = {};
-
   describe('publish', function(){
     it('should reject if registry can not find resource', function(){
         givenRegistryWithNotFound();
