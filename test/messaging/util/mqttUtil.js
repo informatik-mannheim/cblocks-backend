@@ -1,171 +1,173 @@
-let chai = require('chai');
-let chaiAsPromised = require("chai-as-promised");
-let expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-let mqttUtil = require('../../../messaging/util/mqttUtil.js')
+const mqttUtil = require('../../../messaging/util/mqttUtil.js');
 let ipso = {};
+let topic;
+let clientID;
+let isResponseTopic;
 
-describe("MQTT Util", function(){
-  describe("getResourceOutputTopic", function(){
-    it("should be of form objectID/instanceID/resourceID/output", function(){
+describe('MQTT Util', function (){
+  describe('getResourceOutputTopic', function (){
+    it('should be of form objectID/instanceID/resourceID/output', function (){
       whenGetResourceOutputTopicForTemperature();
 
       shouldBeOfIPSOForm();
-    })
-  })
+    });
+  });
 
-  function whenGetResourceOutputTopicForTemperature() {
+  function whenGetResourceOutputTopicForTemperature () {
     topic = mqttUtil.getResourceOutputTopic(3303, 0, 1);
   }
 
-  function shouldBeOfIPSOForm() {
-    expect(topic).to.equal('3303/0/1/output')
+  function shouldBeOfIPSOForm () {
+    expect(topic).to.equal('3303/0/1/output');
   }
 
-  describe('getInternalResourceInputTopic', function(){
-    it('should be of form clientID/objectID/instanceID/resourceID/input', function(){
-      whenGetResourceInputTopicForLED()
+  describe('getInternalResourceInputTopic', function (){
+    it('should be of form clientID/objectID/instanceID/resourceID/input', function (){
+      whenGetResourceInputTopicForLED();
 
-      shouldBeOfIPSOFormWithClientAndInput()
-    })
-  })
+      shouldBeOfIPSOFormWithClientAndInput();
+    });
+  });
 
-  function whenGetResourceInputTopicForLED(){
-    topic = mqttUtil.getInternalResourceInputTopic("client", 3304, 0, 1);
+  function whenGetResourceInputTopicForLED (){
+    topic = mqttUtil.getInternalResourceInputTopic('client', 3304, 0, 1);
   }
 
-  function shouldBeOfIPSOFormWithClientAndInput(){
-    expect(topic).to.equal('internal/client/3304/0/1/input')
+  function shouldBeOfIPSOFormWithClientAndInput (){
+    expect(topic).to.equal('internal/client/3304/0/1/input');
   }
 
-  describe("decomposeResourceOutputTopic", function(){
-    it("should decompose outputs", function(){
+  describe('decomposeResourceOutputTopic', function (){
+    it('should decompose outputs', function (){
       whenDecomposeOutput();
 
       shouldReturnDecomposedOutputTopic();
-    })
+    });
 
-    it("should throw an exception if resource topic can not be decomposed", function(){
-      whenDecomposeInvalidTopicShouldThrowException()
-    })
-  })
+    it('should throw an exception if resource topic can not be decomposed', function (){
+      whenDecomposeInvalidTopicShouldThrowException();
+    });
+  });
 
-  function whenDecomposeOutput(){
+  function whenDecomposeOutput (){
     ipso = mqttUtil.decomposeResourceOutputTopic('internal/3303/0/1/output');
   }
 
-  function shouldReturnDecomposedOutputTopic(){
+  function shouldReturnDecomposedOutputTopic (){
     expect(ipso).to.deep.equal({
       'objectID': 3303,
       'instanceID': 0,
       'resourceID': 1
-    })
+    });
   }
 
-  function whenDecomposeInvalidTopicShouldThrowException() {
-    expect(() => mqttUtil.decomposeResourceOutputTopic('internal/0/1/output')).to.throw("Invalid resource topic.");
-    expect(() => mqttUtil.decomposeResourceOutputTopic('internal/3303/0/1')).to.throw("Invalid resource topic.");
+  function whenDecomposeInvalidTopicShouldThrowException () {
+    expect(() => mqttUtil.decomposeResourceOutputTopic('internal/0/1/output')).to.throw('Invalid resource topic.');
+    expect(() => mqttUtil.decomposeResourceOutputTopic('internal/3303/0/1')).to.throw('Invalid resource topic.');
   }
 
-  describe('decomposeResourceInputTopic', function(){
-    it('should decompose input', function(){
-      whenDecomposeInput()
+  describe('decomposeResourceInputTopic', function (){
+    it('should decompose input', function (){
+      whenDecomposeInput();
 
-      shouldReturnDecomposedInputTopic()
-    })
+      shouldReturnDecomposedInputTopic();
+    });
 
-    it('should fail if client id in input is missing', function(){
-      whenDecomposeInputWithoutClientIDShouldThrowException()
-    })
-  })
+    it('should fail if client id in input is missing', function (){
+      whenDecomposeInputWithoutClientIDShouldThrowException();
+    });
+  });
 
-  function whenDecomposeInput(){
+  function whenDecomposeInput (){
     ipso = mqttUtil.decomposeResourceInputTopic('mqttFX/3303/0/1/input');
   }
 
-  function shouldReturnDecomposedInputTopic(){
+  function shouldReturnDecomposedInputTopic (){
     expect(ipso).to.deep.equal({
       'clientID': 'mqttFX',
       'objectID': 3303,
       'instanceID': 0,
       'resourceID': 1
-    })
+    });
   }
 
-  function whenDecomposeInputWithoutClientIDShouldThrowException(){
-    expect(() => mqttUtil.decomposeResourceOutputTopic('3303/0/1/input')).to.throw("Invalid resource topic.")
+  function whenDecomposeInputWithoutClientIDShouldThrowException (){
+    expect(() => mqttUtil.decomposeResourceOutputTopic('3303/0/1/input')).to.throw('Invalid resource topic.');
   }
 
-  describe("getPublishErrorTopic", function(){
-    it('should be IPSO-style with error in the end', function(){
+  describe('getPublishErrorTopic', function (){
+    it('should be IPSO-style with error in the end', function (){
       whenGetErrorTopicForTemperature();
 
       shouldBeOfIPSOFormWithError();
-    })
-  })
+    });
+  });
 
-  function whenGetErrorTopicForTemperature(){
+  function whenGetErrorTopicForTemperature (){
     topic = mqttUtil.getPublishErrorTopic(3303, 0, 1);
   }
 
-  function shouldBeOfIPSOFormWithError(){
-    expect(topic).to.be.equal("3303/0/1/output/errors");
+  function shouldBeOfIPSOFormWithError (){
+    expect(topic).to.be.equal('3303/0/1/output/errors');
   }
 
-  describe("getClientIDInResponseTopic", function(){
-    it('should get client if correct format', function(){
-      whenGetClientFromValidResponseTopic()
+  describe('getClientIDInResponseTopic', function (){
+    it('should get client if correct format', function (){
+      whenGetClientFromValidResponseTopic();
 
-      shouldGetClientID()
-    })
+      shouldGetClientID();
+    });
 
-    it('should throw error if malformed', function(){
-      whenGetClientFromInvalidResponseTopicShouldThrowError()
-    })
-  })
+    it('should throw error if malformed', function (){
+      whenGetClientFromInvalidResponseTopicShouldThrowError();
+    });
+  });
 
-  function whenGetClientFromValidResponseTopic(){
-    clientID = mqttUtil.getClientIDInResponseTopic("mqttFX/responses")
+  function whenGetClientFromValidResponseTopic (){
+    clientID = mqttUtil.getClientIDInResponseTopic('mqttFX/responses');
   }
 
-  function shouldGetClientID(){
-    expect(clientID).to.equal("mqttFX")
+  function shouldGetClientID (){
+    expect(clientID).to.equal('mqttFX');
   }
 
-  function whenGetClientFromInvalidResponseTopicShouldThrowError(){
-    expect(() => mqttUtil.getClientIDInResponseTopic("mqttFX/asdf")).to.throw("Invalid response topic.")
-    expect(() => mqttUtil.getClientIDInResponseTopic("/responses")).to.throw("Invalid response topic.")
+  function whenGetClientFromInvalidResponseTopicShouldThrowError (){
+    expect(() => mqttUtil.getClientIDInResponseTopic('mqttFX/asdf')).to.throw('Invalid response topic.');
+    expect(() => mqttUtil.getClientIDInResponseTopic('/responses')).to.throw('Invalid response topic.');
   }
 
-  describe('getWriteResponseTopic', function(){
-    it('should be of format clientID/responses', function(){
-      whenGetWriteResponseTopic()
+  describe('getWriteResponseTopic', function (){
+    it('should be of format clientID/responses', function (){
+      whenGetWriteResponseTopic();
 
-      shouldHaveCorrectResponseTopic()
-    })
-  })
+      shouldHaveCorrectResponseTopic();
+    });
+  });
 
-  function whenGetWriteResponseTopic(){
-    topic = mqttUtil.getWriteResponseTopic('mqttFX')
+  function whenGetWriteResponseTopic (){
+    topic = mqttUtil.getWriteResponseTopic('mqttFX');
   }
 
-  function shouldHaveCorrectResponseTopic(){
-    expect(topic).to.equal('mqttFX/responses')
+  function shouldHaveCorrectResponseTopic (){
+    expect(topic).to.equal('mqttFX/responses');
   }
 
-  describe('isResponseTopic', function(){
-    it('should return true for response topic', function(){
-      whenIsValidResponseTopic()
+  describe('isResponseTopic', function (){
+    it('should return true for response topic', function (){
+      whenIsValidResponseTopic();
 
-      shouldReturnTrue()
-    })
-  })
+      shouldReturnTrue();
+    });
+  });
 
-  function whenIsValidResponseTopic(){
-    isResponseTopic = mqttUtil.isResponseTopic('mqttFX/responses')
+  function whenIsValidResponseTopic (){
+    isResponseTopic = mqttUtil.isResponseTopic('mqttFX/responses');
   }
 
-  function shouldReturnTrue(){
+  function shouldReturnTrue (){
     expect(isResponseTopic).to.be.true;
   }
-})
+});

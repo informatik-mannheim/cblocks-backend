@@ -1,68 +1,68 @@
-exports.getResourceOutputTopic = function(objectID, instanceID, resourceID){
-  return `${objectID}/${instanceID}/${resourceID}/output`
-}
+exports.getResourceOutputTopic = function (objectID, instanceID, resourceID){
+  return `${objectID}/${instanceID}/${resourceID}/output`;
+};
 
-exports.getInternalResourceInputTopic = function(clientID, objectID, instanceID, resourceID){
-  return `internal/${clientID}/${objectID}/${instanceID}/${resourceID}/input`
-}
+exports.getInternalResourceInputTopic = function (clientID, objectID, instanceID, resourceID){
+  return `internal/${clientID}/${objectID}/${instanceID}/${resourceID}/input`;
+};
 
-exports.decomposeResourceOutputTopic = function(topic){
+exports.decomposeResourceOutputTopic = function (topic){
   const regex = /(?:[a-z]*?)\/(.*?)\/(.*?)\/(.*?)\/output/g;
 
-  let matches = regex.exec(topic);
+  const matches = regex.exec(topic);
 
-  if(matches){
+  if (matches){
     return {
       'objectID': parseInt(matches[1]),
       'instanceID': parseInt(matches[2]),
       'resourceID': parseInt(matches[3])
-    }
+    };
   }
 
-  throw new Error("Invalid resource topic.");
-}
+  throw new Error('Invalid resource topic.');
+};
 
-exports.decomposeResourceInputTopic = function(topic){
+exports.decomposeResourceInputTopic = function (topic){
   const regex = /([a-z].+)\/(.*?)\/(.*?)\/(.*?)\/input/g;
 
-  let matches = regex.exec(topic);
+  const matches = regex.exec(topic);
 
-  if(matches){
+  if (matches){
     return {
       'clientID': matches[1],
       'objectID': parseInt(matches[2]),
       'instanceID': parseInt(matches[3]),
       'resourceID': parseInt(matches[4])
-    }
+    };
   }
 
-  throw new Error("Invalid resource topic.");
-}
+  throw new Error('Invalid resource topic.');
+};
 
-exports.isResponseTopic = function(topic){
+exports.isResponseTopic = function (topic){
   const regex = /([a-z].+)\/responses/g;
 
-  let matches = regex.exec(topic);
+  const matches = regex.exec(topic);
 
-  if(matches) return true;
+  if (matches) return true;
 
   return false;
-}
+};
 
-exports.getClientIDInResponseTopic = function(topic){
-  if(exports.isResponseTopic(topic)){
+exports.getClientIDInResponseTopic = function (topic){
+  if (exports.isResponseTopic(topic)){
     const regex = /([a-z].+)\/responses/g;
 
     return regex.exec(topic)[1];
   }
 
-  throw new Error("Invalid response topic.");
-}
+  throw new Error('Invalid response topic.');
+};
 
-exports.getPublishErrorTopic = function(objectID, instanceID, resourceID){
-  return exports.getResourceOutputTopic(objectID, instanceID, resourceID) + "/errors"
-}
+exports.getPublishErrorTopic = function (objectID, instanceID, resourceID){
+  return exports.getResourceOutputTopic(objectID, instanceID, resourceID) + '/errors';
+};
 
-exports.getWriteResponseTopic = function(clientID){
-  return `${clientID}/responses`
-}
+exports.getWriteResponseTopic = function (clientID){
+  return `${clientID}/responses`;
+};

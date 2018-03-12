@@ -1,61 +1,61 @@
-let config = require('config')
-let mqttConfig = config.get('mqtt')
-let mongoConfig = config.get('mongo')
-let writeConfig = config.get('write')
+const config = require('config');
+const mqttConfig = config.get('mqtt');
+const mongoConfig = config.get('mongo');
+const writeConfig = config.get('write');
 
-const WRITE_TIMEOUT_MS = writeConfig['timeout_ms']
+const WRITE_TIMEOUT_MS = writeConfig.timeout_ms;
 
-let mqtt = require('mqtt')
+const mqtt = require('mqtt');
 
-let mqttClient = mqtt.connect({
+const mqttClient = mqtt.connect({
   'host': mqttConfig.host,
   'username': mqttConfig.username,
   'password': mqttConfig.password
-})
+});
 
-let mqttConnected = () => {
-  let p = new Promise((resolve, reject) => {
+const mqttConnected = () => {
+  return new Promise((resolve, reject) => {
     mqttClient.on('connect', () => resolve());
 
-    setTimeout(() => reject("Could not connect to MQTT-Broker."), 5000);
-  })
-}
+    setTimeout(() => reject('Could not connect to MQTT-Broker.'), 5000);
+  });
+};
 
-let MongoClient = require('mongodb').MongoClient;
+const MongoClient = require('mongodb').MongoClient;
 
-let init = async () => {
-  let mongoClient = await MongoClient.connect(mongoConfig.url)
-  let db = mongoClient.db(mongoConfig.db)
+const wire = (mongoClient, db) => {
+  const MQTTWriteAgent = require('./messaging/agent/mqttWriteAgent.js');
+  const MQTTWriter = require('./messaging/writer/mqttWriter.js');
 
-  console.log("Connected to mongo.")
+  const MQTTUtil = require('./messaging/util/mqttUtil.js');
+  const Validator = require('jsonschema').Validator;
+  const Registry = require('./registry/registry.js');
+
+  const ResourceWriteUseCase = require('./use-cases/resource-write/resourceWriteUseCase.js');
+
+  const mqttWriter = new MQTTWriter(mqttClient, MQTTUtil, WRITE_TIMEOUT_MS);
+
+  const validator = new Validator();
+  const registry = new Registry(db.collection('registry'), validator);
+
+  const resourceWriteUseCase = new ResourceWriteUseCase(registry, mqttWriter);
+
+  const mqttWriteAgent = new MQTTWriteAgent(mqttClient, MQTTUtil, resourceWriteUseCase);
+
+  mqttWriteAgent.start();
+  console.log('MQTT Write Agent started.');
+};
+
+const init = async () => {
+  const mongoClient = await MongoClient.connect(mongoConfig.url);
+  const db = mongoClient.db(mongoConfig.db);
+
+  console.log('Connected to mongo.');
 
   await mqttConnected();
-  console.log("Connected to MQTT.");
+  console.log('Connected to MQTT.');
 
-  wire(mongoClient, db)
-}
+  wire(mongoClient, db);
+};
 
-let wire = (mongoClient, db) => {
-  let MQTTWriteAgent = require('./messaging/agent/mqttWriteAgent.js')
-  let MQTTWriter = require('./messaging/writer/mqttWriter.js')
-
-  let MQTTUtil = require('./messaging/util/mqttUtil.js')
-  let Validator = require('jsonschema').Validator;
-  let Registry = require('./registry/registry.js');
-
-  let ResourceWriteUseCase = require('./use-cases/resource-write/resourceWriteUseCase.js')
-
-  let mqttWriter = new MQTTWriter(mqttClient, MQTTUtil, WRITE_TIMEOUT_MS)
-
-  let validator = new Validator();
-  let registry = new Registry(db.collection('registry'), validator);
-
-  let resourceWriteUseCase = new ResourceWriteUseCase(registry, mqttWriter)
-
-  let mqttWriteAgent = new MQTTWriteAgent(mqttClient, MQTTUtil, resourceWriteUseCase)
-
-  mqttWriteAgent.start()
-  console.log('MQTT Write Agent started.')
-}
-
-init().catch(err => console.log(err))
+init().catch(err => console.log(err));
