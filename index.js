@@ -15,42 +15,49 @@ let mqttClient = mqtt.connect({
   'password': mqttConfig.password
 })
 
+let mqttConnected = () => {
+  let p = new Promise((resolve, reject) => {
+    mqttClient.on('connect', () => resolve());
+
+    setTimeout(() => reject("Could not connect to MQTT-Broker."), 5000);
+  })
+}
+
 let MongoClient = require('mongodb').MongoClient;
 
-co(function* (){
-  let mongoClient = yield MongoClient.connect(mongoConfig.url)
+let init = async () => {
+  let mongoClient = await MongoClient.connect(mongoConfig.url)
   let db = mongoClient.db(mongoConfig.db)
 
   console.log("Connected to mongo.")
 
-  return new Promise((resolve, reject) => {
-    console.log("Connected to MQTT.");
+  await mqttConnected();
+  console.log("Connected to MQTT.");
 
-    mqttClient.on('connect', function(){
-      let MQTTWriteAgent = require('./messaging/agent/mqttWriteAgent.js')
-      let MQTTWriter = require('./messaging/writer/mqttWriter.js')
+  wire(mongoClient, db)
+}
 
-      let MQTTUtil = require('./messaging/util/mqttUtil.js')
-      let Validator = require('jsonschema').Validator;
-      let Registry = require('./registry/registry.js');
+let wire = (mongoClient, db) => {
+  let MQTTWriteAgent = require('./messaging/agent/mqttWriteAgent.js')
+  let MQTTWriter = require('./messaging/writer/mqttWriter.js')
 
-      let ResourceWriteUseCase = require('./use-cases/resource-write/resourceWriteUseCase.js')
+  let MQTTUtil = require('./messaging/util/mqttUtil.js')
+  let Validator = require('jsonschema').Validator;
+  let Registry = require('./registry/registry.js');
 
-      let mqttWriter = new MQTTWriter(mqttClient, MQTTUtil, WRITE_TIMEOUT_MS)
+  let ResourceWriteUseCase = require('./use-cases/resource-write/resourceWriteUseCase.js')
 
-      let validator = new Validator();
-      let registry = new Registry(db.collection('registry'), validator);
+  let mqttWriter = new MQTTWriter(mqttClient, MQTTUtil, WRITE_TIMEOUT_MS)
 
-      let resourceWriteUseCase = new ResourceWriteUseCase(registry, mqttWriter)
+  let validator = new Validator();
+  let registry = new Registry(db.collection('registry'), validator);
 
-      let mqttWriteAgent = new MQTTWriteAgent(mqttClient, MQTTUtil, resourceWriteUseCase)
+  let resourceWriteUseCase = new ResourceWriteUseCase(registry, mqttWriter)
 
-      mqttWriteAgent.start()
-      console.log('MQTT Write Agent started.')
+  let mqttWriteAgent = new MQTTWriteAgent(mqttClient, MQTTUtil, resourceWriteUseCase)
 
-      resolve()
-    })
-  })
-}).catch(function(err){
-  console.log(err);
-})
+  mqttWriteAgent.start()
+  console.log('MQTT Write Agent started.')
+}
+
+init().catch(err => console.log(err))
