@@ -15,10 +15,14 @@ class MQTTWriteAgent{
   _onMessage(topic, message){
     if(!this._isInputTopic(topic)) return
 
-    let ipso = this.util.decomposeResourceInputTopic(topic)
-    let data = JSON.parse(message)
+    try {
+      let ipso = this.util.decomposeResourceInputTopic(topic)
+      let data = JSON.parse(message)
 
-    this._write(ipso, data)
+      this._write(ipso, data)
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   _isInputTopic(topic){
@@ -32,12 +36,16 @@ class MQTTWriteAgent{
 
   _onWriteError(clientID, requestID, err){
     if(requestID) {
-      this.client.publish(this.util.getWriteResponseTopic(clientID), JSON.stringify({
-        'requestID': requestID,
-        'success': false,
-        'message': err.message
-      }))
+      this._publishError(clientID, requestID, err.message)
     }
+  }
+
+  _publishError(clientID, requestID, errorMessage){
+    this.client.publish(this.util.getWriteResponseTopic(clientID), JSON.stringify({
+      'requestID': requestID,
+      'success': false,
+      'message': errorMessage
+    }))
   }
 }
 

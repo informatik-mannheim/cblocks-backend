@@ -13,10 +13,14 @@ class MQTTPublishAgent{
   _onMessage(topic, message){
     if(!this._isOutputMessage(topic)) return
 
-    let ipso = this.util.decomposeResourceOutputTopic(topic);
-    let data = JSON.parse(message);
+    try {
+      let ipso = this.util.decomposeResourceOutputTopic(topic);
+      let data = JSON.parse(message);
 
-    this._publish(ipso, data)
+      this._publish(ipso, data)
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   _publish(ipso, data){
