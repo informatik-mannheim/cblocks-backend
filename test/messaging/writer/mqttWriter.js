@@ -10,16 +10,16 @@ const MQTTWriter = require('../../../messaging/writer/mqttWriter.js');
 let mqttWriter = {};
 let promise;
 
-describe('MQTTWriter', function (){
-  describe('constructor', function (){
-    it('should subscribe to response topics', function (){
+describe('MQTTWriter', function() {
+  describe('constructor', function() {
+    it('should subscribe to response topics', function() {
       givenMQTTWriter();
 
       shouldSubscribeToResponseTopics();
     });
   });
 
-  function givenMQTTWriter () {
+  function givenMQTTWriter() {
     client.subscribe = sinon.spy();
     client.publish = sinon.spy();
     client.on = sinon.spy();
@@ -27,12 +27,12 @@ describe('MQTTWriter', function (){
     mqttWriter = new MQTTWriter(client, util);
   }
 
-  function shouldSubscribeToResponseTopics (){
+  function shouldSubscribeToResponseTopics() {
     expect(client.subscribe.calledWith('+/responses')).to.be.true;
   }
 
-  describe('writeResourceValue', function (){
-    it('should resolve anyways if no request id is provided', function (){
+  describe('writeResourceValue', function() {
+    it('should resolve anyways if no request id is provided', function() {
       givenMQTTWriter();
 
       whenWriteResourceValueWithNoRequestID();
@@ -41,7 +41,7 @@ describe('MQTTWriter', function (){
       shouldResolve();
     });
 
-    it('should reject with timeout if cblock does not respond', function (){
+    it('should reject with timeout if cblock does not respond', function() {
       givenMQTTWriter();
 
       whenWriteResourceValueWithRequestID();
@@ -50,7 +50,7 @@ describe('MQTTWriter', function (){
       shouldRejectWithTimeout();
     });
 
-    it('should resolve if cblock responds', function (){
+    it('should resolve if cblock responds', function() {
       givenMQTTWriter();
 
       whenWriteResourceValueWithRequestID();
@@ -63,45 +63,47 @@ describe('MQTTWriter', function (){
     });
   });
 
-  function whenWriteResourceValueWithNoRequestID (){
+  function whenWriteResourceValueWithNoRequestID() {
     promise = mqttWriter.writeResourceValue('client', 3304, 0, 0, {
-      'data': true
+      'data': true,
     });
   }
 
-  function shouldCallPublishWithoutRequestID (){
-    expect(client.publish.calledWith('internal/client/3304/0/0/input', JSON.stringify({
-      'data': true
+  function shouldCallPublishWithoutRequestID() {
+    expect(client.publish.calledWith('internal/client/3304/0/0/input',
+     JSON.stringify({
+      'data': true,
     }))).to.be.true;
   }
 
-  function shouldCallPublishWithRequestID (){
-    expect(client.publish.calledWith('internal/client/3304/0/0/input', JSON.stringify({
+  function shouldCallPublishWithRequestID() {
+    expect(client.publish.calledWith('internal/client/3304/0/0/input',
+    JSON.stringify({
       'requestID': 4711,
-      'data': true
+      'data': true,
     }))).to.be.true;
   }
 
-  function shouldResolve (){
+  function shouldResolve() {
     expect(promise).to.be.fulfilled;
   }
 
-  function whenWriteResourceValueWithRequestID (){
+  function whenWriteResourceValueWithRequestID() {
     promise = mqttWriter.writeResourceValue('client', 3304, 0, 0, {
       'requestID': 4711,
-      'data': true
+      'data': true,
     });
   }
 
-  function shouldRejectWithTimeout (){
+  function shouldRejectWithTimeout() {
     expect(promise).to.be.rejectedWith('Timeout.');
   }
 
-  function whenCBlockRespondsWithSuccessToRequestID (){
+  function whenCBlockRespondsWithSuccessToRequestID() {
     mqttWriter._onMessage('client/responses', JSON.stringify({
       'success': true,
       'requestID': 4711,
-      'message': ''
+      'message': '',
     }));
   }
 });

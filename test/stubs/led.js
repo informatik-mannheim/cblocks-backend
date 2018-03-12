@@ -8,8 +8,8 @@ module.exports = {
       'is_writeable': true,
       'schema': {
         'type': 'boolean',
-        'additionalProperties': false
-      }
-    }
-  }
+        'additionalProperties': false,
+      },
+    },
+  },
 };

@@ -10,7 +10,7 @@ const mqtt = require('mqtt');
 const mqttClient = mqtt.connect({
   'host': mqttConfig.host,
   'username': mqttConfig.username,
-  'password': mqttConfig.password
+  'password': mqttConfig.password,
 });
 
 const mqttConnected = () => {
@@ -31,7 +31,8 @@ const wire = (mongoClient, db) => {
   const Validator = require('jsonschema').Validator;
   const Registry = require('./registry/registry.js');
 
-  const ResourceWriteUseCase = require('./use-cases/resource-write/resourceWriteUseCase.js');
+  const ResourceWriteUseCase =
+   require('./use-cases/resource-write/resourceWriteUseCase.js');
 
   const mqttWriter = new MQTTWriter(mqttClient, MQTTUtil, WRITE_TIMEOUT_MS);
 
@@ -40,7 +41,8 @@ const wire = (mongoClient, db) => {
 
   const resourceWriteUseCase = new ResourceWriteUseCase(registry, mqttWriter);
 
-  const mqttWriteAgent = new MQTTWriteAgent(mqttClient, MQTTUtil, resourceWriteUseCase);
+  const mqttWriteAgent = new MQTTWriteAgent(
+    mqttClient, MQTTUtil, resourceWriteUseCase);
 
   mqttWriteAgent.start();
   console.log('MQTT Write Agent started.');
@@ -58,4 +60,4 @@ const init = async () => {
   wire(mongoClient, db);
 };
 
-init().catch(err => console.log(err));
+init().catch((err) => console.log(err));

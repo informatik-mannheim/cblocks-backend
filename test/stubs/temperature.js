@@ -8,8 +8,8 @@ module.exports = {
       'is_writeable': false,
       'schema': {
         'type': 'number',
-        'additionalProperties': false
-      }
-    }
-  }
+        'additionalProperties': false,
+      },
+    },
+  },
 };

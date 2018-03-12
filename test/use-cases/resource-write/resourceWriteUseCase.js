@@ -4,15 +4,16 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 const sinon = require('sinon');
 
-const ResourceWriteUseCase = require('../../../use-cases/resource-write/resourceWriteUseCase');
+const ResourceWriteUseCase =
+  require('../../../use-cases/resource-write/resourceWriteUseCase');
 let resourceWriteUseCase;
 const registry = {};
 const writer = {};
 let promise = {};
 
-describe('ResourceWriteUseCase', function (){
-  describe('write', function (){
-    it('should call writer', function (){
+describe('ResourceWriteUseCase', function() {
+  describe('write', function() {
+    it('should call writer', function() {
       givenValidationSuccess();
       givenWriteSuccess();
       givenResourceWriteUseCase();
@@ -22,7 +23,7 @@ describe('ResourceWriteUseCase', function (){
       shouldCallWriter();
     });
 
-    it('should reject if validate fails', function (){
+    it('should reject if validate fails', function() {
       givenValidationFailure();
       givenResourceWriteUseCase();
 
@@ -31,7 +32,7 @@ describe('ResourceWriteUseCase', function (){
       shouldReject();
     });
 
-    it('should reject if write fails', function (){
+    it('should reject if write fails', function() {
       givenValidationSuccess();
       givenWriteFailure();
       givenResourceWriteUseCase();
@@ -41,7 +42,7 @@ describe('ResourceWriteUseCase', function (){
       shouldReject();
     });
 
-    it('should resolve if write succeeds', function (){
+    it('should resolve if write succeeds', function() {
       givenValidationSuccess();
       givenWriteSuccess();
       givenResourceWriteUseCase();
@@ -52,43 +53,43 @@ describe('ResourceWriteUseCase', function (){
     });
   });
 
-  function givenValidationFailure (){
+  function givenValidationFailure() {
     registry.validateWrite = sinon.stub();
     registry.validateWrite.rejects('Validation error.');
   }
 
-  function givenResourceWriteUseCase (){
+  function givenResourceWriteUseCase() {
     resourceWriteUseCase = new ResourceWriteUseCase(registry, writer);
   }
 
-  function whenWrite (){
+  function whenWrite() {
     promise = resourceWriteUseCase.write('mqttFX', 3304, 0, 0, true);
   }
 
-  function shouldReject (){
+  function shouldReject() {
     expect(promise).to.be.rejected;
   }
 
-  function givenValidationSuccess (){
+  function givenValidationSuccess() {
     registry.validateWrite = sinon.stub();
     registry.validateWrite.resolves();
   }
 
-  function givenWriteFailure (){
+  function givenWriteFailure() {
     writer.writeResourceValue = sinon.stub();
     writer.writeResourceValue.rejects('Timeout.');
   }
 
-  function givenWriteSuccess (){
+  function givenWriteSuccess() {
     writer.writeResourceValue = sinon.stub();
     writer.writeResourceValue.resolves();
   }
 
-  function shouldResolve (){
+  function shouldResolve() {
     expect(promise).to.be.fulfilled;
   }
 
-  function shouldCallWriter (){
+  function shouldCallWriter() {
     expect(writer.writeResourceValue.calledWith('mqttFX'), 3304, 0, 0, true);
   }
 });
