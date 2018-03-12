@@ -2,9 +2,8 @@ exports.getResourceOutputTopic = function(objectID, instanceID, resourceID){
   return `${objectID}/${instanceID}/${resourceID}/output`
 }
 
-//TODO: Tests
-exports.getResourceInputTopic = function(clientID, objectID, instanceID, resourceID){
-  return `${clientID}/${objectID}/${instanceID}/${resourceID}/input`
+exports.getInternalResourceInputTopic = function(clientID, objectID, instanceID, resourceID){
+  return `internal/${clientID}/${objectID}/${instanceID}/${resourceID}/input`
 }
 
 exports.decomposeResourceOutputTopic = function(topic){
@@ -40,13 +39,22 @@ exports.decomposeResourceInputTopic = function(topic){
   throw new Error("Invalid resource topic.");
 }
 
-exports.getClientIDInResponseTopic = function(topic){
-  const regex = /(.+)\/responses/g;
+//TODO: test
+exports.isResponseTopic = function(topic){
+  const regex = /([a-z].+)\/responses/g;
 
   let matches = regex.exec(topic);
 
-  if(matches){
-    return matches[1]
+  if(matches) return true;
+
+  return false;
+}
+
+exports.getClientIDInResponseTopic = function(topic){
+  if(exports.isResponseTopic(topic)){
+    const regex = /([a-z].+)\/responses/g;
+
+    return regex.exec(topic)[1];
   }
 
   throw new Error("Invalid response topic.");

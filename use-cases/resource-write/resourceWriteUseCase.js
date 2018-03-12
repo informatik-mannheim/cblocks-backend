@@ -5,7 +5,7 @@ class ResourceWriteUseCase{
   }
 
   async write(clientID, objectID, instanceID, resourceID, data){
-    await this.registry.validateWrite(objectID, resourceID, data);
+    await this.registry.validateWrite(objectID, resourceID, data.data);
 
     return await this.writer.writeResourceValue(clientID, objectID, instanceID, resourceID, data);
   }

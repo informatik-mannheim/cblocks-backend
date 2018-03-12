@@ -37,7 +37,7 @@ describe('MQTTWriter', function(){
 
       whenWriteResourceValueWithNoRequestID();
 
-      shouldCallPublishAccordingly()
+      shouldCallPublishWithoutRequestID()
       shouldResolve()
     })
 
@@ -46,7 +46,7 @@ describe('MQTTWriter', function(){
 
       whenWriteResourceValueWithRequestID()
 
-      shouldCallPublishAccordingly()
+      shouldCallPublishWithRequestID()
       shouldRejectWithTimeout()
     })
 
@@ -55,7 +55,7 @@ describe('MQTTWriter', function(){
 
       whenWriteResourceValueWithRequestID()
 
-      shouldCallPublishAccordingly()
+      shouldCallPublishWithRequestID()
 
       whenCBlockRespondsWithSuccessToRequestID()
 
@@ -69,8 +69,17 @@ describe('MQTTWriter', function(){
     });
   }
 
-  function shouldCallPublishAccordingly(){
-    expect(client.publish.calledWith('client/3304/0/0/input', "true")).to.be.true;
+  function shouldCallPublishWithoutRequestID(){
+    expect(client.publish.calledWith('internal/client/3304/0/0/input', JSON.stringify({
+      "data": true
+    }))).to.be.true;
+  }
+
+  function shouldCallPublishWithRequestID(){
+    expect(client.publish.calledWith('internal/client/3304/0/0/input', JSON.stringify({
+      "requestID": 4711,
+      "data": true
+    }))).to.be.true;
   }
 
   function shouldResolve(){

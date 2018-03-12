@@ -22,7 +22,7 @@ describe("MQTT Util", function(){
     expect(topic).to.equal('3303/0/1/output')
   }
 
-  describe('getResourceInputTopic', function(){
+  describe('getInternalResourceInputTopic', function(){
     it('should be of form clientID/objectID/instanceID/resourceID/input', function(){
       whenGetResourceInputTopicForLED()
 
@@ -31,11 +31,11 @@ describe("MQTT Util", function(){
   })
 
   function whenGetResourceInputTopicForLED(){
-    topic = mqttUtil.getResourceInputTopic("client", 3304, 0, 1);
+    topic = mqttUtil.getInternalResourceInputTopic("client", 3304, 0, 1);
   }
 
   function shouldBeOfIPSOFormWithClientAndInput(){
-    expect(topic).to.equal('client/3304/0/1/input')
+    expect(topic).to.equal('internal/client/3304/0/1/input')
   }
 
   describe("decomposeResourceOutputTopic", function(){
@@ -151,5 +151,21 @@ describe("MQTT Util", function(){
 
   function shouldHaveCorrectResponseTopic(){
     expect(topic).to.equal('mqttFX/responses')
+  }
+
+  describe('isResponseTopic', function(){
+    it('should return true for response topic', function(){
+      whenIsValidResponseTopic()
+
+      shouldReturnTrue()
+    })
+  })
+
+  function whenIsValidResponseTopic(){
+    isResponseTopic = mqttUtil.isResponseTopic('mqttFX/responses')
+  }
+
+  function shouldReturnTrue(){
+    expect(isResponseTopic).to.be.true;
   }
 })

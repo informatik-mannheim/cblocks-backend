@@ -6,6 +6,7 @@ class MQTTWriter{
   constructor(client, util, writeTimeoutMS){
     this.client = client;
     this.util = util;
+    this.writeTimeoutMS = writeTimeoutMS;
     this.pendingWrites = {};
 
     this._subscribeToResponses()
@@ -17,10 +18,12 @@ class MQTTWriter{
   }
 
   _onMessage(topic, message){
-    let data = JSON.parse(message)
-    let clientID = this.util.getClientIDInResponseTopic(topic);
+    if(this.util.isResponseTopic(topic)){
+      let data = JSON.parse(message)
+      let clientID = this.util.getClientIDInResponseTopic(topic);
 
-    this._resolvePending(clientID, data.requestID)
+      this._resolvePending(clientID, data.requestID)
+    }
   }
 
   _resolvePending(clientID, requestID){
@@ -45,7 +48,7 @@ class MQTTWriter{
     deferred.promise.deferred = deferred //TODO super ugly for testability
 
     let f = () => {
-      this.client.publish(this.util.getResourceInputTopic(clientID, objectID, instanceID, resourceID), JSON.stringify(data.data))
+      this.client.publish(this.util.getInternalResourceInputTopic(clientID, objectID, instanceID, resourceID), JSON.stringify(data))
 
       if(!this._hasRequestID(data))
         return deferred.resolve()
@@ -72,9 +75,9 @@ class MQTTWriter{
   }
 
   _setTimer(clientID, requestID){
-    setTimeout(function () {
+    setTimeout(() => {
       this._rejectPending(clientID, requestID, "Timeout.")
-    }.bind(this), this.writeTimeoutMS);
+    }, this.writeTimeoutMS);
   }
 
   _rejectPending(clientID, requestID, reason){
