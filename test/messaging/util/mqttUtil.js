@@ -136,4 +136,20 @@ describe("MQTT Util", function(){
     expect(() => mqttUtil.getClientIDInResponseTopic("mqttFX/asdf")).to.throw("Invalid response topic.")
     expect(() => mqttUtil.getClientIDInResponseTopic("/responses")).to.throw("Invalid response topic.")
   }
+
+  describe('getWriteResponseTopic', function(){
+    it('should be of format clientID/responses', function(){
+      whenGetWriteResponseTopic()
+
+      shouldHaveCorrectResponseTopic()
+    })
+  })
+
+  function whenGetWriteResponseTopic(){
+    topic = mqttUtil.getWriteResponseTopic('mqttFX')
+  }
+
+  function shouldHaveCorrectResponseTopic(){
+    expect(topic).to.equal('mqttFX/responses')
+  }
 })

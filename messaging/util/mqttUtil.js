@@ -28,8 +28,6 @@ exports.decomposeResourceInputTopic = function(topic){
 
   let matches = regex.exec(topic);
 
-  console.log(matches)
-
   if(matches){
     return {
       'clientID': matches[1],
@@ -56,4 +54,8 @@ exports.getClientIDInResponseTopic = function(topic){
 
 exports.getPublishErrorTopic = function(objectID, instanceID, resourceID){
   return exports.getResourceOutputTopic(objectID, instanceID, resourceID) + "/errors"
+}
+
+exports.getWriteResponseTopic = function(clientID){
+  return `${clientID}/responses`
 }

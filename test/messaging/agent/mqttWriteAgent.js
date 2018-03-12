@@ -26,6 +26,7 @@ describe("MQTTWriteAgent", function(){
   function givenMQTTWriteAgent(){
     client.on = sinon.spy()
     client.subscribe = sinon.spy()
+    client.publish = sinon.spy()
 
     mqttWriteAgent = new MQTTWriteAgent(client, util, resourceWriteUseCase)
   }
@@ -85,6 +86,33 @@ describe("MQTTWriteAgent", function(){
 
       shouldCallWriteUseCase()
     })
+
+    it('should do nothing on write success', function(){
+      givenSuccessfullWrite()
+      givenMQTTWriteAgent()
+
+      whenValidWriteRequest()
+
+      shouldNotPublishAnything()
+    })
+
+    it('should publish error on write failure', function(done){
+      givenWriteFailure()
+      givenMQTTWriteAgent()
+
+      whenValidWriteRequest()
+
+      shouldPublishErrorMessage(done)
+    })
+
+    it('should not publish error if there is no requestID', function(done){
+      givenWriteFailure()
+      givenMQTTWriteAgent()
+
+      whenWriteRequestWithNoRequestID()
+
+      shouldNotPublishError(done)
+    })
   })
 
   function givenSuccessfullWrite(){
@@ -92,7 +120,7 @@ describe("MQTTWriteAgent", function(){
   }
 
   function whenValidWriteRequest(){
-    promise = mqttWriteAgent._onMessage('mqttFX/3304/0/0/input', JSON.stringify({
+    mqttWriteAgent._onMessage('mqttFX/3304/0/0/input', JSON.stringify({
       'requestID': 4711,
       'data': true
     }))
@@ -103,5 +131,39 @@ describe("MQTTWriteAgent", function(){
       'requestID': 4711,
       'data': true
     })).to.be.true;
+  }
+
+  function shouldNotPublishAnything(){
+    expect(client.publish.called).to.be.false;
+  }
+
+  function givenWriteFailure(){
+    resourceWriteUseCase.write = sinon.stub().rejects(new Error("Something went wrong."))
+  }
+
+  function shouldPublishErrorMessage(done){
+    setTimeout(() => {
+      expect(client.publish.calledWith('mqttFX/responses', JSON.stringify({
+        'requestID': 4711,
+        'success': false,
+        'message': 'Something went wrong.'
+      }))).to.be.true
+
+      done()
+    }, 20);
+  }
+
+  function whenWriteRequestWithNoRequestID(){
+    mqttWriteAgent._onMessage('mqttFX/3304/0/0/input', JSON.stringify({
+      'data': true
+    }))
+  }
+
+  function shouldNotPublishError(done){
+    setTimeout(() => {
+      expect(client.publish.called).to.be.false;
+
+      done()
+    }, 20);
   }
 })
