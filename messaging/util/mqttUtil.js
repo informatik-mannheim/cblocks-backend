@@ -39,7 +39,6 @@ exports.decomposeResourceInputTopic = function(topic){
   throw new Error("Invalid resource topic.");
 }
 
-//TODO: test
 exports.isResponseTopic = function(topic){
   const regex = /([a-z].+)\/responses/g;
 

@@ -1,5 +1,3 @@
-let co = require('co');
-
 class Registry{
   constructor(collection, validator){
     this.collection = collection;

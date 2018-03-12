@@ -55,7 +55,7 @@ class MQTTWriter{
 
       this._addToPendingWrites(deferred, clientID, data.requestID)
 
-      this._setTimer(clientID, data.requestID);
+      this._setWriteTimeout(clientID, data.requestID);
     }
 
     f()
@@ -74,7 +74,7 @@ class MQTTWriter{
     this.pendingWrites[clientID][requestID] = deferred
   }
 
-  _setTimer(clientID, requestID){
+  _setWriteTimeout(clientID, requestID){
     setTimeout(() => {
       this._rejectPending(clientID, requestID, "Timeout.")
     }, this.writeTimeoutMS);

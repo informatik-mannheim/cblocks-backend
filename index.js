@@ -1,5 +1,3 @@
-let co = require('co')
-
 let config = require('config')
 let mqttConfig = config.get('mqtt')
 let mongoConfig = config.get('mongo')
