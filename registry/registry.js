@@ -16,7 +16,7 @@ class Registry{
     return o;
   }
 
-  async getResource(objectID, resourceID){ //TODO: remove ugly async stuff
+  async getResource(objectID, resourceID){
     let o = await this.getObject(objectID);
 
     if( this._objectHasResource(o, resourceID) )

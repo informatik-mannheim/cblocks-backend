@@ -38,11 +38,11 @@ describe("MQTT Util", function(){
     expect(topic).to.equal('client/3304/0/1/input')
   }
 
-  describe("decomposeResourceTopic", function(){
-    it("should decompose for internal inputs and outputs", function(){
-      whenDecomposeValidTopic();
+  describe("decomposeResourceOutputTopic", function(){
+    it("should decompose outputs", function(){
+      whenDecomposeOutput();
 
-      shouldReturnDecomposedTopic();
+      shouldReturnDecomposedOutputTopic();
     })
 
     it("should throw an exception if resource topic can not be decomposed", function(){
@@ -50,11 +50,11 @@ describe("MQTT Util", function(){
     })
   })
 
-  function whenDecomposeValidTopic(){
-    ipso = mqttUtil.decomposeResourceTopic('internal/3303/0/1/output');
+  function whenDecomposeOutput(){
+    ipso = mqttUtil.decomposeResourceOutputTopic('internal/3303/0/1/output');
   }
 
-  function shouldReturnDecomposedTopic(){
+  function shouldReturnDecomposedOutputTopic(){
     expect(ipso).to.deep.equal({
       'objectID': 3303,
       'instanceID': 0,
@@ -63,8 +63,37 @@ describe("MQTT Util", function(){
   }
 
   function whenDecomposeInvalidTopicShouldThrowException() {
-    expect(() => mqttUtil.decomposeResourceTopic('internal/0/1/output')).to.throw("Invalid resource topic.");
-    expect(() => mqttUtil.decomposeResourceTopic('internal/3303/0/1')).to.throw("Invalid resource topic.");
+    expect(() => mqttUtil.decomposeResourceOutputTopic('internal/0/1/output')).to.throw("Invalid resource topic.");
+    expect(() => mqttUtil.decomposeResourceOutputTopic('internal/3303/0/1')).to.throw("Invalid resource topic.");
+  }
+
+  describe('decomposeResourceInputTopic', function(){
+    it('should decompose input', function(){
+      whenDecomposeInput()
+
+      shouldReturnDecomposedInputTopic()
+    })
+
+    it('should fail if client id in input is missing', function(){
+      whenDecomposeInputWithoutClientIDShouldThrowException()
+    })
+  })
+
+  function whenDecomposeInput(){
+    ipso = mqttUtil.decomposeResourceInputTopic('mqttFX/3303/0/1/input');
+  }
+
+  function shouldReturnDecomposedInputTopic(){
+    expect(ipso).to.deep.equal({
+      'clientID': 'mqttFX',
+      'objectID': 3303,
+      'instanceID': 0,
+      'resourceID': 1
+    })
+  }
+
+  function whenDecomposeInputWithoutClientIDShouldThrowException(){
+    expect(() => mqttUtil.decomposeResourceOutputTopic('3303/0/1/input')).to.throw("Invalid resource topic.")
   }
 
   describe("getPublishErrorTopic", function(){

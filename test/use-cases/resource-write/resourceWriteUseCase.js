@@ -12,6 +12,16 @@ let promise = {};
 
 describe('ResourceWriteUseCase', function(){
   describe('write', function(){
+    it('should call writer', function(){
+      givenValidationSuccess()
+      givenWriteSuccess()
+      givenResourceWriteUseCase()
+
+      whenWrite()
+
+      shouldCallWriter()
+    })
+
     it('should reject if validate fails', function(){
       givenValidationFailure()
       givenResourceWriteUseCase()
@@ -52,7 +62,7 @@ describe('ResourceWriteUseCase', function(){
   }
 
   function whenWrite(){
-    promise = resourceWriteUseCase.write(3304, 0, 0, true)
+    promise = resourceWriteUseCase.write('mqttFX', 3304, 0, 0, true)
   }
 
   function shouldReject(){
@@ -76,5 +86,9 @@ describe('ResourceWriteUseCase', function(){
 
   function shouldResolve(){
     expect(promise).to.be.fulfilled;
+  }
+
+  function shouldCallWriter(){
+    expect(writer.writeResourceValue.calledWith('mqttFX'), 3304, 0, 0, true)
   }
 })

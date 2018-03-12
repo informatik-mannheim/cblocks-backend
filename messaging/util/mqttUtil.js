@@ -7,8 +7,8 @@ exports.getResourceInputTopic = function(clientID, objectID, instanceID, resourc
   return `${clientID}/${objectID}/${instanceID}/${resourceID}/input`
 }
 
-exports.decomposeResourceTopic = function(topic){
-  const regex = /(?:[a-z]*?)\/(.*?)\/(.*?)\/(.*?)\/(?:output|input)/g;
+exports.decomposeResourceOutputTopic = function(topic){
+  const regex = /(?:[a-z]*?)\/(.*?)\/(.*?)\/(.*?)\/output/g;
 
   let matches = regex.exec(topic);
 
@@ -17,6 +17,25 @@ exports.decomposeResourceTopic = function(topic){
       'objectID': parseInt(matches[1]),
       'instanceID': parseInt(matches[2]),
       'resourceID': parseInt(matches[3])
+    }
+  }
+
+  throw new Error("Invalid resource topic.");
+}
+
+exports.decomposeResourceInputTopic = function(topic){
+  const regex = /([a-z].+)\/(.*?)\/(.*?)\/(.*?)\/input/g;
+
+  let matches = regex.exec(topic);
+
+  console.log(matches)
+
+  if(matches){
+    return {
+      'clientID': matches[1],
+      'objectID': parseInt(matches[2]),
+      'instanceID': parseInt(matches[3]),
+      'resourceID': parseInt(matches[4])
     }
   }
 
