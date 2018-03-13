@@ -1,3 +1,5 @@
+const ResourceWriteError = require('./resourceWriteError.js');
+
 class ResourceWriteUseCase {
   constructor(registry, writer) {
     this.registry = registry;
@@ -5,10 +7,14 @@ class ResourceWriteUseCase {
   }
 
   async write(clientID, objectID, instanceID, resourceID, data) {
-    await this.registry.validateWrite(objectID, resourceID, data.data);
+    try {
+      await this.registry.validateWrite(objectID, resourceID, data.data);
 
-    return await this.writer
-      .writeResourceValue(clientID, objectID, instanceID, resourceID, data);
+      return await this.writer
+        .writeResourceValue(clientID, objectID, instanceID, resourceID, data);
+    } catch (e) {
+      throw new ResourceWriteError(e.message);
+    }
   }
 }
 

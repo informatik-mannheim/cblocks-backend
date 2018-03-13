@@ -45,19 +45,22 @@ const wire = (mongoClient, db) => {
     mqttClient, MQTTUtil, resourceWriteUseCase);
 
   mqttWriteAgent.start();
-  console.log('MQTT Write Agent started.');
+  console.log('Application bootstrapped.');
 };
 
 const init = async () => {
-  const mongoClient = await MongoClient.connect(mongoConfig.url);
-  const db = mongoClient.db(mongoConfig.db);
+  try {
+    const mongoClient = await MongoClient.connect(mongoConfig.url);
+    const db = mongoClient.db(mongoConfig.db);
+    console.log('Connected to mongo.');
 
-  console.log('Connected to mongo.');
+    await mqttConnected();
+    console.log('Connected to MQTT.');
 
-  await mqttConnected();
-  console.log('Connected to MQTT.');
-
-  wire(mongoClient, db);
+    wire(mongoClient, db);
+  } catch (e) {
+    console.log(e);
+  }
 };
 
-init().catch((err) => console.log(err));
+init();

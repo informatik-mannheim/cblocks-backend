@@ -7,6 +7,8 @@ const sinon = require('sinon');
 const client = {};
 const util = require('../../../messaging/util/mqttUtil.js');
 const MQTTWriteAgent = require('../../../messaging/agent/mqttWriteAgent.js');
+const ResourceWriteError =
+  require('../../../use-cases/resource-write/resourceWriteError.js');
 let mqttWriteAgent = {};
 const resourceWriteUseCase = {};
 let isInputMessage;
@@ -139,7 +141,7 @@ describe('MQTTWriteAgent', function() {
 
   function givenWriteFailure() {
     resourceWriteUseCase.write = sinon.stub()
-      .rejects(new Error('Something went wrong.'));
+      .rejects(new ResourceWriteError('Something went wrong.'));
   }
 
   function shouldPublishErrorMessage(done) {

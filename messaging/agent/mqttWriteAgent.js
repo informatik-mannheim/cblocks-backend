@@ -1,4 +1,6 @@
 const inputTopics = '+/+/+/+/input';
+const ResourceWriteError =
+  require('../../use-cases/resource-write/resourceWriteError.js');
 
 class MQTTWriteAgent {
   constructor(client, util, resourceWriteUseCase) {
@@ -12,16 +14,23 @@ class MQTTWriteAgent {
     this.client.on('message', this._onMessage.bind(this));
   }
 
-  _onMessage(topic, message) {
+  async _onMessage(topic, message) {
     if (!this._isInputTopic(topic)) return;
 
-    try {
-      const ipso = this.util.decomposeResourceInputTopic(topic);
-      const data = JSON.parse(message);
+    let ipso;
+    let data;
 
-      this._write(ipso, data);
+    try {
+      ipso = this.util.decomposeResourceInputTopic(topic);
+      data = JSON.parse(message);
+
+      await this._write(ipso, data);
     } catch (e) {
-      console.log(e);
+      if (typeof e !== ResourceWriteError) {
+        this._onWriteError(ipso.clientID, data.requestID, e);
+      } else {
+        console.log(e.message);
+      }
     }
   }
 
@@ -30,9 +39,8 @@ class MQTTWriteAgent {
   }
 
   _write(ipso, data) {
-    this.resourceWriteUseCase.write(
-      ipso.clientID, ipso.objectID, ipso.instanceID, ipso.resourceID, data)
-      .catch(this._onWriteError.bind(this, ipso.clientID, data.requestID));
+    return this.resourceWriteUseCase.write(
+      ipso.clientID, ipso.objectID, ipso.instanceID, ipso.resourceID, data);
   }
 
   _onWriteError(clientID, requestID, err) {
