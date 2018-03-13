@@ -46,8 +46,8 @@ class Registry {
     const r = await this.getResource(objectID, resourceID);
 
     if (!r.is_writeable) {
-throw new Error('Resource is not writable.');
-}
+      throw new Error('Resource is not writable.');
+    }
 
     const result = this.validator.validate(data, r.schema);
 

@@ -4,7 +4,7 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 const sinon = require('sinon');
 
-const Registry = require('../../registry/registry.js');
+const Registry = require('../../data-provider/registry.js');
 const db = {};
 const Validator = require('jsonschema').Validator;
 const stubs = require('../stubs');
