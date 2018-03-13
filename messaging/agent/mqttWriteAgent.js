@@ -26,7 +26,7 @@ class MQTTWriteAgent {
 
       await this._write(ipso, data);
     } catch (e) {
-      if (typeof e !== ResourceWriteError) {
+      if (this._isWriteError(e)) {
         this._onWriteError(ipso.clientID, data.requestID, e);
       } else {
         console.log(e.message);
@@ -41,6 +41,10 @@ class MQTTWriteAgent {
   _write(ipso, data) {
     return this.resourceWriteUseCase.write(
       ipso.clientID, ipso.objectID, ipso.instanceID, ipso.resourceID, data);
+  }
+
+  _isWriteError(e) {
+    return typeof e !== ResourceWriteError;
   }
 
   _onWriteError(clientID, requestID, err) {
