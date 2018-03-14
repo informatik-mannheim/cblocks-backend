@@ -14,6 +14,10 @@ class Registry {
     return o;
   }
 
+  async getObjects() {
+    return await this.collection.find().toArray();
+  }
+
   async getResource(objectID, resourceID) {
     const o = await this.getObject(objectID);
 

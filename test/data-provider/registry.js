@@ -11,7 +11,7 @@ const stubs = require('../stubs');
 let promise;
 let registry;
 
-describe('Registry', function() {
+describe('Registry', () => {
   function givenTemperatureObject() {
     db.findOne = sinon.stub();
 
@@ -34,7 +34,7 @@ describe('Registry', function() {
     expect(promise).to.be.fulfilled;
   }
 
-  describe('getObject', function() {
+  describe('getObject', () => {
     it('should resolve if object exists', function(done) {
       givenTemperatureObject();
       givenRegistry();
@@ -57,7 +57,7 @@ describe('Registry', function() {
       });
     }
 
-    it('should reject if object does not exist', function() {
+    it('should reject if object does not exist', () => {
       givenNoObjects();
       givenRegistry();
 
@@ -76,7 +76,30 @@ describe('Registry', function() {
     }
   });
 
-  describe('getResource', function() {
+  describe('getObjects', () => {
+    it('should resolve if there are objects', function() {
+      givenTemperatureAndLEDObject();
+      givenRegistry();
+
+      whenGetObjects();
+
+      shouldResolveWithAllObjects();
+    });
+
+    function givenTemperatureAndLEDObject() {
+      db.find = sinon.stub().resolves(stubs.all);
+    }
+
+    function whenGetObjects() {
+      promise = registry.getObjects();
+    }
+
+    function shouldResolveWithAllObjects() {
+      expect(promise).to.become(stubs.all);
+    }
+  });
+
+  describe('getResource', () => {
     it('should resolve if resource exists', function(done) {
       givenTemperatureObject();
       givenRegistry();
@@ -99,7 +122,7 @@ describe('Registry', function() {
       });
     }
 
-    it('should reject if resource does not exist', function() {
+    it('should reject if resource does not exist', () => {
       givenTemperatureObjectWithNoResources();
       givenRegistry();
 
@@ -114,8 +137,8 @@ describe('Registry', function() {
     }
   });
 
-  describe('validate', function() {
-    it('should resolve if data is valid and resource exists', function() {
+  describe('validate', () => {
+    it('should resolve if data is valid and resource exists', () => {
       givenTemperatureObject();
       givenRegistry();
 
@@ -128,7 +151,7 @@ describe('Registry', function() {
       promise = registry.validate(3303, 0, 33.2);
     }
 
-    it('should reject if data is invalid', function() {
+    it('should reject if data is invalid', () => {
       givenTemperatureObject();
       givenRegistry();
 
@@ -146,8 +169,8 @@ describe('Registry', function() {
     }
   });
 
-  describe('validateWrite', function() {
-    it('should reject if resource is not writable', function() {
+  describe('validateWrite', () => {
+    it('should reject if resource is not writable', () => {
       givenTemperatureObject();
       givenRegistry();
 
@@ -164,7 +187,7 @@ describe('Registry', function() {
       expect(promise).to.be.rejectedWith('Resource is not writable.');
     }
 
-    it('should resolve if resource is writable and correct format', function() {
+    it('should resolve if resource is writable and correct format', () => {
       givenLEDObject();
       givenRegistry();
 

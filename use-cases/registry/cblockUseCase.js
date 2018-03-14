@@ -6,6 +6,10 @@ class CBlockUseCase {
   async getCBlock(objectID) {
     return await this.registry.getObject(objectID);
   }
+
+  async getCBlocks() {
+    return await this.registry.getObjects();
+  }
 }
 
 module.exports = CBlockUseCase;

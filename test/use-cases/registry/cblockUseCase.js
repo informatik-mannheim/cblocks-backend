@@ -10,13 +10,13 @@ let cBlockUseCase;
 let promise;
 const stubs = require('../../stubs');
 
-describe('cBlockUseCase', function() {
-  beforeEach(function() {
+describe('cBlockUseCase', () => {
+  beforeEach(() => {
     registry = {};
   });
 
-  describe('getCBlock', function() {
-    it('should call registry', function() {
+  describe('getCBlock', () => {
+    it('should call registry', () => {
       givenRegistryReturnsTemperature();
       givenCBlockUseCase();
 
@@ -25,13 +25,24 @@ describe('cBlockUseCase', function() {
       shouldCallGetCBlockOfRegistry();
     });
 
-    it('should throw exception if registry does', function() {
+    it('should throw exception if registry does', () => {
       givenRegistryThrowsError();
       givenCBlockUseCase();
 
       whenGetCBlock();
 
       shouldReject();
+    });
+  });
+
+  describe('getCBlocks', () => {
+    it('should call registry', () => {
+      givenRegistryReturnsAll();
+      givenCBlockUseCase();
+
+      whenGetCBlocks();
+
+      shouldCallGetCBlocksOfRegistry();
     });
   });
 });
@@ -58,4 +69,16 @@ function givenRegistryThrowsError() {
 
 function shouldReject() {
   expect(promise).to.be.rejectedWith('Error.');
+}
+
+function givenRegistryReturnsAll() {
+  registry.getObjects = sinon.stub().resolves(stubs.all);
+}
+
+function whenGetCBlocks() {
+  promise = cBlockUseCase.getCBlocks();
+}
+
+function shouldCallGetCBlocksOfRegistry() {
+  expect(registry.getObjects.called).to.be.true;
 }
