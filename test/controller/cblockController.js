@@ -13,6 +13,7 @@ describe('CBlockController', () => {
     cBlockController = {};
     hapiServer = {};
     errorRenderer = {};
+    responseToolkit = {};
   });
 
   describe('GET /cblocks/{objectID}', () => {
@@ -43,6 +44,29 @@ describe('CBlockController', () => {
       shouldRejectWithNotFoundError();
     });
   });
+
+  describe('Patch instance label', () => {
+    it('should call setLabel of use case', async () => {
+      givenSuccessfullSetLabel();
+      givenCBlockController();
+
+      await whenPatchWithLabel();
+
+      shouldCallSetLabelOfUseCase();
+      shouldReturnOkResponse();
+    });
+
+    it('should not call setLabel of use case if label not provided',
+      async () => {
+        givenSuccessfullSetLabel();
+        givenCBlockController();
+
+        await whenPatchWithoutLabel();
+
+        shouldNotCallSetLabelOfUseCase();
+        shouldReturnOkResponse();
+      });
+  });
 });
 
 function givenUseCaseReturnsTemperatureCBlock() {
@@ -53,6 +77,7 @@ function givenUseCaseReturnsTemperatureCBlock() {
 function givenCBlockController() {
   hapiServer.route = sinon.spy();
   errorRenderer.notFound = Error;
+  responseToolkit.response = sinon.spy();
 
   cBlockController = new CBlockController(
     hapiServer, cBlockUseCase, errorRenderer);
@@ -90,4 +115,48 @@ function givenUseCaseRejects() {
 
 function shouldRejectWithNotFoundError() {
   expect(promise).to.be.rejectedWith('Not found.');
+}
+
+function givenSuccessfullSetLabel() {
+  cBlockUseCase.setLabel = sinon.stub().resolves();
+}
+
+async function whenPatchWithLabel() {
+  let request = {
+    'payload': {
+      'label': 'Chair',
+    },
+    'params': {
+      'objectID': '3303',
+      'instanceID': '0',
+    },
+  };
+
+  return await cBlockController._handlePatchInstance(request, responseToolkit);
+}
+
+function shouldCallSetLabelOfUseCase() {
+  expect(cBlockUseCase.setLabel.calledWith(3303, 0, 'Chair')).to.be.true;
+}
+
+function shouldReturnOkResponse() {
+  expect(responseToolkit.response.calledWith('Ok.')).to.be.true;
+}
+
+async function whenPatchWithoutLabel() {
+  let request = {
+    'payload': {
+      'somethingDifferent': 'Chair',
+    },
+    'params': {
+      'objectID': '3303',
+      'instanceID': '0',
+    },
+  };
+
+  return await cBlockController._handlePatchInstance(request, responseToolkit);
+}
+
+function shouldNotCallSetLabelOfUseCase() {
+  expect(cBlockUseCase.setLabel.called).to.be.false;
 }

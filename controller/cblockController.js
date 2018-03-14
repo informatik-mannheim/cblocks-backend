@@ -13,6 +13,12 @@ class CBlockController {
       'path': '/cblocks/{objectID?}',
       'handler': this._handleGetCBlocks.bind(this),
     });
+
+    this.hapiServer.route({
+      'method': 'PATCH',
+      'path': '/cblocks/{objectID}/{instanceID}',
+      'handler': this._handlePatchInstance.bind(this),
+    });
   }
 
   async _handleGetCBlocks(request, h) {
@@ -31,6 +37,21 @@ class CBlockController {
     }
 
     return await this.cBlockUseCase.getCBlocks();
+  }
+
+  async _handlePatchInstance(request, h) {
+    if (request.payload.label !== undefined) {
+      await this._setLabel(request);
+    }
+
+    return h.response('Ok.');
+  }
+
+  async _setLabel(request) {
+    return await cBlockUseCase.setLabel(
+      parseInt(request.params.objectID),
+      parseInt(request.params.instanceID),
+      request.payload.label);
   }
 };
 

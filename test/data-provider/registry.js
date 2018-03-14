@@ -67,7 +67,6 @@ describe('Registry', () => {
     });
 
     function givenNoObjects() {
-      db.find = sinon.stub().resolves(null);
       db.findOne = sinon.stub().resolves(null);
     }
 
@@ -87,7 +86,11 @@ describe('Registry', () => {
     });
 
     function givenTemperatureAndLEDObject() {
-      db.find = sinon.stub().resolves(stubs.all);
+      db.find = () => {
+        return {
+          'toArray': sinon.stub().resolves(stubs.all),
+        };
+      };
     }
 
     function whenGetObjects() {

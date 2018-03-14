@@ -36,6 +36,10 @@ class Registry {
     return false;
   }
 
+  async setInstanceLabel(objectID, instanceID, label) {
+    throw new Error('Instance not found.');
+  }
+
   async validate(objectID, resourceID, data) {
     const r = await this.getResource(objectID, resourceID);
 
