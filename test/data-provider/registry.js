@@ -27,6 +27,8 @@ describe('Registry', () => {
   }
 
   function givenRegistry() {
+    db.updateOne = sinon.stub().resolves();
+
     registry = new Registry(db, new Validator());
   }
 
@@ -207,6 +209,70 @@ describe('Registry', () => {
 
     function whenValidateWriteLedOn() {
       promise = registry.validateWrite(3304, 0, true);
+    }
+  });
+
+  describe('setInstanceLabel', () => {
+    it('should resolve if instance exists', () => {
+      givenTemperatureObject();
+      givenRegistry();
+
+      whenSetInstanceLabel();
+
+      shouldResolve();
+    });
+
+    function whenSetInstanceLabel() {
+      promise = registry.setInstanceLabel(3303, 0, 'Chair.');
+    }
+
+    it('should reject if instance does not exists', () => {
+      givenTemperatureObject();
+      givenRegistry();
+
+      whenSetLabelOfNotExistingInstance();
+
+      shouldRejectWithInstanceNotFound();
+    });
+
+    function whenSetLabelOfNotExistingInstance() {
+      promise = registry.setInstanceLabel(3303, 1, 'Chair.');
+    }
+  });
+
+  function shouldRejectWithInstanceNotFound() {
+    expect(promise).to.be.rejectedWith('Instance not found.');
+  }
+
+  describe('getInstance', () => {
+    it('should resolve with instance if found', () => {
+      givenTemperatureObject();
+      givenRegistry();
+
+      whenGetTemperatureInstance();
+
+      shouldResolveWithInstance();
+    });
+
+    function whenGetTemperatureInstance() {
+      promise = registry.getInstance(3303, 0);
+    }
+
+    function shouldResolveWithInstance() {
+      expect(promise).to.become(stubs.temperature.instances[0]);
+    }
+
+    it('should reject if there there is no instance', () => {
+      givenTemperatureObject();
+      givenRegistry();
+
+      whenGetNonExistingTemperatureInstance();
+
+      shouldRejectWithInstanceNotFound();
+    });
+
+    function whenGetNonExistingTemperatureInstance() {
+      promise = registry.getInstance(3303, 1);
     }
   });
 });

@@ -12,4 +12,9 @@ module.exports = {
       },
     },
   },
+  'instances': {
+        '0': {
+            'label': 'Temperature Sensor',
+        },
+  },
 };
