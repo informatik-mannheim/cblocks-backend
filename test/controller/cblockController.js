@@ -46,7 +46,7 @@ describe('CBlockController', () => {
   });
 
   describe('Patch instance label', () => {
-    it('should call setLabel of use case', async () => {
+    it('should call setInstanceLabel of use case', async () => {
       givenSuccessfullSetLabel();
       givenCBlockController();
 
@@ -56,7 +56,7 @@ describe('CBlockController', () => {
       shouldReturnOkResponse();
     });
 
-    it('should not call setLabel of use case if label not provided',
+    it('should not call setInstanceLabel of use case if label not provided',
       async () => {
         givenSuccessfullSetLabel();
         givenCBlockController();
@@ -66,6 +66,13 @@ describe('CBlockController', () => {
         shouldNotCallSetLabelOfUseCase();
         shouldReturnOkResponse();
       });
+
+    it('should wrap errors with boomify', async () => {
+      givenErrorSetLabel();
+      givenCBlockController();
+
+      await whenPatchLabelShouldThrowBoomError();
+    });
   });
 });
 
@@ -76,8 +83,10 @@ function givenUseCaseReturnsTemperatureCBlock() {
 
 function givenCBlockController() {
   hapiServer.route = sinon.spy();
-  errorRenderer.notFound = Error;
   responseToolkit.response = sinon.spy();
+
+  errorRenderer.notFound = Error;
+  errorRenderer.boomify = sinon.spy();
 
   cBlockController = new CBlockController(
     hapiServer, cBlockUseCase, errorRenderer);
@@ -118,7 +127,7 @@ function shouldRejectWithNotFoundError() {
 }
 
 function givenSuccessfullSetLabel() {
-  cBlockUseCase.setLabel = sinon.stub().resolves();
+  cBlockUseCase.setInstanceLabel = sinon.stub().resolves();
 }
 
 async function whenPatchWithLabel() {
@@ -136,7 +145,8 @@ async function whenPatchWithLabel() {
 }
 
 function shouldCallSetLabelOfUseCase() {
-  expect(cBlockUseCase.setLabel.calledWith(3303, 0, 'Chair')).to.be.true;
+  expect(cBlockUseCase
+    .setInstanceLabel.calledWith(3303, 0, 'Chair')).to.be.true;
 }
 
 function shouldReturnOkResponse() {
@@ -158,5 +168,19 @@ async function whenPatchWithoutLabel() {
 }
 
 function shouldNotCallSetLabelOfUseCase() {
-  expect(cBlockUseCase.setLabel.called).to.be.false;
+  expect(cBlockUseCase.setInstanceLabel.called).to.be.false;
+}
+
+function givenErrorSetLabel() {
+  cBlockUseCase.setInstanceLabel =
+    sinon.stub().rejects(new Error('Something went wrong.'));
+}
+
+async function whenPatchLabelShouldThrowBoomError() {
+  try {
+    await whenPatchWithLabel();
+    expect(true).to.be.false;
+  } catch (e) {
+    expect(errorRenderer.boomify.called).to.be.true;
+  }
 }

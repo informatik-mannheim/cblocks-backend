@@ -17,7 +17,7 @@ describe('cBlockUseCase', () => {
 
   describe('getCBlock', () => {
     it('should call registry', () => {
-      givenRegistryReturnsTemperature();
+      givenGetObjectResolves();
       givenCBlockUseCase();
 
       whenGetCBlock();
@@ -26,7 +26,7 @@ describe('cBlockUseCase', () => {
     });
 
     it('should throw exception if registry does', () => {
-      givenRegistryThrowsError();
+      givenGetObjectsRejects();
       givenCBlockUseCase();
 
       whenGetCBlock();
@@ -35,9 +35,33 @@ describe('cBlockUseCase', () => {
     });
   });
 
+  function givenGetObjectResolves() {
+    registry.getObject = sinon.stub().resolves(stubs.temperature);
+  }
+
+  function givenCBlockUseCase() {
+    cBlockUseCase = new CBlockUseCase(registry);
+  }
+
+  function whenGetCBlock() {
+    promise = cBlockUseCase.getCBlock(3303);
+  }
+
+  function shouldCallGetCBlockOfRegistry() {
+    expect(registry.getObject.calledWith(3303)).to.be.true;
+  }
+
+  function givenGetObjectsRejects() {
+    registry.getObject = sinon.stub().rejects(new Error('Error.'));
+  }
+
+  function shouldReject() {
+    expect(promise).to.be.rejectedWith('Error.');
+  }
+
   describe('getCBlocks', () => {
     it('should call registry', () => {
-      givenRegistryReturnsAll();
+      givenGetObjectsResolves();
       givenCBlockUseCase();
 
       whenGetCBlocks();
@@ -45,40 +69,44 @@ describe('cBlockUseCase', () => {
       shouldCallGetCBlocksOfRegistry();
     });
   });
+
+  function givenGetObjectsResolves() {
+    registry.getObjects = sinon.stub().resolves(stubs.all);
+  }
+
+  function whenGetCBlocks() {
+    promise = cBlockUseCase.getCBlocks();
+  }
+
+  function shouldCallGetCBlocksOfRegistry() {
+    expect(registry.getObjects.called).to.be.true;
+  }
+
+  describe('setInstanceLabel', () => {
+    it('should call registry', () => {
+      givenSetInstanceLabelResolves();
+      givenCBlockUseCase();
+
+      whenSetInstanceLabel();
+
+      shouldCallSetInstanceLabelOfRegistry();
+      shouldResolve();
+    });
+  });
+
+  function givenSetInstanceLabelResolves() {
+    registry.setInstanceLabel = sinon.stub().resolves();
+  }
+
+  function whenSetInstanceLabel() {
+    promise = cBlockUseCase.setInstanceLabel(3303, 0, 'Chair');
+  }
+
+  function shouldCallSetInstanceLabelOfRegistry() {
+    expect(registry.setInstanceLabel.calledWith(3303, 0, 'Chair')).to.be.true;
+  }
+
+  function shouldResolve() {
+    expect(promise).to.be.fulfilled;
+  }
 });
-
-function givenRegistryReturnsTemperature() {
-  registry.getObject = sinon.stub().resolves(stubs.temperature);
-}
-
-function givenCBlockUseCase() {
-  cBlockUseCase = new CBlockUseCase(registry);
-}
-
-function whenGetCBlock() {
-  promise = cBlockUseCase.getCBlock(3303);
-}
-
-function shouldCallGetCBlockOfRegistry() {
-  expect(registry.getObject.calledWith(3303)).to.be.true;
-}
-
-function givenRegistryThrowsError() {
-  registry.getObject = sinon.stub().rejects(new Error('Error.'));
-}
-
-function shouldReject() {
-  expect(promise).to.be.rejectedWith('Error.');
-}
-
-function givenRegistryReturnsAll() {
-  registry.getObjects = sinon.stub().resolves(stubs.all);
-}
-
-function whenGetCBlocks() {
-  promise = cBlockUseCase.getCBlocks();
-}
-
-function shouldCallGetCBlocksOfRegistry() {
-  expect(registry.getObjects.called).to.be.true;
-}

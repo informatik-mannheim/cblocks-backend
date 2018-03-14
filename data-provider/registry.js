@@ -72,7 +72,9 @@ class Registry {
   async updateObject(object) {
     return await this.collection.updateOne({
       'objectID': object.objectID,
-    }, object);
+    }, {
+      $set: object,
+    });
   }
 
   async validate(objectID, resourceID, data) {
