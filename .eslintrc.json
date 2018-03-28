@@ -5,6 +5,7 @@
   "parser": "babel-eslint",
   "extends": "eslint-config-google",
   "rules": {
-    "require-jsdoc": "off"
+    "require-jsdoc": "off",
+    "switch-colon-spacing": "off"
   }
 }
