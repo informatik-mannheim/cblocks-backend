@@ -1,0 +1,16 @@
+{
+  "mqtt": {
+    "host": "localhost"
+  },
+  "mongo": {
+    "url": "mongodb://localhost:27017",
+    "db": "cblocks"
+  },
+  "hapi": {
+    "port": 8080,
+    "host": "172.16.1.1"
+  },
+  "write": {
+    "timeout_ms": 2000
+  }
+}
