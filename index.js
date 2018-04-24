@@ -16,15 +16,27 @@ const hapiServer = Hapi.server({
 });
 const Boom = require('boom');
 
-const mqttClient = mqtt.connect({
-  'host': mqttConfig.host,
-  'username': mqttConfig.username,
-  'password': mqttConfig.password,
-});
+const getMQTTConfig = () => {
+  let data = {
+    host: mqttConfig.host,
+  };
 
-const mqttConnected = () => {
+  if (mqttConfig.user !== undefined) {
+    connectionData.user = mqttConfig.user;
+  }
+
+  if (mqttConfig.password !== undefined ) {
+    connectionData.password = mqttConfig.password;
+  }
+
+  return data;
+};
+
+const initMQTT = () => {
+  const client = mqtt.connect(getMQTTConfig());
+
   return new Promise((resolve, reject) => {
-    mqttClient.on('connect', () => resolve());
+    client.on('connect', () => resolve(client));
 
     setTimeout(() => reject('Could not connect to MQTT-Broker.'), 5000);
   });
@@ -32,7 +44,7 @@ const mqttConnected = () => {
 
 const MongoClient = require('mongodb').MongoClient;
 
-const wire = (mongoClient, db, hapiServer) => {
+const wire = (mongoClient, mqttClient, db, hapiServer) => {
   const CBlockController = require('./controller/cblockController.js');
   const MQTTWriteAgent = require('./messaging/agent/mqttWriteAgent.js');
   const MQTTWriter = require('./messaging/writer/mqttWriter.js');
@@ -55,9 +67,12 @@ const wire = (mongoClient, db, hapiServer) => {
 
   const mqttWriteAgent = new MQTTWriteAgent(
     mqttClient, MQTTUtil, resourceWriteUseCase);
-  const cBlockController = new CBlockController(hapiServer, cBlockUseCase, Boom);
+  const cBlockController = new CBlockController(
+    hapiServer, cBlockUseCase, Boom);
 
   mqttWriteAgent.start();
+  cBlockController.start();
+
   console.log('Application bootstrapped.');
 };
 
@@ -67,13 +82,13 @@ const init = async () => {
     const db = mongoClient.db(mongoConfig.db);
     console.log('Connected to mongo.');
 
-    await mqttConnected();
+    const mqttClient = await initMQTT();
     console.log('Connected to MQTT.');
 
     await hapiServer.start();
     console.log(`REST Server running at: ${hapiServer.info.uri}`);
 
-    wire(mongoClient, db, hapiServer);
+    wire(mongoClient, mqttClient, db, hapiServer);
   } catch (e) {
     console.log(e);
   }

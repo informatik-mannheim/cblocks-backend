@@ -1,0 +1,18 @@
+{
+  "mqtt": {
+    "host": "192.168.99.100",
+    "username": "",
+    "password": ""
+  },
+  "mongo": {
+    "url": "mongodb://192.168.99.100:27017",
+    "db": "cblocks"
+  },
+  "hapi": {
+    "port": 8080,
+    "host": "localhost"
+  },
+  "write": {
+    "timeout_ms": 2000
+  }
+}

@@ -3,7 +3,9 @@ class CBlockController {
     this.hapiServer = hapiServer;
     this.cBlockUseCase = cBlockUseCase;
     this.errorRenderer = errorRenderer;
+  }
 
+  start() {
     this._initRoutes();
   }
 
