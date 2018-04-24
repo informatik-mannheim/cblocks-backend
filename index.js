@@ -22,11 +22,11 @@ const getMQTTConfig = () => {
   };
 
   if (mqttConfig.user !== undefined) {
-    connectionData.user = mqttConfig.user;
+    data.user = mqttConfig.user;
   }
 
   if (mqttConfig.password !== undefined ) {
-    connectionData.password = mqttConfig.password;
+    data.password = mqttConfig.password;
   }
 
   return data;
