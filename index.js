@@ -33,6 +33,7 @@ const getMQTTConfig = () => {
 };
 
 const initMQTT = () => {
+  console.log(getMQTTConfig());
   const client = mqtt.connect(getMQTTConfig());
 
   return new Promise((resolve, reject) => {
@@ -46,32 +47,43 @@ const MongoClient = require('mongodb').MongoClient;
 
 const wire = (mongoClient, mqttClient, db, hapiServer) => {
   const CBlockController = require('./controller/cblockController.js');
+  const MappingsController = require('./controller/mappingsController.js');
   const MQTTWriteAgent = require('./messaging/agent/mqttWriteAgent.js');
   const MQTTWriter = require('./messaging/writer/mqttWriter.js');
 
   const MQTTUtil = require('./messaging/util/mqttUtil.js');
   const Validator = require('jsonschema').Validator;
   const Registry = require('./data-provider/registry.js');
+  const MappingsDataProvider = require(
+    './data-provider/mappingsDataProvider.js');
 
   const ResourceWriteUseCase =
    require('./use-cases/resource-write/resourceWriteUseCase.js');
   const CBlockUseCase = require('./use-cases/registry/cblockUseCase.js');
+  const MappingsUseCase = require('./use-cases/mappings/mappingsUseCase.js');
 
   const mqttWriter = new MQTTWriter(mqttClient, MQTTUtil, WRITE_TIMEOUT_MS);
 
   const validator = new Validator();
   const registry = new Registry(db.collection('registry'), validator);
+  const mappingsDataProvider = new MappingsDataProvider(
+    db.collection('category-mappings'));
 
   const resourceWriteUseCase = new ResourceWriteUseCase(registry, mqttWriter);
   const cBlockUseCase = new CBlockUseCase(registry);
+  const mappingsUseCase = new MappingsUseCase(mappingsDataProvider);
 
   const mqttWriteAgent = new MQTTWriteAgent(
     mqttClient, MQTTUtil, resourceWriteUseCase);
   const cBlockController = new CBlockController(
     hapiServer, cBlockUseCase, Boom);
+  const mappingsController = new MappingsController(
+    hapiServer, mappingsUseCase, Boom
+  );
 
   mqttWriteAgent.start();
   cBlockController.start();
+  mappingsController.start();
 
   console.log('Application bootstrapped.');
 };

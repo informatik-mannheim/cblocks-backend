@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "index.js",
+    "start": "node index.js",
     "test": "mocha --recursive"
   },
   "author": "",
@@ -14,8 +14,8 @@
     "chai-as-promised": "^7.1.1",
     "eslint": "^4.18.2",
     "eslint-config-google": "^0.9.1",
-    "mocha": "^5.0.2",
-    "sinon": "^4.4.2"
+    "mocha": "^5.2.0",
+    "sinon": "^6.1.4"
   },
   "dependencies": {
     "boom": "^7.2.0",
