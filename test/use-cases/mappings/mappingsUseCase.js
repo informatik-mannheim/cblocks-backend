@@ -20,11 +20,17 @@ describe('mappingsUseCase', () => {
   describe('getMapping', () => {
     it('should resolve if dataprovider does',
       getCategoryMappingShouldResoveIfDataProviderDoes);
-    });
+  });
+
+  describe('putCategoryMapping', () => {
+    it('should call putCategoryMapping of dataprovider',
+      putCategoryMappingShouldDeferToUseCase);
+  });
 });
 
 async function getCategoryMappingShouldResoveIfDataProviderDoes() {
   givenMappingsDataProviderResolvesWithTemperatureMapping();
+  givenMappingsUseCase();
 
   await whenGetTemperatureCategoryMapping();
 
@@ -32,14 +38,42 @@ async function getCategoryMappingShouldResoveIfDataProviderDoes() {
 }
 
 function givenMappingsDataProviderResolvesWithTemperatureMapping() {
-  mappingsDataProvider.getCategorMapping = sinon.stub().resolves(
+  mappingsDataProvider.getCategoryMapping = sinon.stub().resolves(
     stubs.temperatureCategoryMapping);
 }
 
+function givenMappingsUseCase() {
+  mappingsUseCase = new MappingsUseCase(mappingsDataProvider);
+}
+
 async function whenGetTemperatureCategoryMapping() {
-  mapping = await mappingsDataProvider.getCategorMapping(4711);
+  mapping = await mappingsUseCase.getCategoryMapping(4711);
 }
 
 function shouldResolveWithTemperatureMapping() {
   expect(mapping.mappingID).to.equal(4711);
+}
+
+async function putCategoryMappingShouldDeferToUseCase() {
+  givenPutCategoryMappingResolves();
+  givenMappingsUseCase();
+
+  await whenPutCategoryMapping();
+
+  shouldCallPutCategoryMappingOfDataProvider();
+}
+
+function givenPutCategoryMappingResolves() {
+  mappingsDataProvider.putCategoryMapping = sinon.stub().resolves();
+}
+
+async function whenPutCategoryMapping() {
+  await mappingsUseCase.putCategoryMapping(
+    4711, stubs.temperatureCategoryMapping);
+}
+
+function shouldCallPutCategoryMappingOfDataProvider() {
+  expect(mappingsDataProvider.putCategoryMapping.calledWith(
+    4711, stubs.temperatureCategoryMapping
+  ));
 }

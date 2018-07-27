@@ -6,6 +6,7 @@
   "extends": "eslint-config-google",
   "rules": {
     "require-jsdoc": "off",
-    "switch-colon-spacing": "off"
+    "switch-colon-spacing": "off",
+    "no-multi-line": "off"
   }
 }

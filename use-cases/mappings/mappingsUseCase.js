@@ -10,6 +10,10 @@ class MappingsUseCase {
   async getCategoryMappings() {
     return await this.dataProvider.getCategoryMappings();
   }
+
+  async putCategoryMapping(id, mapping) {
+    return await this.dataProvider.putCategoryMapping(id, mapping);
+  }
 }
 
 module.exports = MappingsUseCase;

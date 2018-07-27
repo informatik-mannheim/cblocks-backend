@@ -14,4 +14,8 @@ module.exports = {
       'lessThan': 30,
     },
   ],
+  'objectResources': [{
+    'objectID': 3303,
+    'resourceID': 0,
+  }],
 };

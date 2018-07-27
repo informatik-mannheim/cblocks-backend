@@ -5,7 +5,6 @@ chai.use(chaiAsPromised);
 const sinon = require('sinon');
 
 const DataProvider = require('../../data-provider/mappingsDataProvider.js');
-const Validator = require('jsonschema').Validator;
 const stubs = require('../stubs/mappings');
 let collection;
 let promise;
@@ -33,6 +32,11 @@ describe('MappingsDataProvider', () => {
     it('should reject if no category mappings exist',
       getCateoryMappingsShouldRejectIfThereAreNone);
   });
+
+  describe('putCategoryMapping', () => {
+    it('should call update of collection',
+      putCategoryMappingShoulCallUpdateOfCollection);
+  });
 });
 
 async function getCategoryMappingShouldResolveIfExists() {
@@ -54,6 +58,8 @@ function givenMappings() {
 }
 
 function givenDataProvider() {
+  collection.updateOne = sinon.spy();
+
   dataProvider = new DataProvider(collection);
 }
 
@@ -122,4 +128,23 @@ async function whenGetCategoryMappingsShouldReject() {
   } catch (e) {
     expect(e.message).to.equal('No Mappings found.');
   }
+}
+
+async function putCategoryMappingShoulCallUpdateOfCollection() {
+  givenDataProvider();
+
+  await whenPutCategoryMapping();
+
+  shouldCallUpdateOfCollection();
+}
+
+async function whenPutCategoryMapping() {
+  return promise = dataProvider.putCategoryMapping(
+    4711, stubs.temperatureCategoryMapping);
+}
+
+function shouldCallUpdateOfCollection() {
+  expect(collection.updateOne.calledWith({
+    'mappingID': 4711,
+  }, stubs.temperatureCategoryMapping));
 }

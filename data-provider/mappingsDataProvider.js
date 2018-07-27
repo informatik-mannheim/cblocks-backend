@@ -20,6 +20,14 @@ class MappingsDataProvider {
 
     return r;
   }
+
+  async putCategoryMapping(id, object) {
+    return await this.collection.updateOne({
+      'mappingID': id,
+    }, {
+      $set: object,
+    });
+  }
 }
 
 module.exports = MappingsDataProvider;
