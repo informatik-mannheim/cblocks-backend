@@ -6,13 +6,16 @@ const sinon = require('sinon');
 
 const MappingsUseCase = require('../../../use-cases/mappings/mappingsUseCase.js');
 let mappingsDataProvider;
+let registry;
 let mappingsUseCase;
 let promise;
-const stubs = require('../../stubs/mappings');
+const transducerStubs = require('../../stubs');
+const mappingStubs = require('../../stubs/mappings');
 
 describe('mappingsUseCase', () => {
   beforeEach(() => {
     mappingsDataProvider = {};
+    registry = {};
     mappingsUseCase = {};
     promise = {};
   });
@@ -25,6 +28,9 @@ describe('mappingsUseCase', () => {
   describe('putCategoryMapping', () => {
     it('should call putCategoryMapping of dataprovider',
       putCategoryMappingShouldDeferToUseCase);
+
+    it('should throw if object resource is not of type number',
+      putCategoryMappingShouldThrowIfObjectResourceIsNotANumber);
   });
 });
 
@@ -39,11 +45,11 @@ async function getCategoryMappingShouldResoveIfDataProviderDoes() {
 
 function givenMappingsDataProviderResolvesWithTemperatureMapping() {
   mappingsDataProvider.getCategoryMapping = sinon.stub().resolves(
-    stubs.temperatureCategoryMapping);
+    mappingStubs.temperatureCategoryMapping);
 }
 
 function givenMappingsUseCase() {
-  mappingsUseCase = new MappingsUseCase(mappingsDataProvider);
+  mappingsUseCase = new MappingsUseCase(mappingsDataProvider, registry);
 }
 
 async function whenGetTemperatureCategoryMapping() {
@@ -55,6 +61,7 @@ function shouldResolveWithTemperatureMapping() {
 }
 
 async function putCategoryMappingShouldDeferToUseCase() {
+  givenResourceIsANumber();
   givenPutCategoryMappingResolves();
   givenMappingsUseCase();
 
@@ -63,17 +70,46 @@ async function putCategoryMappingShouldDeferToUseCase() {
   shouldCallPutCategoryMappingOfDataProvider();
 }
 
+function givenResourceIsANumber() {
+  registry.getResource = sinon.stub().resolves(
+    transducerStubs.temperature.resources[0]);
+}
+
 function givenPutCategoryMappingResolves() {
   mappingsDataProvider.putCategoryMapping = sinon.stub().resolves();
 }
 
-async function whenPutCategoryMapping() {
-  await mappingsUseCase.putCategoryMapping(
-    4711, stubs.temperatureCategoryMapping);
+function whenPutCategoryMapping() {
+  return promise = mappingsUseCase.putCategoryMapping(
+    4711, mappingStubs.temperatureCategoryMapping);
 }
 
 function shouldCallPutCategoryMappingOfDataProvider() {
   expect(mappingsDataProvider.putCategoryMapping.calledWith(
-    4711, stubs.temperatureCategoryMapping
+    4711, mappingStubs.temperatureCategoryMapping
   ));
+}
+
+async function putCategoryMappingShouldThrowIfObjectResourceIsNotANumber() {
+  givenResourceIsNotANumber();
+  givenPutCategoryMappingResolves();
+  givenMappingsUseCase();
+
+  whenPutCategoryMapping();
+
+  await shouldThrowResourceIsNotANumberError();
+}
+
+function givenResourceIsNotANumber() {
+  registry.getResource = sinon.stub().resolves(
+    transducerStubs.led.resources[0]);
+}
+
+async function shouldThrowResourceIsNotANumberError() {
+  try {
+    await promise;
+    expect('this never').to.be.true;
+  } catch (e) {
+    expect(e.message).to.equal('Resource 0 of Object 3303 is not a number');
+  }
 }
