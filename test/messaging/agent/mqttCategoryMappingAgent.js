@@ -111,7 +111,6 @@ function shouldApplyMapping() {
 }
 
 function shouldWriteResultIntoMappingTopic() {
-  console.log(client);
   expect(client.publish.calledWith('mappings/4711', 'Medium')).to.be.true;
 }
 

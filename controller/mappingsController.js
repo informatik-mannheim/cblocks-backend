@@ -19,8 +19,14 @@ class MappingsController {
 
     this.hapiServer.route({
       'method': 'PUT',
-      'path': '/mappings/category/{mappingID?}',
+      'path': '/mappings/category/{mappingID}',
       'handler': this._handlePutCategoryMapping.bind(this),
+    });
+
+    this.hapiServer.route({
+      'method': 'DELETE',
+      'path': '/mappings/category/{mappingID}',
+      'handler': this._handleDeleteCategoryMapping.bind(this),
     });
   }
 
@@ -50,7 +56,6 @@ class MappingsController {
 
       return h.response('Ok.');
     } catch (e) {
-      console.log(e);
       throw this.errorRenderer.boomify(e, {statusCode: 500});
     }
   }
@@ -60,6 +65,17 @@ class MappingsController {
       this.putCategoryMappingValidator.validate(payload);
     } catch (e) {
       throw this.errorRenderer.boomify(e, {statusCode: 400});
+    }
+  }
+
+  async _handleDeleteCategoryMapping(request, h) {
+    try {
+      await this.mappingsUseCase.deleteCategoryMapping(
+        parseInt(request.params.mappingID, 10));
+
+      return h.response('Ok.');
+    } catch (e) {
+      throw this.errorRenderer.boomify(e, {statusCode: 500});
     }
   }
 }

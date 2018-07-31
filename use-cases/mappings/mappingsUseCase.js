@@ -14,6 +14,10 @@ class MappingsUseCase {
     return await this.dataProvider.getCategoryMappings();
   }
 
+  async deleteCategoryMapping(id) {
+    return await this.dataProvider.deleteCategoryMapping(id);
+  }
+
   async putCategoryMapping(id, mapping) {
     await this._check(mapping);
 

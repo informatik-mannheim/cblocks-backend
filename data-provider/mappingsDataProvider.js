@@ -21,6 +21,14 @@ class MappingsDataProvider {
     return r;
   }
 
+  async deleteCategoryMapping(id) {
+    const r = await this.collection.remove({
+      'mappingID': id,
+    });
+
+    return r;
+  }
+
   async putCategoryMapping(id, object) {
     return await this.collection.updateOne({
       'mappingID': id,

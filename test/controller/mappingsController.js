@@ -54,6 +54,14 @@ describe('MappingsController', () => {
     it('should respond with 400 if label is missing',
       putCategoryMappingShouldRespondWith400IfLabelMissing);
   });
+
+  describe('DELETE mappings/category', () => {
+    it('should respond 200 with if successfull',
+      deleteCategoryMappingShouldRespond200IfSuccessfull);
+
+      it('should respond with code 500 if use case fails',
+        deleteCategoryMappingShouldrespondWith500IfUseCaseFails);
+  });
 });
 
 function givenMappingsController() {
@@ -263,4 +271,53 @@ function whenPutCategoryMappingWithMissinglabel() {
 
   promise = mappingsController._handlePutCategoryMapping(
     request, responseToolkit);
+}
+
+async function deleteCategoryMappingShouldRespond200IfSuccessfull() {
+  givenDeleteSucceeds();
+  givenMappingsController();
+
+  await whenDeleteCategoryMapping();
+
+  shouldRepondOk();
+}
+
+function givenDeleteSucceeds() {
+  mappingsUseCase.deleteCategoryMapping = sinon.stub().resolves();
+}
+
+function whenDeleteCategoryMapping() {
+  const request = {
+    'params': {
+      'mappingID': '4711',
+    },
+  };
+
+  return promise = mappingsController._handleDeleteCategoryMapping(
+    request, responseToolkit);
+}
+
+async function deleteCategoryMappingShouldrespondWith500IfUseCaseFails() {
+  givenDeleteFails();
+  givenMappingsController();
+
+  whenDeleteCategoryMapping();
+
+  await shouldFailWith500();
+}
+
+function givenDeleteFails() {
+  mappingsUseCase.deleteCategoryMapping = sinon.stub().rejects(
+    Error('Some error.'));
+}
+
+async function shouldFailWith500() {
+  try {
+    await promise;
+  } catch (e) {
+
+  } finally {
+    expect(errorRenderer.boomify.calledWith(
+      sinon.match.any, {statusCode: 500})).to.be.true;
+  }
 }
