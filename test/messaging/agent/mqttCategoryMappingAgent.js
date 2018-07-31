@@ -9,7 +9,7 @@ let agent = {};
 let useCase = {};
 let client = {};
 const util = require('../../../messaging/util/mqttUtil.js');
-const mappingStubs = require('../../stubs/mappings');
+const mappingStubs = require('../../stubs/categoryMappings');
 
 describe('MQTTCategoryMappingAgent', () => {
   beforeEach(() => {

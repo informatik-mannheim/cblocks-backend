@@ -4,8 +4,8 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 const sinon = require('sinon');
 
-const DataProvider = require('../../data-provider/mappingsDataProvider.js');
-const stubs = require('../stubs/mappings');
+const DataProvider = require('../../data-provider/categoryMappingsDataProvider.js');
+const stubs = require('../stubs/categoryMappings');
 let collection;
 let promise;
 let dataProvider;

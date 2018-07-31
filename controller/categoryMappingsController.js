@@ -19,7 +19,7 @@ class MappingsController {
 
     this.hapiServer.route({
       'method': 'PUT',
-      'path': '/mappings/category/{mappingID}',
+      'path': '/mappings/category/{mappingID?}',
       'handler': this._handlePutCategoryMapping.bind(this),
     });
 

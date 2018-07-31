@@ -3,9 +3,9 @@ const chaiAsPromised = require('chai-as-promised');
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 const sinon = require('sinon');
-const stubs = require('../stubs/mappings');
+const stubs = require('../stubs/categoryMappings');
 
-const MappingsController = require('../../controller/mappingsController.js');
+const MappingsController = require('../../controller/categoryMappingsController.js');
 const JsonSchema = require('jsonschema').Validator;
 const Validator = require('../../core/validator');
 const putCategoryMappingSchema = require(

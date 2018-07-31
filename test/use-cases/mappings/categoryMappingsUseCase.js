@@ -4,13 +4,13 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 const sinon = require('sinon');
 
-const MappingsUseCase = require('../../../use-cases/mappings/mappingsUseCase.js');
+const MappingsUseCase = require('../../../use-cases/mappings/categoryMappingsUseCase.js');
 let mappingsDataProvider;
 let registry;
 let mappingsUseCase;
 let promise;
 const transducerStubs = require('../../stubs');
-const mappingStubs = require('../../stubs/mappings');
+const mappingStubs = require('../../stubs/categoryMappings');
 
 describe('mappingsUseCase', () => {
   beforeEach(() => {
