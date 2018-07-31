@@ -50,6 +50,8 @@ const wire = (mongoClient, mqttClient, db, hapiServer) => {
   const MappingsController = require('./controller/mappingsController.js');
   const MQTTWriteAgent = require('./messaging/agent/mqttWriteAgent.js');
   const MQTTWriter = require('./messaging/writer/mqttWriter.js');
+  const MQTTCategoryMappingAgent = require(
+    './messaging/agent/mqttCategoryMappingAgent.js');
 
   const MQTTUtil = require('./messaging/util/mqttUtil.js');
   const JsonValidator = require('jsonschema').Validator;
@@ -75,10 +77,13 @@ const wire = (mongoClient, mqttClient, db, hapiServer) => {
 
   const resourceWriteUseCase = new ResourceWriteUseCase(registry, mqttWriter);
   const cBlockUseCase = new CBlockUseCase(registry);
-  const mappingsUseCase = new MappingsUseCase(mappingsDataProvider);
+  const mappingsUseCase = new MappingsUseCase(mappingsDataProvider, registry);
 
   const mqttWriteAgent = new MQTTWriteAgent(
     mqttClient, MQTTUtil, resourceWriteUseCase);
+  const mqttCategoryMappingAgent = new MQTTCategoryMappingAgent(
+    mqttClient, MQTTUtil, mappingsUseCase
+  );
   const cBlockController = new CBlockController(
     hapiServer, cBlockUseCase, Boom);
   const mappingsController = new MappingsController(
@@ -86,6 +91,7 @@ const wire = (mongoClient, mqttClient, db, hapiServer) => {
   );
 
   mqttWriteAgent.start();
+  mqttCategoryMappingAgent.start();
   cBlockController.start();
   mappingsController.start();
 

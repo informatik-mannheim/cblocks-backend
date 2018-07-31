@@ -26,6 +26,8 @@ class MappingsDataProvider {
       'mappingID': id,
     }, {
       $set: object,
+    }, {
+      upsert: true,
     });
   }
 }

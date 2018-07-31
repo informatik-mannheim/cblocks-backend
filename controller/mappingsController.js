@@ -50,6 +50,7 @@ class MappingsController {
 
       return h.response('Ok.');
     } catch (e) {
+      console.log(e);
       throw this.errorRenderer.boomify(e, {statusCode: 500});
     }
   }

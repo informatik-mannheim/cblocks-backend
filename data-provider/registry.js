@@ -74,6 +74,8 @@ class Registry {
       'objectID': object.objectID,
     }, {
       $set: object,
+    }, {
+      upsert: true,
     });
   }
 

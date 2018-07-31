@@ -8,7 +8,7 @@ exports.getInternalResourceInputTopic = function(
 };
 
 exports.decomposeResourceOutputTopic = function(topic) {
-  const regex = /(?:[a-z]*?)\/(.*?)\/(.*?)\/(.*?)\/output/g;
+  const regex = /(?:[a-z]*\/){0,1}([0-9]+)\/([0-9]+)\/([0-9]+)\/output/g;
 
   const matches = regex.exec(topic);
 

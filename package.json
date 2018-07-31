@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "test": "mocha --recursive"
   },
   "author": "",
@@ -15,6 +15,7 @@
     "eslint": "^4.18.2",
     "eslint-config-google": "^0.9.1",
     "mocha": "^5.2.0",
+    "nodemon": "^1.18.3",
     "sinon": "^6.1.4"
   },
   "dependencies": {

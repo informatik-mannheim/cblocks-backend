@@ -7,6 +7,15 @@ module.exports = {
     'default': {
       'type': 'string',
     },
+    'objectID': {
+      'type': 'integer',
+    },
+    'resourceID': {
+      'type': 'integer',
+    },
+    'instanceID': {
+      'type': 'integer',
+    },
     'ranges': {
       'type': 'array',
       'items': {
@@ -25,22 +34,7 @@ module.exports = {
         'required': ['label', 'greaterEqualsThan', 'lessThan'],
       },
     },
-    'objectResources': {
-      'type': 'array',
-      'items': {
-        'type': 'object',
-        'properties': {
-          'objectID': {
-            'type': 'integer',
-          },
-          'resourceID': {
-            'type': 'integer',
-          },
-        },
-        'required': ['objectID', 'resourceID'],
-      },
-    },
   },
-  'required': ['label', 'objectResources'],
+  'required': ['label', 'objectID', 'resourceID', 'instanceID'],
   'additionalProperties': false,
 };

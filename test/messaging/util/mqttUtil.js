@@ -41,8 +41,14 @@ describe('MQTT Util', function() {
   }
 
   describe('decomposeResourceOutputTopic', function() {
-    it('should decompose outputs', function() {
-      whenDecomposeOutput();
+    it('should decompose internal outputs', function() {
+      whenDecomposeInternalOutput();
+
+      shouldReturnDecomposedOutputTopic();
+    });
+
+    it('should decompose external outputs', () => {
+      whenDecomposeExternalOutput();
 
       shouldReturnDecomposedOutputTopic();
     });
@@ -52,7 +58,7 @@ describe('MQTT Util', function() {
     });
   });
 
-  function whenDecomposeOutput() {
+  function whenDecomposeInternalOutput() {
     ipso = mqttUtil.decomposeResourceOutputTopic('internal/3303/0/1/output');
   }
 
@@ -62,6 +68,10 @@ describe('MQTT Util', function() {
       'instanceID': 0,
       'resourceID': 1,
     });
+  }
+
+  function whenDecomposeExternalOutput() {
+    ipso = mqttUtil.decomposeResourceOutputTopic('3303/0/1/output');
   }
 
   function whenDecomposeInvalidTopicShouldThrowException() {

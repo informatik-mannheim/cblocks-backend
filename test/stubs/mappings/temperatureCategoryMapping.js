@@ -2,6 +2,9 @@ module.exports = {
   'mappingID': 4711,
   'label': 'Temperature Category Mapping',
   'default': 'High',
+  'objectID': 3303,
+  'resourceID': 0,
+  'instanceID': 0,
   'ranges': [
     {
       'label': 'Low',
@@ -14,8 +17,4 @@ module.exports = {
       'lessThan': 30,
     },
   ],
-  'objectResources': [{
-    'objectID': 3303,
-    'resourceID': 0,
-  }],
 };
