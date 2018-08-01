@@ -35,6 +35,6 @@ module.exports = {
       },
     },
   },
-  'required': ['label', 'objectID', 'resourceID', 'instanceID'],
+  'required': ['label', 'default', 'objectID', 'resourceID', 'instanceID'],
   'additionalProperties': false,
 };
