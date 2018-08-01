@@ -17,10 +17,10 @@ module.exports = {
       'type': 'integer',
     },
     'greaterEqualsThan': {
-      'type': number,
+      'type': 'number',
     },
     'lessEqualsThan': {
-      'type': number,
+      'type': 'number',
     },
   },
   'required': ['label', 'objectID', 'resourceID', 'instanceID',

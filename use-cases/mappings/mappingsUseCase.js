@@ -28,7 +28,7 @@ class MappingsUseCase {
     return r;
   }
 
-  async _checkResourceAndInstanceExists(mapping) {
+  async _check(mapping) {
     await this.registry.getInstance(mapping.objectID, mapping.instanceID);
 
     const r = await this.registry.getResource(

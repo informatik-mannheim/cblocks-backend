@@ -50,15 +50,17 @@ const wire = (mongoClient, mqttClient, db, hapiServer) => {
   const MappingsController = require('./controller/mappingsController.js');
   const CategoryMappingsRoutes = require(
     './controller/categoryMappingsRoutes.js');
+  const RangeMappingsRoutes = require('./controller/rangeMappingsRoutes.js');
   const MQTTWriteAgent = require('./messaging/agent/mqttWriteAgent.js');
   const MQTTWriter = require('./messaging/writer/mqttWriter.js');
-  const MQTTCategoryMappingAgent = require(
-    './messaging/agent/mqttCategoryMappingAgent.js');
+  const MQTTMappingAgent = require(
+    './messaging/agent/mqttMappingAgent.js');
 
   const MQTTUtil = require('./messaging/util/mqttUtil.js');
   const JsonValidator = require('jsonschema').Validator;
   const Registry = require('./data-provider/registry.js');
   const Validator = require('./core/validator.js');
+  const rangeMap = require('./core/rangeMap.js');
   const MappingsDataProvider = require(
     './data-provider/mappingsDataProvider.js');
 
@@ -67,6 +69,8 @@ const wire = (mongoClient, mqttClient, db, hapiServer) => {
   const CBlockUseCase = require('./use-cases/registry/cblockUseCase.js');
   const CategoryMappingsUseCase = require(
     './use-cases/mappings/categoryMappingsUseCase.js');
+  const RangeMappingUseCase = require(
+    './use-cases/mappings/rangeMappingsUseCase.js');
 
   const mqttWriter = new MQTTWriter(mqttClient, MQTTUtil, WRITE_TIMEOUT_MS);
 
@@ -74,31 +78,52 @@ const wire = (mongoClient, mqttClient, db, hapiServer) => {
     './controller/schema/putCategoryMappingSchema.js');
   const putCategoryMappingValidator = new Validator(
     JsonValidator, putCategoryMappingSchema);
+  const putRangeMappingSchema = require(
+    './controller/schema/putRangeMappingSchema.js');
+  const putRangeMappingValidator = new Validator(
+    JsonValidator, putRangeMappingSchema);
+
   const registry = new Registry(db.collection('registry'), new JsonValidator());
   const categoryMappingsDataProvider = new MappingsDataProvider(
     db.collection('category-mappings'));
+  const rangeMappingsDataProvider = new MappingsDataProvider(
+    db.collection('range-mappings'));
 
   const resourceWriteUseCase = new ResourceWriteUseCase(registry, mqttWriter);
   const cBlockUseCase = new CBlockUseCase(registry);
   const categoryMappingsUseCase = new CategoryMappingsUseCase(
     categoryMappingsDataProvider, registry);
+  const rangeMappingsUseCase = new RangeMappingUseCase(
+    rangeMappingsDataProvider, registry, rangeMap
+  );
 
   const mqttWriteAgent = new MQTTWriteAgent(
     mqttClient, MQTTUtil, resourceWriteUseCase);
-  const mqttCategoryMappingAgent = new MQTTCategoryMappingAgent(
+  const mqttCategoryMappingAgent = new MQTTMappingAgent(
     mqttClient, MQTTUtil, categoryMappingsUseCase
   );
+  const mqttRangeMappingAgent = new MQTTMappingAgent(
+    mqttClient, MQTTUtil, rangeMappingsUseCase
+  );
+
   const cBlockController = new CBlockController(
     hapiServer, cBlockUseCase, Boom);
   const categoryMappingsRoutes = new CategoryMappingsRoutes(
     hapiServer,
     new MappingsController(
       categoryMappingsUseCase, Boom, putCategoryMappingValidator));
+  const rangeMappingsRoutes = new RangeMappingsRoutes(
+    hapiServer,
+    new MappingsController(
+      rangeMappingsUseCase, Boom, putRangeMappingValidator));
 
   mqttWriteAgent.start();
   mqttCategoryMappingAgent.start();
+  mqttRangeMappingAgent.start();
+
   cBlockController.start();
   categoryMappingsRoutes.start();
+  rangeMappingsRoutes.start();
 
   console.log('Application bootstrapped.');
 };

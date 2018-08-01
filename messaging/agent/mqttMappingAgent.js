@@ -1,4 +1,4 @@
-class MQTTCategoryMappingAgent {
+class MQTTMappingAgent {
   constructor(client, util, useCase) {
     this._client = client;
     this._util = util;
@@ -25,7 +25,7 @@ class MQTTCategoryMappingAgent {
 
   async _getMappings() {
     try {
-      this._mappings = await this._useCase.getCategoryMappings();
+      this._mappings = await this._useCase.getMappings();
     } catch (e) {
       this._mappings = [];
     }
@@ -37,8 +37,8 @@ class MQTTCategoryMappingAgent {
     for (let i = 0; i < mappings.length; i++) {
       const m = mappings[i];
 
-      const v = await this._useCase.applyMapping(
-        m.mappingID, parseInt(message, 10));
+      const v = String(await this._useCase.applyMapping(
+        m.mappingID, message));
 
       this._client.publish(`mappings/${m.mappingID}`, v);
     }
@@ -47,7 +47,7 @@ class MQTTCategoryMappingAgent {
   _getMappingsForTopic(topic) {
     const ipso = this._util.decomposeResourceOutputTopic(topic);
 
-    return _filterMappingsByIpso(mappings, ipso);
+    return this._filterMappingsByIpso(this._mappings, ipso);
   }
 
   _filterMappingsByIpso(mappings, ipso) {
@@ -63,4 +63,4 @@ class MQTTCategoryMappingAgent {
   }
 }
 
-module.exports = MQTTCategoryMappingAgent;
+module.exports = MQTTMappingAgent;

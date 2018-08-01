@@ -12,13 +12,23 @@ class MappingsDataProvider {
       throw new Error('Mapping could not be found.');
     }
 
+    m.mappingID = m._id;
+    delete m._id;
+
     return m;
   }
 
   async getMappings() {
-    const r = await this.collection.find().toArray();
+    let r = await this.collection.find().toArray();
 
     if (!r.length) throw Error('No Mappings found.');
+
+    r = r.map((m) => {
+      m.mappingID = m._id;
+      delete m._id;
+
+      return m;
+    });
 
     return r;
   }

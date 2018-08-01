@@ -13,13 +13,14 @@ class CategoryMappingsUseCase extends MappingsUseCase {
   }
 
   async applyMapping(id, value) {
-    const m = await this.dataProvider.getCategoryMapping(id);
+    const v = parseInt(value, 10);
+    const m = await this.dataProvider.getMapping(id);
     const ranges = m.ranges;
 
     for (let i = 0; i < ranges.length; i++) {
       const r = ranges[i];
 
-      if (value >= r.greaterEqualsThan && value < r.lessThan) {
+      if (v >= r.greaterEqualsThan && v < r.lessThan) {
         return r.label;
       }
     }
