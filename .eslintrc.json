@@ -7,6 +7,7 @@
   "rules": {
     "require-jsdoc": "off",
     "switch-colon-spacing": "off",
-    "no-multi-line": "off"
+    "no-multi-line": "off",
+    "max-len": ["error", { "code": 100 }]
   }
 }

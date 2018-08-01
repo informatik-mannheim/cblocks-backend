@@ -1,10 +1,12 @@
+const ObjectID = require('mongodb').ObjectID;
+
 class MappingsDataProvider {
   constructor(collection) {
     this.collection = collection;
   }
 
   async getCategoryMapping(id) {
-    const m = await this.collection.findOne({'mappingID': id});
+    const m = await this.collection.findOne({'_id': new ObjectID(id)});
 
     if (m === null) {
       throw new Error('Mapping could not be found.');
@@ -23,20 +25,33 @@ class MappingsDataProvider {
 
   async deleteCategoryMapping(id) {
     const r = await this.collection.remove({
-      'mappingID': id,
+      '_id': new ObjectID(id),
     });
 
     return r;
   }
 
   async putCategoryMapping(id, object) {
-    return await this.collection.updateOne({
-      'mappingID': id,
+    const r = await this.collection.updateOne({
+      '_id': new ObjectID(id),
     }, {
       $set: object,
-    }, {
-      upsert: true,
     });
+
+    if (r.result.nModified === 0) throw new Error('Mapping could not be found.');
+
+    object.mappingID = id;
+
+    return object;
+  }
+
+  async createCategoryMapping(object) {
+    const r = await this.collection.insert(object);
+
+    object.mappingID = object._id;
+    delete object._id;
+
+    return object;
   }
 }
 

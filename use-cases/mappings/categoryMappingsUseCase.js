@@ -40,6 +40,15 @@ class MappingsUseCase {
     }
   }
 
+  async createCategoryMapping(mapping) {
+    await this._check(mapping);
+    const r = await this.dataProvider.createCategoryMapping(mapping);
+
+    this._onUpdateMappings();
+
+    return r;
+  }
+
   async applyMapping(id, value) {
     const m = await this.dataProvider.getCategoryMapping(id);
     const ranges = m.ranges;

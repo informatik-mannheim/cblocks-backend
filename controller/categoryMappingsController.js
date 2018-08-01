@@ -19,8 +19,14 @@ class MappingsController {
 
     this.hapiServer.route({
       'method': 'PUT',
-      'path': '/mappings/category/{mappingID?}',
+      'path': '/mappings/category/{mappingID}',
       'handler': this._handlePutCategoryMapping.bind(this),
+    });
+
+    this.hapiServer.route({
+      'method': 'POST',
+      'path': '/mappings/category',
+      'handler': this._handlePostCategoryMapping.bind(this),
     });
 
     this.hapiServer.route({
@@ -39,9 +45,9 @@ class MappingsController {
   }
 
   async _getCategoryMappings(request) {
-    if (request.params.mappingID !== undefined) {
+    if (request.params.mappingID !== undefined) { // TODO test this
       return await this.mappingsUseCase.getCategoryMapping(
-        parseInt(request.params.mappingID, 10));
+        request.params.mappingID);
     }
 
     return await this.mappingsUseCase.getCategoryMappings();
@@ -51,10 +57,10 @@ class MappingsController {
     this._validatePutCategoryMapping(request.payload);
 
     try {
-      await this.mappingsUseCase.putCategoryMapping(
-        parseInt(request.params.mappingID, 10), request.payload);
+      const r = await this.mappingsUseCase.putCategoryMapping(
+        request.params.mappingID, request.payload);
 
-      return h.response('Ok.');
+      return h.response(r);
     } catch (e) {
       throw this.errorRenderer.boomify(e, {statusCode: 500});
     }
@@ -68,10 +74,23 @@ class MappingsController {
     }
   }
 
+  async _handlePostCategoryMapping(request, h) {
+    this._validatePutCategoryMapping(request.payload);
+
+    try {
+      const r = await this.mappingsUseCase.createCategoryMapping(
+        request.payload);
+
+      return h.response(r);
+    } catch (e) {
+      throw this.errorRenderer.boomify(e, {statusCode: 500});
+    }
+  }
+
   async _handleDeleteCategoryMapping(request, h) {
     try {
       await this.mappingsUseCase.deleteCategoryMapping(
-        parseInt(request.params.mappingID, 10));
+        request.params.mappingID);
 
       return h.response('Ok.');
     } catch (e) {

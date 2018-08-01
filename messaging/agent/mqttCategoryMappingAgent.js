@@ -34,6 +34,7 @@ class MQTTCategoryMappingAgent {
   async onMessage(topic, message) {
     const ipso = this._util.decomposeResourceOutputTopic(topic);
 
+    // TODO: test
     const relevantMappings = this._mappings.filter((m) =>
       m.objectID === ipso.objectID &&
       m.resourceID === ipso.resourceID &&

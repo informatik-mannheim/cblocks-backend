@@ -33,7 +33,7 @@ class CBlockController {
   }
 
   async _getCBlocks(request) {
-    if (request.params.objectID !== undefined) {
+    if (request.params.objectID !== undefined) { // TODO test
       return await
         this.cBlockUseCase.getCBlock(parseInt(request.params.objectID, 10));
     }
@@ -41,9 +41,9 @@ class CBlockController {
     return await this.cBlockUseCase.getCBlocks();
   }
 
-  async _handlePatchInstance(request, h) { // TODO tests anpassen
+  async _handlePatchInstance(request, h) {
     try {
-      if (request.payload.label !== undefined) {
+      if (request.payload.label !== undefined) { // TODO test
         await this._setLabel(request);
       }
 
@@ -51,7 +51,7 @@ class CBlockController {
     } catch (e) {
       let statusCode = 500;
 
-      if (this._isInstanceNotFoundError(e)) {
+      if (this._isInstanceNotFoundError(e)) { // TODO test
         statusCode = 404;
       }
 
@@ -60,7 +60,7 @@ class CBlockController {
   }
 
   _isInstanceNotFoundError(e) {
-    return (e.message === 'Instance not found.');
+    return (e.message === 'Instance not found.'); // TODO test
   }
 
   async _setLabel(request) {
