@@ -1,9 +1,5 @@
 const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
 const expect = chai.expect;
-chai.use(chaiAsPromised);
-const sinon = require('sinon');
-const stubs = require('../stubs/categoryMappings');
 
 const JsonSchema = require('jsonschema').Validator;
 const Validator = require('../../core/validator.js');

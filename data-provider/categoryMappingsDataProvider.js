@@ -40,18 +40,20 @@ class MappingsDataProvider {
 
     if (r.result.nModified === 0) throw new Error('Mapping could not be found.');
 
-    object.mappingID = id;
-
-    return object;
+    return {...object, 'mappingID': id};
   }
 
   async createCategoryMapping(object) {
-    const r = await this.collection.insert(object);
+    await this.collection.insert(object);
 
-    object.mappingID = object._id;
-    delete object._id;
+    let r = {
+      ...object,
+      'mappingID': object._id,
+    };
 
-    return object;
+    delete r._id;
+
+    return r;
   }
 }
 

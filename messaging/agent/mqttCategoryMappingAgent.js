@@ -32,22 +32,29 @@ class MQTTCategoryMappingAgent {
   }
 
   async onMessage(topic, message) {
-    const ipso = this._util.decomposeResourceOutputTopic(topic);
+    const mappings = this._getMappingsForTopic(topic);
 
-    // TODO: test
-    const relevantMappings = this._mappings.filter((m) =>
-      m.objectID === ipso.objectID &&
-      m.resourceID === ipso.resourceID &&
-      m.instanceID === ipso.instanceID);
-
-    for (let i = 0; i < relevantMappings.length; i++) {
-      const m = relevantMappings[i];
+    for (let i = 0; i < mappings.length; i++) {
+      const m = mappings[i];
 
       const v = await this._useCase.applyMapping(
         m.mappingID, parseInt(message, 10));
 
       this._client.publish(`mappings/${m.mappingID}`, v);
     }
+  }
+
+  _getMappingsForTopic(topic) {
+    const ipso = this._util.decomposeResourceOutputTopic(topic);
+
+    return _filterMappingsByIpso(mappings, ipso);
+  }
+
+  _filterMappingsByIpso(mappings, ipso) {
+    return mappings.filter((m) =>
+      m.objectID === ipso.objectID &&
+      m.resourceID === ipso.resourceID &&
+      m.instanceID === ipso.instanceID);
   }
 
   async onUpdateMappings() {
