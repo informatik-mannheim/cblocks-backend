@@ -47,8 +47,9 @@ const MongoClient = require('mongodb').MongoClient;
 
 const wire = (mongoClient, mqttClient, db, hapiServer) => {
   const CBlockController = require('./controller/cblockController.js');
-  const CategoryMappingsController = require(
-    './controller/categoryMappingsController.js');
+  const MappingsController = require('./controller/mappingsController.js');
+  const CategoryMappingsRoutes = require(
+    './controller/categoryMappingsRoutes.js');
   const MQTTWriteAgent = require('./messaging/agent/mqttWriteAgent.js');
   const MQTTWriter = require('./messaging/writer/mqttWriter.js');
   const MQTTCategoryMappingAgent = require(
@@ -58,8 +59,8 @@ const wire = (mongoClient, mqttClient, db, hapiServer) => {
   const JsonValidator = require('jsonschema').Validator;
   const Registry = require('./data-provider/registry.js');
   const Validator = require('./core/validator.js');
-  const CategoryMappingsDataProvider = require(
-    './data-provider/categoryMappingsDataProvider.js');
+  const MappingsDataProvider = require(
+    './data-provider/mappingsDataProvider.js');
 
   const ResourceWriteUseCase =
    require('./use-cases/resource-write/resourceWriteUseCase.js');
@@ -74,12 +75,13 @@ const wire = (mongoClient, mqttClient, db, hapiServer) => {
   const putCategoryMappingValidator = new Validator(
     JsonValidator, putCategoryMappingSchema);
   const registry = new Registry(db.collection('registry'), new JsonValidator());
-  const categoryMappingsDataProvider = new CategoryMappingsDataProvider(
+  const categoryMappingsDataProvider = new MappingsDataProvider(
     db.collection('category-mappings'));
 
   const resourceWriteUseCase = new ResourceWriteUseCase(registry, mqttWriter);
   const cBlockUseCase = new CBlockUseCase(registry);
-  const categoryMappingsUseCase = new CategoryMappingsUseCase(categoryMappingsDataProvider, registry);
+  const categoryMappingsUseCase = new CategoryMappingsUseCase(
+    categoryMappingsDataProvider, registry);
 
   const mqttWriteAgent = new MQTTWriteAgent(
     mqttClient, MQTTUtil, resourceWriteUseCase);
@@ -88,14 +90,15 @@ const wire = (mongoClient, mqttClient, db, hapiServer) => {
   );
   const cBlockController = new CBlockController(
     hapiServer, cBlockUseCase, Boom);
-  const categoryMappingsController = new CategoryMappingsController(
-    hapiServer, categoryMappingsUseCase, Boom, putCategoryMappingValidator
-  );
+  const categoryMappingsRoutes = new CategoryMappingsRoutes(
+    hapiServer,
+    new MappingsController(
+      categoryMappingsUseCase, Boom, putCategoryMappingValidator));
 
   mqttWriteAgent.start();
   mqttCategoryMappingAgent.start();
   cBlockController.start();
-  categoryMappingsController.start();
+  categoryMappingsRoutes.start();
 
   console.log('Application bootstrapped.');
 };

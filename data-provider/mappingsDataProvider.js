@@ -5,7 +5,7 @@ class MappingsDataProvider {
     this.collection = collection;
   }
 
-  async getCategoryMapping(id) {
+  async getMapping(id) {
     const m = await this.collection.findOne({'_id': new ObjectID(id)});
 
     if (m === null) {
@@ -15,7 +15,7 @@ class MappingsDataProvider {
     return m;
   }
 
-  async getCategoryMappings() {
+  async getMappings() {
     const r = await this.collection.find().toArray();
 
     if (!r.length) throw Error('No Mappings found.');
@@ -23,7 +23,7 @@ class MappingsDataProvider {
     return r;
   }
 
-  async deleteCategoryMapping(id) {
+  async deleteMapping(id) {
     const r = await this.collection.remove({
       '_id': new ObjectID(id),
     });
@@ -31,7 +31,7 @@ class MappingsDataProvider {
     return r;
   }
 
-  async putCategoryMapping(id, object) {
+  async putMapping(id, object) {
     const r = await this.collection.updateOne({
       '_id': new ObjectID(id),
     }, {
@@ -43,7 +43,7 @@ class MappingsDataProvider {
     return {...object, 'mappingID': id};
   }
 
-  async createCategoryMapping(object) {
+  async createMapping(object) {
     await this.collection.insert(object);
 
     let r = {

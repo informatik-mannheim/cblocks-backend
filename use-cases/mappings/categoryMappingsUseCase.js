@@ -1,52 +1,15 @@
-class MappingsUseCase {
+const MappingsUseCase = require('./mappingsUseCase.js');
+
+class CategoryMappingsUseCase extends MappingsUseCase {
   constructor(dataProvider, registry) {
-    this.dataProvider = dataProvider;
-    this.registry = registry;
-
-    this._onUpdateMappings = () => {};
+    super(dataProvider, registry);
   }
 
-  async getCategoryMapping(id) {
-    return await this.dataProvider.getCategoryMapping(id);
-  }
-
-  async getCategoryMappings() {
-    return await this.dataProvider.getCategoryMappings();
-  }
-
-  async deleteCategoryMapping(id) {
-    return await this.dataProvider.deleteCategoryMapping(id);
-  }
-
-  async putCategoryMapping(id, mapping) {
-    await this._check(mapping);
-
-    const r = await this.dataProvider.putCategoryMapping(id, mapping);
-
-    this._onUpdateMappings();
-
-    return r;
-  }
-
-  async _check(mapping) {
-    await this.registry.getInstance(mapping.objectID, mapping.instanceID);
-
-    const r = await this.registry.getResource(
-      mapping.objectID, mapping.resourceID);
-
-    if (r.schema.type !== 'number' && r.schema.type !== 'integer') {
+  _checkType(resource) {
+    if (resource.schema.type !== 'number' && resource.schema.type !== 'integer') {
       throw Error(
         `Resource ${mapping.resourceID} of Object ${mapping.objectID} is not a number`);
     }
-  }
-
-  async createCategoryMapping(mapping) {
-    await this._check(mapping);
-    const r = await this.dataProvider.createCategoryMapping(mapping);
-
-    this._onUpdateMappings();
-
-    return r;
   }
 
   async applyMapping(id, value) {
@@ -63,10 +26,6 @@ class MappingsUseCase {
 
     return m.default;
   }
-
-  registerOnUpdateMappings(cb) {
-    this._onUpdateMappings = cb;
-  }
 }
 
-module.exports = MappingsUseCase;
+module.exports = CategoryMappingsUseCase;
