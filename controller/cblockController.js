@@ -33,7 +33,7 @@ class CBlockController {
   }
 
   async _getCBlocks(request) {
-    if (this._requestHasObjectID()) {
+    if (this._requestHasObjectID(request)) {
       return await
         this.cBlockUseCase.getCBlock(parseInt(request.params.objectID, 10));
     }

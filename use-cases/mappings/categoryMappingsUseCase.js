@@ -20,7 +20,7 @@ class CategoryMappingsUseCase extends MappingsUseCase {
     for (let i = 0; i < ranges.length; i++) {
       const r = ranges[i];
 
-      if (v >= r.greaterEqualsThan && v < r.lessThan) {
+      if (v >= r.greaterEqualsThan && v < r.lessThan) { // TODO: outfactor
         return r.label;
       }
     }
