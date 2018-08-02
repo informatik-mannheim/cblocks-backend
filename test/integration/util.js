@@ -19,7 +19,13 @@ exports.getMongo = async () => {
 };
 
 exports.stopMongo = () => {
-  mongoServerInstance.stop();
+  return new Promise((resolve, reject) => {
+    mongoServerInstance.stop((error) => {
+      if (error) reject(error);
+
+      resolve();
+    });
+  });
 };
 
 const Hapi = require('hapi');
@@ -35,8 +41,8 @@ exports.getHapi = async () => {
   return hapiServer;
 };
 
-exports.stopHapi = () => {
-  hapiServer.stop();
+exports.stopHapi = async () => {
+  await hapiServer.stop();
 };
 
 exports.errorRenderer = Boom;

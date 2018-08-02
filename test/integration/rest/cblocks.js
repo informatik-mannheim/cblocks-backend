@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
-const stubs = require('../stubs/cblocks');
-const util = require('./util.js');
+const stubs = require('../../stubs/cblocks');
+const util = require('../util.js');
 
 let hapiServer;
 let dataProvider;
@@ -17,21 +17,21 @@ const getCBlocksRequestDefaults = {
 
 const wire = () => {
   const JsonValidator = require('jsonschema').Validator;
-  const Registry = require('../../data-provider/registry.js');
+  const Registry = require('../../../data-provider/registry.js');
   dataProvider = new Registry(
     db.collection('registry'), new JsonValidator());
 
-  const CBlockUseCase = require('../../use-cases/registry/cblockUseCase.js');
+  const CBlockUseCase = require('../../../use-cases/registry/cblockUseCase.js');
   const useCase = new CBlockUseCase(dataProvider);
 
-  const CBlockController = require('../../controller/cblockController.js');
+  const CBlockController = require('../../../controller/cblockController.js');
   const controller = new CBlockController(
     hapiServer, useCase, util.errorRenderer);
 
   controller.start();
 };
 
-describe('cBlocks', () => {
+describe('REST cBlocks', () => {
   before(async () => {
     const mongoClient = await util.getMongo();
     hapiServer = await util.getHapi();
@@ -45,9 +45,11 @@ describe('cBlocks', () => {
     payload = {};
   });
 
-  after(() => {
-    util.stopMongo();
-    util.stopHapi();
+  after(async () => {
+    await Promise.all([
+      await util.stopMongo(),
+      await util.stopHapi(),
+    ]);
   });
 
   afterEach(() => {

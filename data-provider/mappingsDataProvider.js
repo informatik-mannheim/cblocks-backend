@@ -1,4 +1,5 @@
 const ObjectID = require('mongodb').ObjectID;
+const EntityNotFoundError = require('../core/entityNotFoundError.js');
 
 class MappingsDataProvider {
   constructor(collection) {
@@ -9,7 +10,7 @@ class MappingsDataProvider {
     const m = await this.collection.findOne({'_id': new ObjectID(id)});
 
     if (m === null) {
-      throw new Error('Mapping could not be found.');
+      throw new EntityNotFoundError('Mapping not found');
     }
 
     m.mappingID = m._id;
@@ -20,8 +21,6 @@ class MappingsDataProvider {
 
   async getMappings() {
     let r = await this.collection.find().toArray();
-
-    if (!r.length) throw Error('No Mappings found.');
 
     r = r.map((m) => {
       m.mappingID = m._id;
@@ -48,7 +47,9 @@ class MappingsDataProvider {
       $set: object,
     });
 
-    if (r.result.nModified === 0) throw new Error('Mapping could not be found.');
+    if (r.result.nModified === 0) {
+throw new EntityNotFoundError('Mapping not found');
+}
 
     return {...object, 'mappingID': id};
   }

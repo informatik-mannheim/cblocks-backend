@@ -1,3 +1,5 @@
+const EntityNotFoundError = require('../core/entityNotFoundError.js');
+
 class Registry {
   constructor(collection, validator) {
     this.collection = collection;
@@ -8,7 +10,7 @@ class Registry {
     const o = await this.collection.findOne({'objectID': objectID});
 
     if (o === null) {
-      throw new Error('cBlock does not exist.');
+      throw new EntityNotFoundError('cBlock not found.');
     }
 
     return o;
@@ -25,7 +27,7 @@ class Registry {
       return o.resources[resourceID];
     }
 
-    throw new Error('Resource can\'t be found.');
+    throw new EntityNotFoundError('Resource not found.');
   }
 
   _objectHasResource(object, resourceID) {
@@ -48,7 +50,7 @@ class Registry {
       return await this.updateObject(object);
     }
 
-    throw new Error('Instance not found.');
+    throw new EntityNotFoundError('Instance not found.');
   }
 
   async getInstance(objectID, instanceID) {
@@ -58,7 +60,7 @@ class Registry {
       return o.instances[instanceID];
     }
 
-    throw new Error('Instance not found.');
+    throw new EntityNotFoundError('Instance not found.');
   }
 
   _objectHasInstance(object, instanceID) {
