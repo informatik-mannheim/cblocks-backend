@@ -1,38 +1,11 @@
 const chai = require('chai');
 const expect = chai.expect;
 const stubs = require('../stubs/cblocks');
+const util = require('./util.js');
 
-const MongoInMemory = require('mongo-in-memory');
-const mongoPort = 8000;
-const mongoServerInstance = new MongoInMemory(8000);
-const mongoServerStart = () => {
-  return new Promise((resolve, reject) => {
-    mongoServerInstance.start((error, config) => {
-      if (error) reject(error);
-
-      resolve();
-    });
-  });
-};
-let dataProvider = {};
-
-const MongoClient = require('mongodb').MongoClient;
-const connectMongo = async () => {
-  return await MongoClient.connect(mongoServerInstance.getMongouri('test'));
-};
+let hapiServer;
+let dataProvider;
 let db;
-
-const Hapi = require('hapi');
-const Boom = require('boom');
-const hapiPort = 8080;
-const hapiServer = new Hapi.Server({
-  'port': hapiPort,
-});
-const startHapiServer = async () => {
-  if (hapiServer.info.started) return;
-
-  await hapiServer.start();
-};
 let response;
 let payload;
 
@@ -42,7 +15,7 @@ const getCBlocksRequestDefaults = {
   'payload': {},
 };
 
-const wire = async () => {
+const wire = () => {
   const JsonValidator = require('jsonschema').Validator;
   const Registry = require('../../data-provider/registry.js');
   dataProvider = new Registry(
@@ -52,19 +25,19 @@ const wire = async () => {
   const useCase = new CBlockUseCase(dataProvider);
 
   const CBlockController = require('../../controller/cblockController.js');
-  const controller = new CBlockController(hapiServer, useCase, Boom);
+  const controller = new CBlockController(
+    hapiServer, useCase, util.errorRenderer);
 
   controller.start();
 };
 
 describe('cBlocks', () => {
   before(async () => {
-    await mongoServerStart();
-    const mongoClient = await connectMongo();
+    const mongoClient = await util.getMongo();
+    hapiServer = await util.getHapi();
     db = mongoClient.db('cblocks');
-    await startHapiServer();
 
-    await wire();
+    wire();
   });
 
   beforeEach(() => {
@@ -73,7 +46,8 @@ describe('cBlocks', () => {
   });
 
   after(() => {
-    mongoServerInstance.stop();
+    util.stopMongo();
+    util.stopHapi();
   });
 
   afterEach(() => {
@@ -95,9 +69,6 @@ describe('cBlocks', () => {
     it('should return 404 if not found',
       getTemperatureCBlocksShouldReturn404IfNotFound);
   });
-
-  describe('PATCH label should set label of instance if exists',
-    patchLabelShouldSetLabelIfExists);
 });
 
 async function getCBlocksShouldGetAllCBlocksIfThereAreSome() {
@@ -163,16 +134,4 @@ async function getTemperatureCBlocksShouldReturn404IfNotFound() {
 
 function shouldReturn404() {
   expect(response.result.statusCode).to.equal(404);
-}
-
-async function patchLabelShouldSetLabelIfExists() {
-  await givenTwoCBlocks();
-
-  await whenPatchLabel();
-
-  shouldRespondWith204();
-}
-
-async function whenPatchLabel() {
-
 }

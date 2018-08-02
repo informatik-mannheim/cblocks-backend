@@ -21,7 +21,6 @@ class CBlockController {
     try {
       return await this._getCBlocks(request);
     } catch (e) {
-      console.log(e);
       throw this.errorRenderer.notFound(e.message);
     }
   }

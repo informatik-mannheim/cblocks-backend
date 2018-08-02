@@ -1,0 +1,42 @@
+
+const MongoInMemory = require('mongo-in-memory');
+const mongoPort = 8000;
+const mongoServerInstance = new MongoInMemory(mongoPort);
+const MongoClient = require('mongodb').MongoClient;
+const startMongo = () => {
+  return new Promise((resolve, reject) => {
+    mongoServerInstance.start((error, config) => {
+      if (error) reject(error);
+
+      resolve();
+    });
+  });
+};
+
+exports.getMongo = async () => {
+  await startMongo();
+  return await MongoClient.connect(mongoServerInstance.getMongouri('test'));
+};
+
+exports.stopMongo = () => {
+  mongoServerInstance.stop();
+};
+
+const Hapi = require('hapi');
+const Boom = require('boom');
+const hapiPort = 8080;
+const hapiServer = new Hapi.Server({
+  'port': hapiPort,
+});
+
+exports.getHapi = async () => {
+  if (!hapiServer.info.started) await hapiServer.start();
+
+  return hapiServer;
+};
+
+exports.stopHapi = () => {
+  hapiServer.stop();
+};
+
+exports.errorRenderer = Boom;
