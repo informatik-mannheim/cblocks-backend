@@ -13,8 +13,8 @@ module.exports = {
     },
   },
   'instances': {
-        '0': {
-            'label': 'Temperature Sensor',
-        },
+    '0': {
+        'label': 'Temperature Sensor',
+    },
   },
 };

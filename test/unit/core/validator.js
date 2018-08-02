@@ -2,8 +2,8 @@ const chai = require('chai');
 const expect = chai.expect;
 
 const JsonSchema = require('jsonschema').Validator;
-const Validator = require('../../core/validator.js');
-const schema = require('../stubs/schema/dummy.js');
+const Validator = require('../../../core/validator.js');
+const schema = require('../../stubs/schema/dummy.js');
 
 let validator;
 

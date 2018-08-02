@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const mqttUtil = require('../../../messaging/util/mqttUtil.js');
+const mqttUtil = require('../../../../messaging/util/mqttUtil.js');
 let ipso = {};
 let topic;
 let clientID;

@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const rangeMap = require('../../core/rangeMap.js');
+const rangeMap = require('../../../core/rangeMap.js');
 
 let value;
 
