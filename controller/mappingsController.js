@@ -75,9 +75,16 @@ class MappingsController {
       await this.mappingsUseCase.deleteMapping(
         request.params.mappingID);
 
-      return h.response('Ok.');
+      const r = h.response();
+      r.code(204);
+
+      return r;
     } catch (e) {
-      throw this.errorRenderer.boomify(e, {statusCode: 500});
+      let statusCode = 500;
+
+      if ( e instanceof EntityNotFoundError) statusCode = 404;
+
+      throw this.errorRenderer.boomify(e, {statusCode: statusCode});
     }
   }
 }

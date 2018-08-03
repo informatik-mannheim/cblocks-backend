@@ -7,7 +7,6 @@ let hapiServer;
 let dataProvider;
 let db;
 let response;
-let payload;
 
 const getCBlocksRequestDefaults = {
   'method': 'GET',
@@ -89,12 +88,11 @@ async function givenTwoCBlocks() {
 }
 
 async function whenGetAllCBlocks() {
-  response = await hapiServer.inject(getCBlocksRequestDefaults);
-  payload = JSON.parse(response.payload);
+  response = await util.sendRequest(getCBlocksRequestDefaults);
 }
 
 function shouldReturnTwoCBlocks() {
-  expect(payload.length).to.equal(2);
+  expect(response.payload.length).to.equal(2);
 }
 
 async function getCBlocksShouldReturnEmptyArrayIfThereAreNone() {
@@ -104,7 +102,7 @@ async function getCBlocksShouldReturnEmptyArrayIfThereAreNone() {
 }
 
 function shouldReturnEmptyArray() {
-  expect(payload.length).to.equal(0);
+  expect(response.payload.length).to.equal(0);
 }
 
 async function getTemperatureCBlocksShouldReturnItIfExists() {
@@ -116,24 +114,20 @@ async function getTemperatureCBlocksShouldReturnItIfExists() {
 }
 
 async function whenGetTemperatureCBlock() {
-  const request = Object.assign({}, getCBlocksRequestDefaults, {
+  const request = {
+    ...getCBlocksRequestDefaults,
     'url': '/cblocks/3303',
-  });
+  };
 
-  response = await hapiServer.inject(request);
-  payload = JSON.parse(response.payload);
+  response = await util.sendRequest(request);
 }
 
 function shouldReturnTemperatureCBlock() {
-  expect(payload.objectID).to.equal(3303);
+  expect(response.payload.objectID).to.equal(3303);
 }
 
 async function getTemperatureCBlocksShouldReturn404IfNotFound() {
   await whenGetTemperatureCBlock();
 
-  shouldReturn404();
-}
-
-function shouldReturn404() {
-  expect(response.result.statusCode).to.equal(404);
+  util.shouldReturnStatusCode(404);
 }

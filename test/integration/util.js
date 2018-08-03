@@ -1,3 +1,5 @@
+const chai = require('chai');
+const expect = chai.expect;
 
 const MongoInMemory = require('mongo-in-memory');
 const mongoPort = 8000;
@@ -46,3 +48,22 @@ exports.stopHapi = async () => {
 };
 
 exports.errorRenderer = Boom;
+
+exports.sendRequest = async (request) => {
+  response = await hapiServer.inject(request);
+
+  try {
+    payload = JSON.parse(response.payload);
+  } catch (e) {
+
+  }
+
+  return {
+    'raw': response,
+    'payload': payload,
+  };
+};
+
+exports.shouldReturnStatusCode = (statusCode) => {
+  expect(response.statusCode).to.equal(statusCode);
+};

@@ -1,3 +1,5 @@
+const EntityNotFoundError = require('../core/entityNotFoundError.js');
+
 class CBlockController {
   constructor(hapiServer, cBlockUseCase, errorRenderer) {
     this.hapiServer = hapiServer;
@@ -21,7 +23,11 @@ class CBlockController {
     try {
       return await this._getCBlocks(request);
     } catch (e) {
-      throw this.errorRenderer.notFound(e.message);
+      let statusCode = 500;
+
+      if ( e instanceof EntityNotFoundError) statusCode = 404;
+
+      throw this.errorRenderer.boomify(e, {statusCode: statusCode});
     }
   }
 

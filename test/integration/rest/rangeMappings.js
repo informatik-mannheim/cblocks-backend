@@ -1,11 +1,11 @@
 const chai = require('chai');
 const expect = chai.expect;
 const cblockStubs = require('../../stubs/cblocks');
-const mappingStubs = require('../../stubs/categoryMappings');
+const mappingStubs = require('../../stubs/rangeMappings');
 const util = require('../util.js');
 const ObjectID = require('mongodb').ObjectID;
 
-const mappingsCollection = 'category-mappings';
+const mappingsCollection = 'range-mappings';
 const registryCollection = 'registry';
 
 let hapiServer;
@@ -16,25 +16,25 @@ let response;
 
 const getMappingsRequestDefaults = {
   'method': 'GET',
-  'url': '/mappings/category',
+  'url': '/mappings/range',
   'payload': {},
 };
 
 const postMappingRequestDefaults = {
   'method': 'POST',
-  'url': '/mappings/category',
+  'url': '/mappings/range',
   'payload': {},
 };
 
 const putMappingRequestDefaults = {
   'method': 'PUT',
-  'url': '/mappings/category',
+  'url': '/mappings/range',
   'payload': {},
 };
 
 const deleteMappingRequestDefaults = {
   'method': 'DELETE',
-  'url': '/mappings/category',
+  'url': '/mappings/range',
   'payload': {},
 };
 
@@ -42,7 +42,7 @@ const wire = () => {
   const JsonValidator = require('jsonschema').Validator;
   const Validator = require('../../../core/validator.js');
   const schema = require(
-    '../../../controller/schema/putCategoryMappingSchema.js');
+    '../../../controller/schema/putRangeMappingSchema.js');
   const validator = new Validator(
     JsonValidator, schema);
 
@@ -54,15 +54,16 @@ const wire = () => {
     '../../../data-provider/mappingsDataProvider.js');
   dataProvider = new DataProvider(db.collection(mappingsCollection));
 
+  const rangeMap = require('../../../core/rangeMap.js');
   const UseCase = require(
-    '../../../use-cases/mappings/categoryMappingsUseCase.js');
-  const useCase = new UseCase(dataProvider, registry);
+    '../../../use-cases/mappings/rangeMappingsUseCase.js');
+  const useCase = new UseCase(dataProvider, registry, rangeMap);
 
   const Controller = require('../../../controller/mappingsController.js');
   const controller = new Controller(
     useCase, util.errorRenderer, validator);
 
-  const Routes = require('../../../controller/categoryMappingsRoutes.js');
+  const Routes = require('../../../controller/rangeMappingsRoutes.js');
   const routes = new Routes(hapiServer, controller);
 
   routes.start();
@@ -140,7 +141,7 @@ describe('REST mappings', () => {
       deleteMappingShouldReturn204);
 
     it('should return 404 if mapping not found',
-      deleteMappingshouldReturn404IfNotFound);
+      deleteMappingShouldReturn404IfNotFound);
   });
 });
 
@@ -154,8 +155,7 @@ async function getMappingsShouldReturnMappings() {
 
 async function givenMappings() {
   await Promise.all([
-    dataProvider.createMapping(mappingStubs.humidityCategoryMapping),
-    dataProvider.createMapping(mappingStubs.temperatureCategoryMapping),
+    dataProvider.createMapping(mappingStubs.temperatureRangeMapping),
   ]);
 }
 
@@ -164,7 +164,7 @@ async function whenGetMappings() {
 }
 
 function shouldReturnMappings() {
-  expect(response.payload.length).to.equal(2);
+  expect(response.payload.length).to.equal(1);
 }
 
 async function getMappingsShouldReturnEmptyArrayIfNotFound() {
@@ -191,7 +191,7 @@ async function whenGetMapping() {
 
   const request = {
     ...getMappingsRequestDefaults,
-    'url': `/mappings/category/${id}`,
+    'url': `/mappings/range/${id}`,
   };
 
   response = await util.sendRequest(request);
@@ -211,7 +211,7 @@ async function whenGetNonExistingMapping() {
   const id = new ObjectID();
   const request = {
     ...getMappingsRequestDefaults,
-    'url': `/mappings/category/${id}`,
+    'url': `/mappings/range/${id}`,
   };
 
   response = await util.sendRequest(request);
@@ -230,7 +230,7 @@ async function givenTemperatureCBlock() {
 }
 
 async function whenPostMapping() {
-  let stub = {...mappingStubs.temperatureCategoryMapping};
+  let stub = {...mappingStubs.temperatureRangeMapping};
   delete stub.mappingID;
   delete stub._id;
 
@@ -262,7 +262,7 @@ async function postMappingShouldRespond404IfInstanceNotFound() {
 
 async function whenPostMappingNonExistingInstance() {
   let stub = {
-    ...mappingStubs.temperatureCategoryMapping,
+    ...mappingStubs.temperatureRangeMapping,
     instanceID: 99,
   };
   delete stub.mappingID;
@@ -284,7 +284,7 @@ async function postMappingShouldFailWith400IfMissingData() {
 
 async function postMappingShouldFailWith400IfMissingData() {
   let stub = {
-    ...mappingStubs.temperatureCategoryMapping,
+    ...mappingStubs.temperatureRangeMapping,
   };
   delete stub.mappingID;
   delete stub.label;
@@ -318,7 +318,7 @@ async function whenPutTemperatureMapping() {
 
   const request = {
     ...putMappingRequestDefaults,
-    'url': `/mappings/category/${id}`,
+    'url': `/mappings/range/${id}`,
     'payload': stub,
   };
 
@@ -358,7 +358,7 @@ async function whenPutTemperatureMappingWithoutLabel() {
 
   const request = {
     ...putMappingRequestDefaults,
-    'url': `/mappings/category/${id}`,
+    'url': `/mappings/range/${id}`,
     'payload': stub,
   };
 
@@ -380,13 +380,13 @@ async function whenDeleteTemperatureMapping() {
 
   const request = {
     ...deleteMappingRequestDefaults,
-    'url': `/mappings/category/${id}`,
+    'url': `/mappings/range/${id}`,
   };
 
   response = await util.sendRequest(request);
 }
 
-async function deleteMappingshouldReturn404IfNotFound() {
+async function deleteMappingShouldReturn404IfNotFound() {
   await whenDeleteNoneExistingMapping();
 
   util.shouldReturnStatusCode(404);
@@ -397,7 +397,7 @@ async function whenDeleteNoneExistingMapping() {
 
   const request = {
     ...deleteMappingRequestDefaults,
-    'url': `/mappings/category/${id}`,
+    'url': `/mappings/range/${id}`,
   };
 
   response = await util.sendRequest(request);

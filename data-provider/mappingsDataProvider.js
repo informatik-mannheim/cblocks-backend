@@ -37,7 +37,9 @@ class MappingsDataProvider {
       '_id': new ObjectID(id),
     });
 
-    return r;
+    if (r.result.n === 0) {
+      throw new EntityNotFoundError('Mapping not found');
+    }
   }
 
   async putMapping(id, object) {
@@ -48,8 +50,8 @@ class MappingsDataProvider {
     });
 
     if (r.result.nModified === 0) {
-throw new EntityNotFoundError('Mapping not found');
-}
+      throw new EntityNotFoundError('Mapping not found');
+    }
 
     return {...object, 'mappingID': id};
   }
