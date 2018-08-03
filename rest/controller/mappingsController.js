@@ -1,6 +1,6 @@
-const EntityNotFoundError = require('../core/entityNotFoundError.js');
+const EntityNotFoundError = require('../../core/entityNotFoundError.js');
 
-class MappingsController {
+class Controller {
   constructor(mappingsUseCase, errorRenderer, putMappingValidator) {
     this.mappingsUseCase = mappingsUseCase;
     this.errorRenderer = errorRenderer;
@@ -89,4 +89,4 @@ class MappingsController {
   }
 }
 
-module.exports = MappingsController;
+module.exports = Controller;

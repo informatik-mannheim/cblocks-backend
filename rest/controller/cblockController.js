@@ -1,25 +1,12 @@
-const EntityNotFoundError = require('../core/entityNotFoundError.js');
+const EntityNotFoundError = require('../../core/entityNotFoundError.js');
 
-class CBlockController {
-  constructor(hapiServer, cBlockUseCase, errorRenderer) {
-    this.hapiServer = hapiServer;
+class Controller {
+  constructor(cBlockUseCase, errorRenderer) {
     this.cBlockUseCase = cBlockUseCase;
     this.errorRenderer = errorRenderer;
   }
 
-  start() {
-    this._initRoutes();
-  }
-
-  _initRoutes() {
-    this.hapiServer.route({
-      'method': 'GET',
-      'path': '/cblocks/{objectID?}',
-      'handler': this._handleGetCBlocks.bind(this),
-    });
-  }
-
-  async _handleGetCBlocks(request, h) {
+  async handleGetCBlocks(request, h) {
     try {
       return await this._getCBlocks(request);
     } catch (e) {
@@ -45,4 +32,4 @@ class CBlockController {
   }
 };
 
-module.exports = CBlockController;
+module.exports = Controller;

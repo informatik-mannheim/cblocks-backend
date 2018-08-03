@@ -2,6 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const stubs = require('../../stubs/cblocks');
 const util = require('../util.js');
+const wiring = require('../../../wiring');
 
 let hapiServer;
 let dataProvider;
@@ -20,14 +21,17 @@ const wire = () => {
   dataProvider = new Registry(
     db.collection('registry'), new JsonValidator());
 
-  const CBlockUseCase = require('../../../use-cases/registry/cblockUseCase.js');
-  const useCase = new CBlockUseCase(dataProvider);
+  const UseCase = require('../../../use-cases/registry/cblockUseCase.js');
+  const useCase = new UseCase(dataProvider);
 
-  const CBlockController = require('../../../controller/cblockController.js');
-  const controller = new CBlockController(
-    hapiServer, useCase, util.errorRenderer);
+  const Controller = require('../../../rest/controller/cblockController.js');
+  const controller = new Controller(
+    useCase, util.errorRenderer);
 
-  controller.start();
+  const Routes = require('../../../rest/routes/cblocksRoutes.js');
+  const routes = new Routes(hapiServer, controller);
+
+  routes.start();
 };
 
 describe('REST cBlocks', () => {

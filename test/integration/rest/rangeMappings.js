@@ -40,9 +40,9 @@ const deleteMappingRequestDefaults = {
 
 const wire = () => {
   const JsonValidator = require('jsonschema').Validator;
-  const Validator = require('../../../core/validator.js');
+  const Validator = require('../../../rest/controller/validator.js');
   const schema = require(
-    '../../../controller/schema/putRangeMappingSchema.js');
+    '../../../rest/schema/putRangeMappingSchema.js');
   const validator = new Validator(
     JsonValidator, schema);
 
@@ -59,11 +59,11 @@ const wire = () => {
     '../../../use-cases/mappings/rangeMappingsUseCase.js');
   const useCase = new UseCase(dataProvider, registry, rangeMap);
 
-  const Controller = require('../../../controller/mappingsController.js');
+  const Controller = require('../../../rest/controller/mappingsController.js');
   const controller = new Controller(
     useCase, util.errorRenderer, validator);
 
-  const Routes = require('../../../controller/rangeMappingsRoutes.js');
+  const Routes = require('../../../rest/routes/rangeMappingsRoutes.js');
   const routes = new Routes(hapiServer, controller);
 
   routes.start();

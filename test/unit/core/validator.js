@@ -2,7 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 
 const JsonSchema = require('jsonschema').Validator;
-const Validator = require('../../../core/validator.js');
+const Validator = require('../../../rest/controller/validator.js');
 const schema = require('../../stubs/schema/dummy.js');
 
 let validator;
