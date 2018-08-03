@@ -2,7 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const stubs = require('../../stubs/cblocks');
 const util = require('../util.js');
-const wiring = require('../../../wiring');
+const wire = require('../../../wire');
 
 let hapiServer;
 let dataProvider;
@@ -15,32 +15,16 @@ const getCBlocksRequestDefaults = {
   'payload': {},
 };
 
-const wire = () => {
-  const JsonValidator = require('jsonschema').Validator;
-  const Registry = require('../../../data-provider/registry.js');
-  dataProvider = new Registry(
-    db.collection('registry'), new JsonValidator());
-
-  const UseCase = require('../../../use-cases/registry/cblockUseCase.js');
-  const useCase = new UseCase(dataProvider);
-
-  const Controller = require('../../../rest/controller/cblockController.js');
-  const controller = new Controller(
-    useCase, util.errorRenderer);
-
-  const Routes = require('../../../rest/routes/cblocksRoutes.js');
-  const routes = new Routes(hapiServer, controller);
-
-  routes.start();
-};
-
 describe('REST cBlocks', () => {
   before(async () => {
     const mongoClient = await util.getMongo();
+    const mqttClient = await util.getMQTT();
     hapiServer = await util.getHapi();
     db = mongoClient.db('cblocks');
 
-    wire();
+    const app = wire(mongoClient, mqttClient, db, hapiServer);
+    dataProvider = app.dataProviders.registry;
+    app.rest.cblocksRoutes.start();
   });
 
   beforeEach(() => {
@@ -52,6 +36,7 @@ describe('REST cBlocks', () => {
     await Promise.all([
       await util.stopMongo(),
       await util.stopHapi(),
+      util.stopMQTT(),
     ]);
   });
 
@@ -81,6 +66,7 @@ async function getCBlocksShouldGetAllCBlocksIfThereAreSome() {
 
   await whenGetAllCBlocks();
 
+  util.shouldReturnStatusCode(200);
   shouldReturnTwoCBlocks();
 }
 
@@ -102,6 +88,7 @@ function shouldReturnTwoCBlocks() {
 async function getCBlocksShouldReturnEmptyArrayIfThereAreNone() {
   await whenGetAllCBlocks();
 
+  util.shouldReturnStatusCode(200);
   shouldReturnEmptyArray();
 }
 
@@ -114,6 +101,7 @@ async function getTemperatureCBlocksShouldReturnItIfExists() {
 
   await whenGetTemperatureCBlock();
 
+  util.shouldReturnStatusCode(200);
   shouldReturnTemperatureCBlock();
 }
 

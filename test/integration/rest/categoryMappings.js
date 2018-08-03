@@ -4,6 +4,7 @@ const cblockStubs = require('../../stubs/cblocks');
 const mappingStubs = require('../../stubs/categoryMappings');
 const util = require('../util.js');
 const ObjectID = require('mongodb').ObjectID;
+const wire = require('../../../wire');
 
 const mappingsCollection = 'category-mappings';
 const registryCollection = 'registry';
@@ -38,43 +39,17 @@ const deleteMappingRequestDefaults = {
   'payload': {},
 };
 
-const wire = () => {
-  const JsonValidator = require('jsonschema').Validator;
-  const Validator = require('../../../rest/controller/validator.js');
-  const schema = require(
-    '../../../rest/schema/putCategoryMappingSchema.js');
-  const validator = new Validator(
-    JsonValidator, schema);
-
-  const Registry = require('../../../data-provider/registry.js');
-  registry = new Registry(
-    db.collection('registry'), new JsonValidator());
-
-  const DataProvider = require(
-    '../../../data-provider/mappingsDataProvider.js');
-  dataProvider = new DataProvider(db.collection(mappingsCollection));
-
-  const UseCase = require(
-    '../../../use-cases/mappings/categoryMappingsUseCase.js');
-  const useCase = new UseCase(dataProvider, registry);
-
-  const Controller = require('../../../rest/controller/mappingsController.js');
-  const controller = new Controller(
-    useCase, util.errorRenderer, validator);
-
-  const Routes = require('../../../rest/routes/categoryMappingsRoutes.js');
-  const routes = new Routes(hapiServer, controller);
-
-  routes.start();
-};
-
-describe('REST mappings', () => {
+describe('REST category mappings', () => {
   before(async () => {
     const mongoClient = await util.getMongo();
+    const mqttClient = await util.getMQTT();
     hapiServer = await util.getHapi();
     db = mongoClient.db('cblocks');
 
-    wire();
+    const app = wire(mongoClient, mqttClient, db, hapiServer);
+    registry = app.dataProviders.registry;
+    dataProvider = app.dataProviders.categoryMappingsDataProvider;
+    app.rest.categoryMappingsRoutes.start();
   });
 
   beforeEach(() => {
@@ -149,6 +124,7 @@ async function getMappingsShouldReturnMappings() {
 
   await whenGetMappings();
 
+  util.shouldReturnStatusCode(200);
   shouldReturnMappings();
 }
 
@@ -170,6 +146,7 @@ function shouldReturnMappings() {
 async function getMappingsShouldReturnEmptyArrayIfNotFound() {
   await whenGetMappings();
 
+  util.shouldReturnStatusCode(200);
   shouldReturnEmptyArray();
 }
 
@@ -182,6 +159,7 @@ async function getMappingShouldReturnIfFound() {
 
   await whenGetMapping();
 
+  util.shouldReturnStatusCode(200);
   shouldReturnMapping();
 }
 
@@ -222,6 +200,7 @@ async function postMappingShouldReturnMappingWithID() {
 
   await whenPostMapping();
 
+  util.shouldReturnStatusCode(200);
   shouldReturnMappingWithID();
 }
 
@@ -303,6 +282,7 @@ async function putMappingShouldReturnUpdatedVersion() {
 
   await whenPutTemperatureMapping();
 
+  util.shouldReturnStatusCode(200);
   shouldReturnUpdatedVersion();
 }
 

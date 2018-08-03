@@ -30,6 +30,23 @@ exports.stopMongo = () => {
   });
 };
 
+const mqtt = require('mqtt');
+let mqttClient;
+
+exports.getMQTT = async () => {
+  mqttClient = mqtt.connect('mqtt://localhost:1883');
+
+  return new Promise((resolve, reject) => {
+    mqttClient.on('connect', () => resolve(mqttClient));
+
+    setTimeout(() => reject('Could not connect to MQTT-Broker.'), 5000);
+  });
+};
+
+exports.stopMQTT = () => {
+  mqttClient.end();
+};
+
 const Hapi = require('hapi');
 const Boom = require('boom');
 const hapiPort = 8080;

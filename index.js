@@ -6,7 +6,7 @@ const hapiConfig = config.get('hapi');
 const mqtt = require('mqtt');
 const Hapi = require('hapi');
 
-const wiring = require('./wiring');
+const wire = require('./wire');
 
 const hapiServer = Hapi.server({
     port: hapiConfig.port,
@@ -30,7 +30,6 @@ const getMQTTConfig = () => {
 };
 
 const initMQTT = () => {
-  console.log(getMQTTConfig());
   const client = mqtt.connect(getMQTTConfig());
 
   return new Promise((resolve, reject) => {
@@ -41,40 +40,6 @@ const initMQTT = () => {
 };
 
 const MongoClient = require('mongodb').MongoClient;
-
-const wire = (mongoClient, mqttClient, db, hapiServer) => {
-  const core = wiring.core();
-  const dataProviders = wiring.dataProviders(db);
-
-  let messaging = {};
-  messaging.outbound = wiring.messaging.outbound(mqttClient);
-
-  const useCases = wiring.useCases(
-    messaging.outbound,
-    dataProviders,
-    core
-  );
-
-  const rest = wiring.rest(
-    hapiServer,
-    useCases
-  );
-
-  messaging.inbound = wiring.messaging.inbound(
-    mqttClient,
-    useCases
-  );
-
-  messaging.inbound.mqttWriteAgent.start();
-  messaging.inbound.mqttCategoryMappingAgent.start();
-  messaging.inbound.mqttRangeMappingAgent.start();
-
-  rest.cblocksRoutes.start();
-  rest.categoryMappingsRoutes.start();
-  rest.rangeMappingsRoutes.start();
-
-  console.log('Application bootstrapped.');
-};
 
 const init = async () => {
   try {
@@ -88,7 +53,17 @@ const init = async () => {
     await hapiServer.start();
     console.log(`REST Server running at: ${hapiServer.info.uri}`);
 
-    wire(mongoClient, mqttClient, db, hapiServer);
+    const app = wire(mongoClient, mqttClient, db, hapiServer);
+
+    app.messaging.inbound.mqttWriteAgent.start();
+    app.messaging.inbound.mqttRangeMappingAgent.start();
+    app.messaging.inbound.mqttCategoryMappingAgent.start();
+
+    app.rest.cblocksRoutes.start();
+    app.rest.categoryMappingsRoutes.start();
+    app.rest.rangeMappingsRoutes.start();
+
+    console.log('Application bootstrapped.');
   } catch (e) {
     console.log(e);
   }
