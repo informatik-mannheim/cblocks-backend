@@ -5,5 +5,5 @@ module.exports = {
   'resourceID': 0,
   'instanceID': 0,
   'greaterEqualsThan': 20,
-  'lessEqualsThan': 50,
+  'lessEqualsThan': 30,
 };

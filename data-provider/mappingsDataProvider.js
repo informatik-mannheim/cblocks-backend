@@ -1,7 +1,7 @@
 const ObjectID = require('mongodb').ObjectID;
 const EntityNotFoundError = require('../core/entityNotFoundError.js');
 
-class MappingsDataProvider {
+class MappingsDataProvider { // TODO inject entity factory to make actual entities
   constructor(collection) {
     this.collection = collection;
   }

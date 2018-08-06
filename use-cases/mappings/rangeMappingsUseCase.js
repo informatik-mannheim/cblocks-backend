@@ -6,7 +6,7 @@ class RangeMappingsUseCase extends MappingsUseCase {
     this._rangeMap = rangeMap;
   }
 
-  _checkType(resource) {
+  _checkType(resource) { // TODO: use a type checker?
     if (resource.schema.type !== 'number' && resource.schema.type !== 'integer') {
       throw Error(
         `Resource ${mapping.resourceID} of Object ${mapping.objectID} is not a number`);
