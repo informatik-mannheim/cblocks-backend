@@ -1,20 +1,29 @@
 class RangeMapping {
+  constructor(min, max) {
+    this._min = min;
+    this._max = max;
+  }
+
   apply(val) {
-    if (val < this.greaterEqualsThan) {
+    val = parseFloat(val);
+
+    if (val < this._min) {
       return 0;
     }
 
-    if (val > this.lessEqualsThan) {
+    if (val > this._max) {
       return 100;
     }
 
-    return (val-this.greaterEqualsThan) /
-      (this.lessEqualsThan - this.greaterEqualsThan) * 100;
+    return (val-this._min) /
+      (this._max - this._min) * 100;
+  }
+
+  isApplicableFor(resource) {
+    return resource.isNumeric();
   }
 }
 
-exports.Prototype = RangeMapping;
-
-exports.make = (object) => {
-  return Object.assign(new RangeMapping(), object);
+exports.make = (dto) => {
+  return new RangeMapping(dto.greaterEqualsThan, dto.lessEqualsThan);
 };

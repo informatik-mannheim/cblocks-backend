@@ -1,33 +1,18 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const MongoInMemory = require('mongo-in-memory');
-const mongoPort = 8000;
-const mongoServerInstance = new MongoInMemory(mongoPort);
 const MongoClient = require('mongodb').MongoClient;
-const startMongo = () => {
-  return new Promise((resolve, reject) => {
-    mongoServerInstance.start((error, config) => {
-      if (error) reject(error);
-
-      resolve();
-    });
-  });
-};
 
 exports.getMongo = async () => {
-  await startMongo();
-  return await MongoClient.connect(mongoServerInstance.getMongouri('test'));
+  return await MongoClient.connect('mongodb://localhost:27017');
 };
 
-exports.stopMongo = () => {
-  return new Promise((resolve, reject) => {
-    mongoServerInstance.stop((error) => {
-      if (error) reject(error);
+exports.clearDataBase = async (db) => {
+  const collections = await db.collections();
+  const deletePromises = collections.map((c) =>
+    db.collection(c.s.name).deleteMany({}));
 
-      resolve();
-    });
-  });
+  return await Promise.all(deletePromises);
 };
 
 const mqtt = require('mqtt');
@@ -43,10 +28,6 @@ exports.getMQTT = async () => {
   });
 };
 
-exports.stopMQTT = () => {
-  mqttClient.end();
-};
-
 const Hapi = require('hapi');
 const Boom = require('boom');
 const hapiPort = 8080;
@@ -58,10 +39,6 @@ exports.getHapi = async () => {
   if (!hapiServer.info.started) await hapiServer.start();
 
   return hapiServer;
-};
-
-exports.stopHapi = async () => {
-  await hapiServer.stop();
 };
 
 exports.errorRenderer = Boom;

@@ -6,9 +6,6 @@ const util = require('../util.js');
 const ObjectID = require('mongodb').ObjectID;
 const wire = require('../../../wire');
 
-const mappingsCollection = 'range-mappings';
-const registryCollection = 'registry';
-
 let hapiServer;
 let registry;
 let dataProvider;
@@ -44,7 +41,7 @@ describe('REST range mappings', () => {
     const mongoClient = await util.getMongo();
     const mqttClient = await util.getMQTT();
     hapiServer = await util.getHapi();
-    db = mongoClient.db('cblocks');
+    db = mongoClient.db('test');
 
     const app = wire(mongoClient, mqttClient, db, hapiServer);
     registry = app.dataProviders.registry;
@@ -52,21 +49,10 @@ describe('REST range mappings', () => {
     app.rest.rangeMappingsRoutes.start();
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await util.clearDataBase(db);
     response = {};
     payload = {};
-  });
-
-  after(async () => {
-    await Promise.all([
-      await util.stopMongo(),
-      await util.stopHapi(),
-    ]);
-  });
-
-  afterEach(() => {
-    db.collection(mappingsCollection).deleteMany({});
-    db.collection(registryCollection).deleteMany({});
   });
 
   describe('GET mappings', () => {

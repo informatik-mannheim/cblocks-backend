@@ -20,28 +20,17 @@ describe('REST cBlocks', () => {
     const mongoClient = await util.getMongo();
     const mqttClient = await util.getMQTT();
     hapiServer = await util.getHapi();
-    db = mongoClient.db('cblocks');
+    db = mongoClient.db('test');
 
     const app = wire(mongoClient, mqttClient, db, hapiServer);
     dataProvider = app.dataProviders.registry;
     app.rest.cblocksRoutes.start();
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await util.clearDataBase(db);
     response = {};
     payload = {};
-  });
-
-  after(async () => {
-    await Promise.all([
-      await util.stopMongo(),
-      await util.stopHapi(),
-      util.stopMQTT(),
-    ]);
-  });
-
-  afterEach(() => {
-    db.collection('registry').deleteMany({});
   });
 
   describe('GET /cblocks', () => {

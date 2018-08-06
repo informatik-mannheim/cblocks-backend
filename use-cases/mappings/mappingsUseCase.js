@@ -1,7 +1,9 @@
 class MappingsUseCase {
-  constructor(dataProvider, registry) {
+  constructor(dataProvider, registry, makeMapping, makeResource) {
     this.dataProvider = dataProvider;
     this.registry = registry;
+    this.makeMapping = makeMapping;
+    this.makeResource = makeResource;
 
     this._onUpdateMappings = () => {};
   }
@@ -34,7 +36,16 @@ class MappingsUseCase {
     const r = await this.registry.getResource(
       mapping.objectID, mapping.resourceID);
 
-    this._checkType(r);
+    this._checkType(mapping, r);
+  }
+
+  _checkType(mapping, resource) {
+    const map = this.makeMapping(mapping);
+    const r = this.makeResource(resource);
+
+    if (!map.isApplicableFor(r)) {
+      throw Error('Mapping is not applicable for resource.');
+    }
   }
 
   async createMapping(mapping) {
@@ -44,6 +55,11 @@ class MappingsUseCase {
     this._onUpdateMappings();
 
     return r;
+  }
+
+  applyMapping(value) {
+    const map = this.makeMapping(mapping);
+    map.apply(value);
   }
 
   registerOnUpdateMappings(cb) {

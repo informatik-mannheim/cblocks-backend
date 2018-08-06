@@ -1,36 +1,36 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const rangeMap = require('../../../../core/entity/rangeMapping.js');
-const stubs = require('../../../stubs/rangeMappings');
+const mapping = require('../../../../core/entity/categoryMapping.js');
+const stubs = require('../../../stubs/categoryMappings');
 
 let map;
 let value;
 
-describe('Range Mappping', () => {
+describe('Category Mappping', () => {
   describe('apply', () => {
-    it('should return 0 if value less min', () => {
+    it('should return Low for 15', () => {
       givenMap();
 
-      whenValueLessMinValue();
+      whenApply(15);
 
-      shouldReturnMinValue();
+      shouldReturn('Low');
     });
 
-    it('should return 100 if value higher than max', () => {
+    it('should return Medium for 25', () => {
       givenMap();
 
-      whenValueMoreThanMax();
+      whenApply(25);
 
-      shouldReturnMaxValue();
+      shouldReturn('Medium');
     });
 
-    it('should be 50% in the middle', () => {
+    it('should return default label if out of range', () => {
       givenMap();
 
-      whenValueInMiddle();
+      whenApply(99);
 
-      shouldReturn(50);
+      shouldReturn(getDefaultLabel());
     });
   });
 
@@ -44,27 +44,11 @@ describe('Range Mappping', () => {
 });
 
 function givenMap() {
-  map = rangeMap.make(stubs.temperatureRangeMapping);
+  map = mapping.make(stubs.temperatureCategoryMapping);
 }
 
-function whenValueLessMinValue() {
-  value = map.apply(5);
-}
-
-function shouldReturnMinValue() {
-  expect(value).to.equal(0);
-}
-
-function whenValueMoreThanMax() {
-  value = map.apply(35);
-}
-
-function shouldReturnMaxValue() {
-  expect(value).to.equal(100);
-}
-
-function whenValueInMiddle() {
-  value = map.apply(25);
+function whenApply(val) {
+  value = map.apply(val);
 }
 
 function isApplicableShouldReturnTrueForNumericResource() {
@@ -101,4 +85,8 @@ function whenIsApplicableForNonNumericResource() {
   };
 
   value = map.isApplicableFor(resource);
+}
+
+function getDefaultLabel() {
+  return stubs.temperatureCategoryMapping.default;
 }
