@@ -88,14 +88,28 @@ describe('MQTT Util', function() {
   });
 
   describe('isInputTopic', () => {
-    it('should return true for 3303/0/0/input', () => {
-      whenIsInputTopicWith('3303/0/0/input');
+    it('should return true for clientID/3303/0/0/input', () => {
+      whenIsInputTopicWith('clientID/3303/0/0/input');
 
       shouldReturn(true);
     });
 
     it('should return false for 3303/0/input', () => {
       whenIsInputTopicWith('3303/0/input');
+
+      shouldReturn(false);
+    });
+  });
+
+  describe('isOutputTopic', () => {
+    it('should return true for 3303/0/0/output', () => {
+      whenIsOutputTopicWith('3303/0/0/output');
+
+      shouldReturn(true);
+    });
+
+    it('should return false for 3303/0/output', () => {
+      whenIsOutputTopicWith('3303/0/input');
 
       shouldReturn(false);
     });
@@ -201,4 +215,8 @@ function shouldReturn(val) {
 
 function whenIsInputTopicWith(val) {
   value = mqttUtil.isInputTopic(val);
+}
+
+function whenIsOutputTopicWith(val) {
+  value = mqttUtil.isOutputTopic(val);
 }

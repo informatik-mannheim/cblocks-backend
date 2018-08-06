@@ -23,6 +23,8 @@ class MQTTMappingAgent {
   }
 
   async onMessage(topic, message) {
+    if (!this._util.isOutputTopic(topic)) return;
+
     const mappings = await this._getMappingsForTopic(topic);
 
     for (let i = 0; i < mappings.length; i++) {

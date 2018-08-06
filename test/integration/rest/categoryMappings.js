@@ -114,8 +114,8 @@ async function getMappingsShouldReturnMappings() {
   shouldReturnMappings();
 }
 
-async function givenMappings() {
-  await Promise.all([
+function givenMappings() {
+  return Promise.all([
     dataProvider.createMapping(mappingStubs.humidityCategoryMapping),
     dataProvider.createMapping(mappingStubs.temperatureCategoryMapping),
   ]);

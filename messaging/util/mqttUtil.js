@@ -51,7 +51,17 @@ exports.isResponseTopic = function(topic) {
 };
 
 exports.isInputTopic = (topic) => {
-  const regex = /([0-9]+)\/([0-9]+)\/([0-9]+)\/input/g;
+  const regex = /(.+)\/([0-9]+)\/([0-9]+)\/([0-9]+)\/input/g;
+
+  const matches = regex.exec(topic);
+
+  if (matches) return true;
+
+  return false;
+};
+
+exports.isOutputTopic = (topic) => {
+  const regex = /([0-9]+)\/([0-9]+)\/([0-9]+)\/output/g;
 
   const matches = regex.exec(topic);
 

@@ -7,7 +7,7 @@ const MappingsUseCase = require(
 module.exports = (messaging, dataProvider, core) => {
   return {
     'resourceWriteUseCase': new ResourceWriteUseCase(
-      dataProvider.egistry, messaging.mqttWriter),
+      dataProvider.registry, messaging.mqttWriter),
     'cBlockUseCase': new CBlockUseCase(dataProvider.registry),
     'categoryMappingsUseCase': new MappingsUseCase(
       dataProvider.categoryMappingsDataProvider,
