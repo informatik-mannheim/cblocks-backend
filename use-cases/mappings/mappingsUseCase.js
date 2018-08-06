@@ -39,9 +39,9 @@ class MappingsUseCase {
     this._checkType(mapping, r);
   }
 
-  _checkType(mapping, resource) {
-    const map = this.makeMapping(mapping);
-    const r = this.makeResource(resource);
+  _checkType(mappingDTO, resourceDTO) {
+    const map = this.makeMapping(mappingDTO);
+    const r = this.makeResource(resourceDTO);
 
     if (!map.isApplicableFor(r)) {
       throw Error('Mapping is not applicable for resource.');
@@ -57,7 +57,7 @@ class MappingsUseCase {
     return r;
   }
 
-  applyMapping(value) {
+  applyMapping(mapping, value) {
     const map = this.makeMapping(mapping);
     map.apply(value);
   }

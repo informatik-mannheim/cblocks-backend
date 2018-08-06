@@ -10,11 +10,11 @@ class MQTTMappingAgent {
   async start() {
     this._useCase.registerOnUpdateMappings(this.onUpdateMappings.bind(this));
     await this._getMappings();
-    await this._subscribeToResources();
+    this._subscribeToResources();
     this._client.on('message', this.onMessage.bind(this));
   }
 
-  async _subscribeToResources() {
+  _subscribeToResources() {
     for (let i = 0; i < this._mappings.length; i++) {
       const m = this._mappings[i];
 
@@ -37,10 +37,9 @@ class MQTTMappingAgent {
     for (let i = 0; i < mappings.length; i++) {
       const m = mappings[i];
 
-      const v = String(await this._useCase.applyMapping(
-        m.mappingID, message));
+      const v = String(await this._useCase.applyMapping(m, message));
 
-      this._client.publish(`mappings/${m.mappingID}`, v);
+      this._client.publish(`mappings/${m.mappingID}`, v); // TODO: await all publishes
     }
   }
 
@@ -50,7 +49,7 @@ class MQTTMappingAgent {
     return this._filterMappingsByIpso(this._mappings, ipso);
   }
 
-  _filterMappingsByIpso(mappings, ipso) {
+  _filterMappingsByIpso(mappings, ipso) { // TODO: Feature envy: give array a function to filter by ipso
     return mappings.filter((m) =>
       m.objectID === ipso.objectID &&
       m.resourceID === ipso.resourceID &&
@@ -59,7 +58,7 @@ class MQTTMappingAgent {
 
   async onUpdateMappings() {
     await this._getMappings();
-    await this._subscribeToResources();
+    this._subscribeToResources();
   }
 }
 
