@@ -3,7 +3,7 @@ const mqttConfig = config.get('mqtt');
 const mongoConfig = config.get('mongo');
 const hapiConfig = config.get('hapi');
 
-const mqtt = require('mqtt');
+const mqtt = require('async-mqtt');
 const Hapi = require('hapi');
 
 const wire = require('./wire');

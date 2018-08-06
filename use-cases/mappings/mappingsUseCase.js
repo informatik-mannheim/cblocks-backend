@@ -16,6 +16,10 @@ class MappingsUseCase {
     return await this.dataProvider.getMappings();
   }
 
+  async getMappingsFor(ipso) {
+    return await this.dataProvider.getMappingsFor(ipso);
+  }
+
   async deleteMapping(id) {
     return await this.dataProvider.deleteMapping(id);
   }
@@ -59,7 +63,8 @@ class MappingsUseCase {
 
   applyMapping(mapping, value) {
     const map = this.makeMapping(mapping);
-    map.apply(value);
+
+    return map.apply(value);
   }
 
   registerOnUpdateMappings(cb) {

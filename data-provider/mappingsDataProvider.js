@@ -32,6 +32,23 @@ class MappingsDataProvider { // TODO inject entity factory to make actual entiti
     return r;
   }
 
+  async getMappingsFor(ipso) {
+    let r = await this.collection.find({
+      'objectID': ipso.objectID,
+      'resourceID': ipso.resourceID,
+      'instanceID': ipso.instanceID,
+    }).toArray();
+
+    r = r.map((m) => {
+      m.mappingID = m._id;
+      delete m._id;
+
+      return m;
+    });
+
+    return r;
+  }
+
   async deleteMapping(id) {
     const r = await this.collection.remove({
       '_id': new ObjectID(id),

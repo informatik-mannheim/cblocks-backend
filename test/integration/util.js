@@ -15,7 +15,7 @@ exports.clearDataBase = async (db) => {
   return await Promise.all(deletePromises);
 };
 
-const mqtt = require('mqtt');
+const mqtt = require('async-mqtt');
 let mqttClient;
 
 exports.getMQTT = async () => {
