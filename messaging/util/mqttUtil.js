@@ -50,6 +50,16 @@ exports.isResponseTopic = function(topic) {
   return false;
 };
 
+exports.isInputTopic = (topic) => {
+  const regex = /([0-9]+)\/([0-9]+)\/([0-9]+)\/input/g;
+
+  const matches = regex.exec(topic);
+
+  if (matches) return true;
+
+  return false;
+};
+
 exports.getClientIDInResponseTopic = function(topic) {
   if (exports.isResponseTopic(topic)) {
     const regex = /([a-z].+)\/responses/g;

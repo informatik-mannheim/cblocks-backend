@@ -15,7 +15,7 @@ class MQTTWriteAgent {
   }
 
   async _onMessage(topic, message) {
-    if (!this._isInputTopic(topic)) return;
+    if (!this.util.isInputTopic(topic)) return;
 
     let ipso;
     let data;
@@ -32,10 +32,6 @@ class MQTTWriteAgent {
         console.log(e.message);
       }
     }
-  }
-
-  _isInputTopic(topic) {
-    return topic.includes('input');
   }
 
   _write(ipso, data) {
