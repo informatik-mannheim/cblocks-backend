@@ -24,12 +24,6 @@ const postMappingRequestDefaults = {
   'payload': {},
 };
 
-const putMappingRequestDefaults = {
-  'method': 'PUT',
-  'url': '/mappings/range',
-  'payload': {},
-};
-
 const deleteMappingRequestDefaults = {
   'method': 'DELETE',
   'url': '/mappings/range',
@@ -83,17 +77,9 @@ describe('REST range mappings', () => {
 
     it('should fail with 400 if missing data',
       postMappingShouldFailWith400IfMissingData);
-  });
 
-  describe('PUT mapping', () => {
-    it('should return updated version',
-      putMappingShouldReturnUpdatedVersion);
-
-    it('should fail with 404 if cblock not found',
-      putMappingShouldRespond404IfCBlockDoesNotExist);
-
-    it('should fail with 400 if missing data',
-      putMappingShouldFailWith400IfMissingData);
+    it('should return updated version if ID provided',
+      postMappingWithIDShouldReturnUpdatedVersion);
   });
 
   describe('DELETE mapping', () => {
@@ -261,17 +247,17 @@ async function postMappingShouldFailWith400IfMissingData() {
   response = await util.sendRequest(request);
 }
 
-async function putMappingShouldReturnUpdatedVersion() {
+async function postMappingWithIDShouldReturnUpdatedVersion() {
   await givenTemperatureCBlock();
   await givenMappings();
 
-  await whenPutTemperatureMapping();
+  await whenPostExistingTemperatureMapping();
 
   util.shouldReturnStatusCode(200);
   shouldReturnUpdatedVersion();
 }
 
-async function whenPutTemperatureMapping() {
+async function whenPostExistingTemperatureMapping() {
   const mappings = (await dataProvider.getMappings()).filter(
     (m) => m.objectID === 3303);
   const id = mappings[0]['mappingID'];
@@ -282,7 +268,7 @@ async function whenPutTemperatureMapping() {
   delete stub.mappingID;
 
   const request = {
-    ...putMappingRequestDefaults,
+    ...postMappingRequestDefaults,
     'url': `/mappings/range/${id}`,
     'payload': stub,
   };
@@ -292,42 +278,6 @@ async function whenPutTemperatureMapping() {
 
 function shouldReturnUpdatedVersion() {
   expect(response.payload.label).to.equal('New Label');
-}
-
-async function putMappingShouldRespond404IfCBlockDoesNotExist() {
-  await givenMappings();
-
-  await whenPutTemperatureMapping();
-
-  util.shouldReturnStatusCode(404);
-}
-
-async function putMappingShouldFailWith400IfMissingData() {
-  await givenTemperatureCBlock();
-  await givenMappings();
-
-  await whenPutTemperatureMappingWithoutLabel();
-
-  util.shouldReturnStatusCode(400);
-}
-
-async function whenPutTemperatureMappingWithoutLabel() {
-  const mappings = (await dataProvider.getMappings()).filter(
-    (m) => m.objectID === 3303);
-  const id = mappings[0]['mappingID'];
-  let stub = {
-    ...mappings[0],
-  };
-  delete stub._od;
-  delete stub.default;
-
-  const request = {
-    ...putMappingRequestDefaults,
-    'url': `/mappings/range/${id}`,
-    'payload': stub,
-  };
-
-  response = await util.sendRequest(request);
 }
 
 async function deleteMappingShouldReturn204() {

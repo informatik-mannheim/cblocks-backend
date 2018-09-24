@@ -13,15 +13,8 @@ class Routes {
     });
 
     this.hapiServer.route({
-      'method': 'PUT',
-      'path': '/mappings/range/{mappingID}',
-      'handler': this.mappingsController.handlePutMapping.
-        bind(this.mappingsController),
-    });
-
-    this.hapiServer.route({
       'method': 'POST',
-      'path': '/mappings/range',
+      'path': '/mappings/range/{mappingID?}',
       'handler': this.mappingsController.handlePostMapping.
         bind(this.mappingsController),
     });

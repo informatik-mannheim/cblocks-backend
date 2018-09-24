@@ -28,12 +28,20 @@ class Controller {
     return await this.mappingsUseCase.getMappings();
   }
 
-  async handlePutMapping(request, h) {
-    this._validatePutMapping(request.payload);
+
+  async handlePostMapping(request, h) {
+    this._validateMapping(request.payload);
 
     try {
-      const r = await this.mappingsUseCase.putMapping(
-        request.params.mappingID, request.payload);
+      let r;
+
+      if (request.params.mappingID !== undefined) {
+        r = await this.mappingsUseCase.updateMapping(
+          request.params.mappingID, request.payload);
+      } else {
+        r = await this.mappingsUseCase.createMapping(
+          request.payload);
+      }
 
       return h.response(r);
     } catch (e) {
@@ -45,28 +53,11 @@ class Controller {
     }
   }
 
-  _validatePutMapping(payload) {
+  _validateMapping(payload) {
     try {
       this.putMappingValidator.validate(payload);
     } catch (e) {
       throw this.errorRenderer.boomify(e, {statusCode: 400});
-    }
-  }
-
-  async handlePostMapping(request, h) {
-    this._validatePutMapping(request.payload);
-
-    try {
-      const r = await this.mappingsUseCase.createMapping(
-        request.payload);
-
-      return h.response(r);
-    } catch (e) {
-      let statusCode = 500;
-
-      if ( e instanceof EntityNotFoundError) statusCode = 404;
-
-      throw this.errorRenderer.boomify(e, {statusCode: statusCode});
     }
   }
 

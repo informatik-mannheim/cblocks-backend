@@ -59,7 +59,7 @@ class MappingsDataProvider { // TODO inject entity factory to make actual entiti
     }
   }
 
-  async putMapping(id, object) {
+  async updateMapping(id, object) {
     const r = await this.collection.updateOne({
       '_id': new ObjectID(id),
     }, {

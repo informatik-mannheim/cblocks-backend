@@ -24,10 +24,10 @@ class MappingsUseCase {
     return await this.dataProvider.deleteMapping(id);
   }
 
-  async putMapping(id, mapping) {
+  async updateMapping(id, mapping) {
     await this._check(mapping);
 
-    const r = await this.dataProvider.putMapping(id, mapping);
+    const r = await this.dataProvider.updateMapping(id, mapping);
 
     this._onUpdateMappings();
 
