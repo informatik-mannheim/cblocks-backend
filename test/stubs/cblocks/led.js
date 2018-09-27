@@ -24,8 +24,8 @@ module.exports = {
           },
           'green': {
             'type': 'number',
-             'minimum': 0,
-              'maximum': 255,
+            'minimum': 0,
+            'maximum': 255,
           },
           'blue': {
             'type':
