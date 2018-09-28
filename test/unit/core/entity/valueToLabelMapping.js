@@ -29,11 +29,11 @@ describe('Value To Label Mappping', () => {
 
     describe('compound resources', () => {
       it('should return matching label', () => {
-        const offValue = {
+        const offValue = JSON.stringify({
           'red': 0,
           'green': 0,
           'blue': 0,
-        };
+        });
 
         givenLedLabelMapping();
 

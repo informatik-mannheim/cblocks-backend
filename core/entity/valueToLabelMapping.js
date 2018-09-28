@@ -8,11 +8,13 @@ class ValueToLabelMapping {
 
   apply(val) {
     const findIndex = (() => {
-      if (typeof val === 'object') {
-        return (element) => deepEqual(element['value'], val);
-      }
+      try {
+        const jsonVal = JSON.parse(val);
 
-      return (element) => element['value'] === val;
+        return (element) => deepEqual(element['value'], jsonVal);
+      } catch (e) {
+        return (element) => element['value'] === val;
+      }
     })();
 
     const i = this._labels.findIndex(findIndex);

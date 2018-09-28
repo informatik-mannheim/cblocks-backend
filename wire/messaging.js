@@ -22,6 +22,10 @@ exports.inbound = (mqttClient, useCases) => {
       'range', mqttClient, MQTTUtil, useCases.rangeMappingsUseCase
     );
 
+    r.mqttLabelMappingAgent = new MQTTMappingAgent(
+      'label', mqttClient, MQTTUtil, useCases.labelMappingsUseCase
+    );
+
     return r;
 };
 

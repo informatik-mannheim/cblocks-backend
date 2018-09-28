@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 const cblockStubs = require('../../stubs/cblocks');
-const mappingStubs = require('../../stubs/rangeMappings');
+const mappingStubs = require('../../stubs/labelMappings');
 const util = require('../util.js');
 const wire = require('../../../wire');
 const sinon = require('sinon');
@@ -12,7 +12,7 @@ let agent;
 let mqttClient;
 let mappingID;
 
-describe('Range mapping agent', () => {
+describe('Label mapping agent', () => {
   before(async () => {
     const mongoClient = await util.getMongo();
     mqttClient = await util.getMQTT();
@@ -21,8 +21,8 @@ describe('Range mapping agent', () => {
 
     const app = wire(mongoClient, mqttClient, db, hapiServer);
     registry = app.dataProviders.registry;
-    dataProvider = app.dataProviders.rangeMappingsDataProvider;
-    agent = app.messaging.inbound.mqttRangeMappingAgent;
+    dataProvider = app.dataProviders.labelMappingsDataProvider;
+    agent = app.messaging.inbound.mqttLabelMappingAgent;
 });
 
   beforeEach(async () => {
@@ -38,43 +38,64 @@ describe('Range mapping agent', () => {
 
   describe('output', () => {
     it('should publish mapped value if resource has mapping', async () => {
-      await givenTemperatureMapping();
+      await givenLedMapping();
       await givenAgent();
 
-      await whenResourcePublishesValue(25);
+      await whenResourcePublishes(1, JSON.stringify({
+        'red': 0,
+        'green': 0,
+        'blue': 0,
+      }));
 
-      await shouldPublishMappedValue(50);
+      await shouldPublishMappedValue('On');
+
+      await whenResourcePublishes(1, JSON.stringify({
+        'red': 255,
+        'green': 255,
+        'blue': 255,
+      }));
+
+      await shouldPublishMappedValue('Off');
+
+      await whenResourcePublishes(1, JSON.stringify({
+        'red': 255,
+        'green': 255,
+        'blue': 0,
+      }));
+
+      await shouldPublishMappedValue('Undefined');
     });
 
     it('should do nothing if resource has no mapping', async () => {
       await givenAgent();
 
-      await whenResourcePublishesValue(15);
+      await whenResourcePublishes(0, true);
 
       shouldNotMap();
     });
   });
 });
 
-async function givenTemperatureMapping() {
-  let m = await registry.updateObject(cblockStubs.temperature);
+async function givenLedMapping() {
+  await registry.updateObject(cblockStubs.led);
+  const m = await dataProvider.createMapping(mappingStubs.ledLabelMapping);
+
   mappingID = m.mappingID;
-  await dataProvider.createMapping(mappingStubs.temperatureRangeMapping);
 }
 
 async function givenAgent() {
   await agent.start();
 }
 
-async function whenResourcePublishesValue(val) {
-  await agent.onMessage('3303/0/0/output', String(val));
+async function whenResourcePublishes(res, val) {
+  await agent.onMessage(`3304/0/${res}/output`, String(val));
 }
 
 async function shouldPublishMappedValue(val) {
-  expect(mqttClient.publish.calledWith(`mappings/range/${mappingID}`, String(val)));
+  expect(mqttClient.publish.calledWith(`mappings/label/${mappingID}`, String(val)));
 }
 
 function shouldNotMap() {
   expect(mqttClient.publish.calledWith(
-    `mappings/range/${mappingID}`, sinon.match.any)).to.be.false;
+    `mappings/label/${mappingID}`, sinon.match.any)).to.be.false;
 }
