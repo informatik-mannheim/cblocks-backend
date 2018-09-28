@@ -8,29 +8,59 @@ let map;
 let value;
 
 describe('Range Mappping', () => {
-  describe('apply', () => {
-    it('should return 0 if value less min', () => {
-      givenMap();
+  describe('Output', () => {
+    describe('apply', () => {
+      it('should return 0 if value less min', () => {
+        givenOutputMap();
 
-      whenValueLessMinValue();
+        whenApply(19);
 
-      shouldReturnMinValue();
+        shouldReturn(0);
+      });
+
+      it('should return 100 if value higher than max', () => {
+        givenOutputMap();
+
+        whenApply(31);
+
+        shouldReturn(100);
+      });
+
+      it('should be 50% in the middle', () => {
+        givenOutputMap();
+
+        whenApply(25);
+
+        shouldReturn(50);
+      });
     });
+  });
 
-    it('should return 100 if value higher than max', () => {
-      givenMap();
+  describe('Input', () => {
+    describe('apply', () => {
+      it('should return 20 if value is 0', () => {
+        givenInputMap();
 
-      whenValueMoreThanMax();
+        whenApply(0);
 
-      shouldReturnMaxValue();
-    });
+        shouldReturn(20);
+      });
 
-    it('should be 50% in the middle', () => {
-      givenMap();
+      it('should return 30 if value is 100', () => {
+        givenInputMap();
 
-      whenValueInMiddle();
+        whenApply(100);
 
-      shouldReturn(50);
+        shouldReturn(30);
+      });
+
+      it('should be 50% in the middle', () => {
+        givenInputMap();
+
+        whenApply(50);
+
+        shouldReturn(25);
+      });
     });
   });
 
@@ -43,32 +73,24 @@ describe('Range Mappping', () => {
   });
 });
 
-function givenMap() {
-  map = rangeMap.make(stubs.temperatureRangeMapping);
+function givenOutputMap() {
+  map = rangeMap.makeOutput(stubs.temperatureRangeMapping);
 }
 
-function whenValueLessMinValue() {
-  value = map.apply(5);
+function whenApply(val) {
+  value = map.apply(val);
 }
 
-function shouldReturnMinValue() {
-  expect(value).to.equal(0);
+function shouldReturn(val) {
+  expect(value).to.equal(val);
 }
 
-function whenValueMoreThanMax() {
-  value = map.apply(35);
-}
-
-function shouldReturnMaxValue() {
-  expect(value).to.equal(100);
-}
-
-function whenValueInMiddle() {
-  value = map.apply(25);
+function givenInputMap() {
+  map = rangeMap.makeInput(stubs.temperatureRangeMapping);
 }
 
 function isApplicableShouldReturnTrueForNumericResource() {
-  givenMap();
+  givenOutputMap();
 
   whenIsApplicableForNumericResource();
 
@@ -83,12 +105,8 @@ function whenIsApplicableForNumericResource() {
   value = map.isApplicableFor(resource);
 }
 
-function shouldReturn(val) {
-  expect(value).to.equal(val);
-}
-
 function isApplicableShouldReturnFalseIfResourceIsNotNumeric() {
-  givenMap();
+  givenOutputMap();
 
   whenIsApplicableForNonNumericResource();
 

@@ -18,8 +18,8 @@ module.exports = (messaging, dataProvider, core) => {
     'rangeMappingsUseCase': new MappingsUseCase(
       dataProvider.rangeMappingsDataProvider,
       dataProvider.registry,
-      core.entities.rangeMapping.make,
-      null,
+      core.entities.rangeMapping.makeOutput,
+      core.entities.rangeMapping.makeInput,
       core.entities.resource.make),
     'labelMappingsUseCase': new MappingsUseCase(
       dataProvider.labelMappingsDataProvider,
