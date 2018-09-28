@@ -15,5 +15,9 @@ module.exports = (db) => {
   r.rangeMappingsDataProvider = new MappingsDataProvider(
     db.collection('range-mappings'));
 
+  r.labelMappingsDataProvider = new MappingsDataProvider(
+    db.collection('label-mappings')
+  );
+
   return r;
 };

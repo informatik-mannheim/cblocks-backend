@@ -8,6 +8,7 @@ const CblocksRoutes = require('../rest/routes/cblocksRoutes.js');
 const CategoryMappingsRoutes = require(
   '../rest/routes/categoryMappingsRoutes.js');
 const RangeMappingsRoutes = require('../rest/routes/rangeMappingsRoutes.js');
+const LabelMappingsRoutes = require('../rest/routes/labelMappingsRoutes.js');
 
 const Validator = require('../rest/controller/validator.js');
 
@@ -20,6 +21,11 @@ const putRangeMappingSchema = require(
   '../rest/schema/putRangeMappingSchema.js');
 const putRangeMappingValidator = new Validator(
   JsonValidator, putRangeMappingSchema);
+
+const putLabelMappingSchema = require(
+  '../rest/schema/putLabelMappingSchema.js');
+const putLabelMappingValidator = new Validator(
+  JsonValidator, putLabelMappingSchema);
 
 module.exports = (
   hapiServer, useCases) => {
@@ -39,6 +45,11 @@ module.exports = (
       hapiServer,
       new MappingsController(
         useCases.rangeMappingsUseCase, Boom, putRangeMappingValidator));
+
+    r.labelMappingsRoutes = new LabelMappingsRoutes(
+      hapiServer,
+      new MappingsController(
+        useCases.labelMappingsUseCase, Boom, putLabelMappingValidator));
 
     return r;
 };

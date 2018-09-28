@@ -1,8 +1,10 @@
 class MappingsUseCase {
-  constructor(dataProvider, registry, makeMapping, makeResource) {
+  constructor(
+    dataProvider, registry, makeOutputMapping, makeInputMapping, makeResource) {
     this.dataProvider = dataProvider;
     this.registry = registry;
-    this.makeMapping = makeMapping;
+    this.makeOutputMapping = makeOutputMapping;
+    this.makeInputMapping = makeInputMapping;
     this.makeResource = makeResource;
 
     this._onUpdateMappings = () => {};
@@ -44,7 +46,7 @@ class MappingsUseCase {
   }
 
   _checkType(mappingDTO, resourceDTO) {
-    const map = this.makeMapping(mappingDTO);
+    const map = this.makeOutputMapping(mappingDTO);
     const r = this.makeResource(resourceDTO);
 
     if (!map.isApplicableFor(r)) {
@@ -62,7 +64,7 @@ class MappingsUseCase {
   }
 
   applyMapping(mapping, value) {
-    const map = this.makeMapping(mapping);
+    const map = this.makeOutputMapping(mapping);
 
     return map.apply(value);
   }

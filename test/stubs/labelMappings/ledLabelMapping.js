@@ -1,7 +1,7 @@
 module.exports = {
   'mappingID': 4711,
   'label': 'Button Label Mapping',
-  'objectID': 3302,
+  'objectID': 3304,
   'resourceID': 0,
   'instanceID': 0,
   'default': 'Undefined',

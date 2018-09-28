@@ -88,3 +88,7 @@ exports.getPublishErrorTopic = function(objectID, instanceID, resourceID) {
 exports.getWriteResponseTopic = function(clientID) {
   return `${clientID}/responses`;
 };
+
+exports.getMappingsInputTopic = function(mappingID, type) {
+  return `mappings/${type}/${mappingID}/input`;
+};

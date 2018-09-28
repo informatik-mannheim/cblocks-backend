@@ -114,6 +114,14 @@ describe('MQTT Util', function() {
       shouldReturn(false);
     });
   });
+
+  describe('getMappingsInputTopic', () => {
+    it('should return mappings/category/3303/input for id 3303 and type category', () => {
+      whenGetMappingInputTopicWith(3303, 'category');
+
+      shouldReturn('mappings/category/3303/input');
+    });
+  });
 });
 
 function whenGetResourceOutputTopicForTemperature() {
@@ -219,4 +227,8 @@ function whenIsInputTopicWith(val) {
 
 function whenIsOutputTopicWith(val) {
   value = mqttUtil.isOutputTopic(val);
+}
+
+function whenGetMappingInputTopicWith(mappingID, type) {
+  value = mqttUtil.getMappingsInputTopic(mappingID, type);
 }

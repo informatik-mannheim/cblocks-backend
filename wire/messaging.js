@@ -15,11 +15,11 @@ exports.inbound = (mqttClient, useCases) => {
     );
 
     r.mqttCategoryMappingAgent = new MQTTMappingAgent(
-      mqttClient, MQTTUtil, useCases.categoryMappingsUseCase
+      'category', mqttClient, MQTTUtil, useCases.categoryMappingsUseCase
     );
 
     r.mqttRangeMappingAgent = new MQTTMappingAgent(
-      mqttClient, MQTTUtil, useCases.rangeMappingsUseCase
+      'range', mqttClient, MQTTUtil, useCases.rangeMappingsUseCase
     );
 
     return r;
