@@ -92,3 +92,13 @@ exports.getWriteResponseTopic = function(clientID) {
 exports.getMappingsInputTopic = function(mappingID, type) {
   return `mappings/${type}/${mappingID}/input`;
 };
+
+exports.isMappingInputTopic = function(topic) {
+  const regex = /mappings\/([a-z]+)\/([0-9]+)\/input/g;
+
+  const matches = regex.exec(topic);
+
+  if (matches) return true;
+
+  return false;
+};

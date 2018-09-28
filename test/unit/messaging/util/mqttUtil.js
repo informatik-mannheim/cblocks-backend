@@ -122,6 +122,38 @@ describe('MQTT Util', function() {
       shouldReturn('mappings/category/3303/input');
     });
   });
+
+  describe('isMappingInputTopic', () => {
+    it('should return true for mappings/category/3303/input', () => {
+      whenIsMappingInputTopicWith('mappings/category/3303/input');
+
+      shouldReturn(true);
+    });
+
+    it('should return false for mappings/3303/input', () => {
+      whenIsMappingInputTopicWith('mappings/3303/input');
+
+      shouldReturn(false);
+    });
+
+    it('should return false for mappings/category/input', () => {
+      whenIsMappingInputTopicWith('mappings/category/input');
+
+      shouldReturn(false);
+    });
+
+    it('should return false for mappings/category/3303/output', () => {
+      whenIsMappingInputTopicWith('mappings/category/3303/output');
+
+      shouldReturn(false);
+    });
+
+    it('should return false for /mappings/category/3303/input', () => {
+      whenIsMappingInputTopicWith('/mappings/category/3303/output');
+
+      shouldReturn(false);
+    });
+  });
 });
 
 function whenGetResourceOutputTopicForTemperature() {
@@ -231,4 +263,8 @@ function whenIsOutputTopicWith(val) {
 
 function whenGetMappingInputTopicWith(mappingID, type) {
   value = mqttUtil.getMappingsInputTopic(mappingID, type);
+}
+
+function whenIsMappingInputTopicWith(topic) {
+  value = mqttUtil.isMappingInputTopic(topic);
 }
