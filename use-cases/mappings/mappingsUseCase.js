@@ -69,6 +69,12 @@ class MappingsUseCase {
     return map.apply(value);
   }
 
+  applyInputMapping(mapping, value) {
+    const map = this.makeInputMapping(mapping);
+
+    return map.apply(value);
+  }
+
   registerOnUpdateMappings(cb) {
     this._onUpdateMappings = cb;
   }

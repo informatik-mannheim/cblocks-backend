@@ -13,6 +13,14 @@ describe('MQTT Util', function() {
     });
   });
 
+  describe('getResourceInputTopic', function() {
+    it('should be of form objectID/instanceID/resourceID/input', function() {
+      whenGetResourceInputTopicForTemperature();
+
+      shouldBeOfIPSOInputForm();
+    });
+  });
+
   describe('getInternalResourceInputTopic', function() {
     it('should be of ipso form', function() {
       whenGetResourceInputTopicForLED();
@@ -124,8 +132,13 @@ describe('MQTT Util', function() {
   });
 
   describe('isMappingInputTopic', () => {
-    it('should return true for mappings/category/3303/input', () => {
+    it('should return true for correct mapping input topic', () => {
       whenIsMappingInputTopicWith('mappings/category/3303/input');
+
+      shouldReturn(true);
+
+      whenIsMappingInputTopicWith(
+        'mappings/label/5bbc6c1987a2d423f62aa045/input');
 
       shouldReturn(true);
     });
@@ -156,12 +169,28 @@ describe('MQTT Util', function() {
   });
 });
 
+describe('getMappingIDInTopic', () => {
+  it('should return id if topic is well formatted', () => {
+    whenGetMappingIDInTopicWith('mappings/label/5bbc6c1987a2d423f62aa045/input');
+
+    shouldReturn('5bbc6c1987a2d423f62aa045');
+  });
+});
+
 function whenGetResourceOutputTopicForTemperature() {
   value = mqttUtil.getResourceOutputTopic(3303, 0, 1);
 }
 
 function shouldBeOfIPSOForm() {
   expect(value).to.equal('3303/0/1/output');
+}
+
+function whenGetResourceInputTopicForTemperature() {
+  value = mqttUtil.getResourceInputTopic(3303, 0, 1);
+}
+
+function shouldBeOfIPSOInputForm() {
+  expect(value).to.equal('3303/0/1/input');
 }
 
 function whenGetResourceInputTopicForLED() {
@@ -267,4 +296,8 @@ function whenGetMappingInputTopicWith(mappingID, type) {
 
 function whenIsMappingInputTopicWith(topic) {
   value = mqttUtil.isMappingInputTopic(topic);
+}
+
+function whenGetMappingIDInTopicWith(topic) {
+  value = mqttUtil.getMappingIDInTopic(topic);
 }

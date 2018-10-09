@@ -2,6 +2,10 @@ exports.getResourceOutputTopic = function(objectID, instanceID, resourceID) {
   return `${objectID}/${instanceID}/${resourceID}/output`;
 };
 
+exports.getResourceInputTopic = function(objectID, instanceID, resourceID) {
+  return `${objectID}/${instanceID}/${resourceID}/input`;
+};
+
 exports.getInternalResourceInputTopic = function(
   clientID, objectID, instanceID, resourceID) {
     return `internal/${clientID}/${objectID}/${instanceID}/${resourceID}/input`;
@@ -94,11 +98,21 @@ exports.getMappingsInputTopic = function(mappingID, type) {
 };
 
 exports.isMappingInputTopic = function(topic) {
-  const regex = /mappings\/([a-z]+)\/([0-9]+)\/input/g;
+  const regex = /mappings\/([a-z]+)\/([a-z0-9]+)\/input/g;
 
   const matches = regex.exec(topic);
 
   if (matches) return true;
 
   return false;
+};
+
+exports.getMappingIDInTopic = (topic) => {
+  const regex = /mappings\/([a-z]+)\/([a-z0-9]+)\/input/g;
+
+  const matches = regex.exec(topic);
+
+  if (matches) return matches[2];
+
+  throw new Error('Invalid mapping topic.');
 };

@@ -23,7 +23,7 @@ describe('Label mapping agent', () => {
     registry = app.dataProviders.registry;
     dataProvider = app.dataProviders.labelMappingsDataProvider;
     agent = app.messaging.inbound.mqttLabelMappingAgent;
-});
+  });
 
   beforeEach(async () => {
     sinon.spy(mqttClient, 'publish');
@@ -48,22 +48,6 @@ describe('Label mapping agent', () => {
       }));
 
       await shouldPublishMappedValue('On');
-
-      await whenResourcePublishes(1, JSON.stringify({
-        'red': 255,
-        'green': 255,
-        'blue': 255,
-      }));
-
-      await shouldPublishMappedValue('Off');
-
-      await whenResourcePublishes(1, JSON.stringify({
-        'red': 255,
-        'green': 255,
-        'blue': 0,
-      }));
-
-      await shouldPublishMappedValue('Undefined');
     });
 
     it('should do nothing if resource has no mapping', async () => {
@@ -72,6 +56,18 @@ describe('Label mapping agent', () => {
       await whenResourcePublishes(0, true);
 
       shouldNotMap();
+    });
+  });
+
+  describe('input', () => {
+    it('should publish mapped value if mappings exists', async () => {
+      await givenLedMapping();
+      await givenAgent();
+
+      await whenServiceCallsInputWith('On');
+
+      await shouldPublishCommand(1,
+        JSON.stringify(mappingStubs.ledLabelMapping.labels[1].value));
     });
   });
 });
@@ -92,10 +88,21 @@ async function whenResourcePublishes(res, val) {
 }
 
 async function shouldPublishMappedValue(val) {
-  expect(mqttClient.publish.calledWith(`mappings/label/${mappingID}`, String(val)));
+  expect(mqttClient.publish.calledWith(`mappings/label/${mappingID}/output`, String(val)));
 }
 
 function shouldNotMap() {
   expect(mqttClient.publish.calledWith(
-    `mappings/label/${mappingID}`, sinon.match.any)).to.be.false;
+    `mappings/label/${mappingID}/output`, sinon.match.any)).to.be.false;
+}
+
+async function whenServiceCallsInputWith(val) {
+  await agent.onMessage(`mappings/label/${mappingID}/input`, val);
+}
+
+async function shouldPublishCommand(res, val) {
+  console.log(mqttClient.publish);
+
+  expect(mqttClient.publish.calledWith(
+    `internal/service/3304/0/${res}/input`, String(val))).to.be.true;
 }
