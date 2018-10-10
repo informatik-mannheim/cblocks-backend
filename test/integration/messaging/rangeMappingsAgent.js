@@ -54,12 +54,54 @@ describe('Range mapping agent', () => {
       shouldNotMap();
     });
   });
+
+  describe('input', () => {
+    describe('given temperature mappings', () => {
+      it('should publish matching value within boundaries', async () => {
+        await givenTemperatureMapping();
+        await givenAgent();
+
+        await whenServiceCallsInputWith(50);
+
+        await shouldPublishCommand(0, 25);
+      });
+
+      it('should publish upper bound for 100 %', async () => {
+        await givenTemperatureMapping();
+        await givenAgent();
+
+        await whenServiceCallsInputWith(100);
+
+        await shouldPublishCommand(0, 30);
+      });
+
+      it('should publish lower bound for 0 %', async () => {
+        await givenTemperatureMapping();
+        await givenAgent();
+
+        await whenServiceCallsInputWith(0);
+
+        await shouldPublishCommand(0, 20);
+      });
+    });
+
+    describe('given no mappings', () => {
+      it('should do nothing', async () => {
+        await givenAgent();
+
+        await whenServiceCallsInputWith(50);
+
+        shouldNotPublishCommand(0);
+      });
+    });
+  });
 });
 
 async function givenTemperatureMapping() {
-  let m = await registry.updateObject(cblockStubs.temperature);
+  await registry.updateObject(cblockStubs.temperature);
+  let m = await dataProvider.createMapping(mappingStubs.temperatureRangeMapping);
+
   mappingID = m.mappingID;
-  await dataProvider.createMapping(mappingStubs.temperatureRangeMapping);
 }
 
 async function givenAgent() {
@@ -77,4 +119,18 @@ async function shouldPublishMappedValue(val) {
 function shouldNotMap() {
   expect(mqttClient.publish.calledWith(
     `mappings/range/${mappingID}/output`, sinon.match.any)).to.be.false;
+}
+
+async function whenServiceCallsInputWith(val) {
+  await agent.onMessage(`mappings/range/${mappingID}/input`, val);
+}
+
+async function shouldPublishCommand(res, val) {
+  expect(mqttClient.publish.calledWith(
+    `internal/service/3303/0/${res}/input`, String(val))).to.be.true;
+}
+
+async function shouldNotPublishCommand(res) {
+  expect(mqttClient.publish.calledWith(
+    `internal/service/3303/0/${res}/input`, sinon.match.any)).to.be.false;
 }

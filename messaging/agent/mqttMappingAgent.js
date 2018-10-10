@@ -68,6 +68,7 @@ class MQTTMappingAgent {
         'service', m.objectID, m.instanceID, m.resourceID), v);
     } catch (e) {
       // TODO: some form of logging
+      console.log(e);
     }
   }
 
