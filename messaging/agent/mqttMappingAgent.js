@@ -54,18 +54,21 @@ class MQTTMappingAgent {
   }
 
   async _handleInput(topic, message) {
-    const m = await this._getMappingForMappingInput(topic);
+    try {
+      const m = await this._getMappingForMappingInput(topic);
+      let v = this._useCase.applyInputMapping(m, message);
 
-    let v = this._useCase.applyInputMapping(m, message);
+      if (v instanceof Object) {
+        v = JSON.stringify(v);
+      } else {
+        v = String(v);
+      }
 
-    if (v instanceof Object) {
-      v = JSON.stringify(v);
-    } else {
-      v = String(v);
+      this._client.publish(this._util.getInternalResourceInputTopic(
+        'service', m.objectID, m.instanceID, m.resourceID), v);
+    } catch (e) {
+      // TODO: some form of logging
     }
-
-    this._client.publish(this._util.getInternalResourceInputTopic(
-      'service', m.objectID, m.instanceID, m.resourceID), v);
   }
 
   _getMappingForMappingInput(topic) {

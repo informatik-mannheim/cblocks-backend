@@ -60,14 +60,35 @@ describe('Label mapping agent', () => {
   });
 
   describe('input', () => {
-    it('should publish mapped value if mappings exists', async () => {
-      await givenLedMapping();
-      await givenAgent();
+    describe('given mapping exists', () => {
+      it('should publish mapped value if label exists', async () => {
+        await givenLedMapping();
+        await givenAgent();
 
-      await whenServiceCallsInputWith('On');
+        await whenServiceCallsInputWith('On');
 
-      await shouldPublishCommand(1,
-        JSON.stringify(mappingStubs.ledLabelMapping.labels[1].value));
+        await shouldPublishCommand(1,
+          JSON.stringify(mappingStubs.ledLabelMapping.labels[1].value));
+      });
+
+      it('should publish no value if label does not exist', async () => {
+        await givenLedMapping();
+        await givenAgent();
+
+        await whenServiceCallsInputWith('Something');
+
+        await shouldNotPublishCommand(1);
+      });
+    });
+
+    describe('given mapping does not exist', () => {
+      it('should do nothing', async () => {
+        await givenAgent();
+
+        await whenServiceCallsInputWith('On');
+
+        await shouldNotPublishCommand(1);
+      });
     });
   });
 });
@@ -101,8 +122,11 @@ async function whenServiceCallsInputWith(val) {
 }
 
 async function shouldPublishCommand(res, val) {
-  console.log(mqttClient.publish);
-
   expect(mqttClient.publish.calledWith(
     `internal/service/3304/0/${res}/input`, String(val))).to.be.true;
+}
+
+async function shouldNotPublishCommand(res) {
+  expect(mqttClient.publish.calledWith(
+    `internal/service/3304/0/${res}/input`, sinon.match.any)).to.be.false;
 }
