@@ -1,8 +1,8 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const resource = require('../../../../../core/entity/resource.js');
-const stubs = require('../../../../stubs/cblocks');
+const resource = require('../../../../core/entity/resource.js');
+const stubs = require('../../../stubs/cblocks');
 
 let res;
 let isNumeric;

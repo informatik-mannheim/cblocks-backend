@@ -1,13 +1,14 @@
+// TODO put data provider methods in here
+
 class Resource {
-  constructor(type) {
-    this._type = type;
+  constructor(validator) {
+    this.validator = validator;
   }
 
   isNumeric() {
-    return (this._type === 'number' || this._type === 'integer');
+    return (this.schema.type === 'number' || this.schema.type === 'integer');
   }
 }
 
-exports.make = (dto) => {
-  return new Resource(dto.schema.type);
-};
+exports.make = (dto) =>
+  Object.create(Resource.prototype, Object.getOwnPropertyDescriptors(dto));

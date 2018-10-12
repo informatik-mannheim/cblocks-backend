@@ -6,6 +6,17 @@ module.exports = {
       'resourceID': 0,
       'name': 'Current Temperature',
       'is_writeable': false,
+      'unit': '°',
+      'schema': {
+        'type': 'number',
+        'additionalProperties': false,
+      },
+    },
+    '1': {
+      'resourceID': 1,
+      'name': 'Relative Humidity',
+      'is_writeable': false,
+      'unit': '%',
       'schema': {
         'type': 'number',
         'additionalProperties': false,
