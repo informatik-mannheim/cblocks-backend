@@ -1,9 +1,10 @@
 const MongoClient = require('mongodb').MongoClient;
 const DB = 'cblocks';
-const cblocks = require('./data/cblocks');
-const categoryMappings = require('./data/categoryMappings');
-const rangeMappings = require('./data/rangeMappings');
-const labelMappings = require('./data/labelMappings');
+const cblocks = require('../test/stubs/cblocks');
+const categoryMappings = require('../test/stubs/categoryMappings');
+const rangeMappings = require('../test/stubs/rangeMappings');
+const labelMappings = require('../test/stubs/labelMappings');
+const mongoHost = process.argv[2] || 'localhost';
 const _ = require('lodash');
 
 const collectionNames =
@@ -15,7 +16,7 @@ async function bootstrap() {
 
   while (!isConnected) {
     try {
-      mongoClient = await MongoClient.connect('mongodb://mongo:27017');
+      mongoClient = await MongoClient.connect(`mongodb://${mongoHost}:27017`);
       isConnected = true;
     } catch (e) {
     }

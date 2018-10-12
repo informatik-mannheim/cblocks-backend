@@ -4,10 +4,6 @@ services:
     image: "mongo"
     ports:
       - "27017:27017"
-  mongo_bootstrap:
-    build: ./mongo_bootstrap/
-    depends_on:
-      - "mongo"
   mqtt:
     image: "eclipse-mosquitto"
     ports:
