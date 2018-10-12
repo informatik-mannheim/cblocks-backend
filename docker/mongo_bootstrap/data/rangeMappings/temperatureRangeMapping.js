@@ -1,5 +1,4 @@
 module.exports = {
-  'mappingID': 4711,
   'label': 'Temperature Range Mapping',
   'objectID': 3303,
   'resourceID': 0,

@@ -1,5 +1,4 @@
 module.exports = {
-  'mappingID': 4711,
   'label': 'Temperature Category Mapping',
   'default': 'High',
   'objectID': 3303,

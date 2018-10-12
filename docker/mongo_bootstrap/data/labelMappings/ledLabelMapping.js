@@ -1,5 +1,4 @@
 module.exports = {
-  'mappingID': 4711,
   'label': 'LED Label Mapping',
   'objectID': 3304,
   'resourceID': 1,

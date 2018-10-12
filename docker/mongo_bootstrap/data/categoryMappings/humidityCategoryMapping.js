@@ -1,9 +1,8 @@
 module.exports = {
-  'mappingID': 4712,
   'label': 'Humidity Category Mapping',
   'default': 'High',
-  'objectID': 3304,
-  'resourceID': 0,
+  'objectID': 3303,
+  'resourceID': 1,
   'instanceID': 0,
   'ranges': [
     {

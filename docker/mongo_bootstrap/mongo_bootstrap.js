@@ -1,5 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
-const DB = 'tmp';
+const DB = 'cblocks';
 const cblocks = require('./data/cblocks');
 const categoryMappings = require('./data/categoryMappings');
 const rangeMappings = require('./data/rangeMappings');
