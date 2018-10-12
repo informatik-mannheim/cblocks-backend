@@ -1,8 +1,8 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const mapping = require('../../../../core/entity/categoryMapping.js');
-const stubs = require('../../../stubs/categoryMappings');
+const mapping = require('../../../../../core/entity/mappings/categoryMapping.js');
+const stubs = require('../../../../stubs/categoryMappings');
 
 let map;
 let value;

@@ -1,8 +1,8 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const rangeMap = require('../../../../core/entity/rangeMapping.js');
-const stubs = require('../../../stubs/rangeMappings');
+const rangeMap = require('../../../../../core/entity/mappings/rangeMapping.js');
+const stubs = require('../../../../stubs/rangeMappings');
 
 let map;
 let value;

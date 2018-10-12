@@ -1,8 +1,8 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const mapping = require('../../../../core/entity/valueToLabelMapping.js');
-const stubs = require('../../../stubs/labelMappings');
+const mapping = require('../../../../../core/entity/mappings/valueToLabelMapping.js');
+const stubs = require('../../../../stubs/labelMappings');
 
 let value;
 let map;
