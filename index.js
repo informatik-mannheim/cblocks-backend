@@ -58,10 +58,12 @@ const init = async () => {
     app.messaging.inbound.mqttWriteAgent.start();
     app.messaging.inbound.mqttRangeMappingAgent.start();
     app.messaging.inbound.mqttCategoryMappingAgent.start();
+    app.messaging.inbound.mqttLabelMappingAgent.start();
 
     app.rest.cblocksRoutes.start();
     app.rest.categoryMappingsRoutes.start();
     app.rest.rangeMappingsRoutes.start();
+    app.rest.labelMappingsRoutes.start();
 
     console.log('Application bootstrapped.');
   } catch (e) {

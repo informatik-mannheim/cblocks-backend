@@ -118,12 +118,16 @@ function shouldNotMap() {
 }
 
 async function whenServiceCallsInputWith(val) {
-  await agent.onMessage(`mappings/label/${mappingID}/input`, val);
+  await agent.onMessage(`mappings/label/${mappingID}/input`, String(val));
 }
 
 async function shouldPublishCommand(res, val) {
+  const commandValue = JSON.stringify({
+    'data': String(val),
+  });
+
   expect(mqttClient.publish.calledWith(
-    `internal/service/3304/0/${res}/input`, String(val))).to.be.true;
+    `internal/service/3304/0/${res}/input`, commandValue)).to.be.true;
 }
 
 async function shouldNotPublishCommand(res) {

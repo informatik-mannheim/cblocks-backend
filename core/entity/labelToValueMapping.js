@@ -4,6 +4,7 @@ class LabelToValueMapping {
   }
 
   apply(label) {
+    console.log(label);
     const i = this._labels.findIndex((e) => e['label'] === label);
 
     if (i === -1) throw new Error('Label not found.');
