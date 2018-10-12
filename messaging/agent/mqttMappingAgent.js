@@ -71,7 +71,6 @@ class MQTTMappingAgent {
         }));
     } catch (e) {
       // TODO: some form of logging
-      // console.log(e);
     }
   }
 
