@@ -8,6 +8,7 @@ module.exports = () => {
     require('../core/entity/mappings/labelToValueMapping.js');
   r.entities.valueToLabelMapping =
     require('../core/entity/mappings/valueToLabelMapping.js');
+  r.entities.cblock = require('../core/entity/cblock.js');
   r.entities.resource = require('../core/entity/resource.js');
 
   return r;

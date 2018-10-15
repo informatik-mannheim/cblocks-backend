@@ -6,7 +6,7 @@ const wireUseCases = require('./useCases.js');
 
 module.exports = (mongoClient, mqttClient, db, hapiServer) => {
   const core = wireCore();
-  const dataProviders = wireDataProviders(db);
+  const dataProviders = wireDataProviders(db, core);
 
   let messaging = {};
   messaging.outbound = wireMessaging.outbound(mqttClient);

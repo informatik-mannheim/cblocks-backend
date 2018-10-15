@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "test": "mocha --recursive"
+    "test": "mocha --recursive",
+    "unit": "mocha --recursive test/unit"
   },
   "author": "",
   "license": "ISC",

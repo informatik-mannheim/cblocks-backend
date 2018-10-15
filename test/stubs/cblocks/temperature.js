@@ -6,7 +6,7 @@ module.exports = {
       'resourceID': 0,
       'name': 'Current Temperature',
       'is_writeable': false,
-      'unit': '°',
+      'unit': '°C',
       'schema': {
         'type': 'number',
         'additionalProperties': false,

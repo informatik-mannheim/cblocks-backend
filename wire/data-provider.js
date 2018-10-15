@@ -4,10 +4,11 @@ const Registry = require('../data-provider/registry.js');
 const MappingsDataProvider = require(
   '../data-provider/mappingsDataProvider.js');
 
-module.exports = (db) => {
+module.exports = (db, core) => {
   let r = {};
 
-  r.registry = new Registry(db.collection('registry'), new JsonValidator());
+  r.registry = new Registry(
+    db.collection('registry'), core.entities.cblock.make);
 
   r.categoryMappingsDataProvider = new MappingsDataProvider(
     db.collection('category-mappings'));

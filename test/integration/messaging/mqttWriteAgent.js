@@ -8,7 +8,6 @@ const sinon = require('sinon');
 let registry;
 let agent;
 let mqttClient;
-let mappingID;
 
 describe('MQTT Write Agent', () => {
   before(async () => {
@@ -21,7 +20,7 @@ describe('MQTT Write Agent', () => {
     registry = app.dataProviders.registry;
     agent = app.messaging.inbound.mqttWriteAgent;
     writer = app.messaging.outbound.mqttWriter;
-    writer.writeTimeoutMS = 10;
+    writer.writeTimeoutMS = 50;
   });
 
   beforeEach(async () => {
@@ -66,6 +65,15 @@ describe('MQTT Write Agent', () => {
     await whenPublishInvalidCommand();
 
     shouldPublishErrorWithMessage('instance is not of a type(s) boolean');
+  });
+
+  it('should publish error if resource not found', async () => {
+    await givenLEDCBlock();
+    await givenAgent();
+
+    await whenPublishNoneExistingResource();
+
+    shouldPublishErrorWithMessage('Resource not found.');
   });
 });
 
@@ -124,3 +132,10 @@ async function whenPublishInvalidCommand() {
     'data': 99,
   }));
 };
+
+async function whenPublishNoneExistingResource() {
+  await agent._onMessage('testClient/3304/0/5/input', JSON.stringify({
+    'requestID': 4711,
+    'data': 99,
+  }));
+}

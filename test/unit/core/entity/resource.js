@@ -8,20 +8,22 @@ let res;
 let isNumeric;
 
 describe('Resource', () => {
-  it('isNumeric should return true for temperature', () => {
-    givenTemperatureResource();
+  describe('isNumeric', () => {
+    it('should return true for temperature', () => {
+      givenTemperatureResource();
 
-    whenIsNumeric();
+      whenIsNumeric();
 
-    shouldReturn(true);
-  });
+      shouldReturn(true);
+    });
 
-  it('isNumeric should return false for on/off', () => {
-    givenOnOffResource();
+    it('should return false for on/off', () => {
+      givenOnOffResource();
 
-    whenIsNumeric();
+      whenIsNumeric();
 
-    shouldReturn(false);
+      shouldReturn(false);
+    });
   });
 });
 

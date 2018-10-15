@@ -1,9 +1,9 @@
 const EntityNotFoundError = require('../core/entityNotFoundError.js');
 
 class Registry {
-  constructor(collection, validator) {
+  constructor(collection, makeCblock) {
     this.collection = collection;
-    this.validator = validator;
+    this.makeCblock = makeCblock;
   }
 
   async getObject(objectID) {
@@ -13,11 +13,14 @@ class Registry {
       throw new EntityNotFoundError('cBlock not found.');
     }
 
-    return o;
+    return this.makeCblock(o);
   }
 
   async getObjects() {
-    return await this.collection.find().toArray();
+    const data = await this.collection.find().toArray();
+    const cblocks = data.map((o) => this.makeCblock(o));
+
+    return cblocks;
   }
 
   async getResource(objectID, resourceID) {
@@ -79,30 +82,6 @@ class Registry {
     }, {
       upsert: true,
     });
-  }
-
-  async validate(objectID, resourceID, data) {
-    const r = await this.getResource(objectID, resourceID);
-
-    const result = this.validator.validate(data, r.schema);
-
-    if (result.valid) return;
-
-    throw new Error(result.errors[0].stack);
-  }
-
-  async validateWrite(objectID, resourceID, data) {
-    const r = await this.getResource(objectID, resourceID);
-
-    if (!r.is_writeable) {
-      throw new Error('Resource is not writable.');
-    }
-
-    const result = this.validator.validate(data, r.schema);
-
-    if (result.valid) return;
-
-    throw new Error(result.errors[0].stack);
   }
 }
 
