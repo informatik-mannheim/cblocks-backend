@@ -1,4 +1,5 @@
 const makeResource = require('./resource.js').make;
+const EntityNotFoundError = require('../entityNotFoundError.js');
 
 class Cblock {
   getResource(id) {
@@ -7,7 +8,16 @@ class Cblock {
       return this.resources[id];
     }
 
-    throw new Error('Resource not found.');
+    throw new EntityNotFoundError('Resource not found.');
+  }
+
+  getInstance(id) {
+    if (this.hasOwnProperty('instances')
+      && this.instances.hasOwnProperty(id)) {
+      return this.instances[id];
+    }
+
+    throw new EntityNotFoundError('Instance not found.');
   }
 }
 

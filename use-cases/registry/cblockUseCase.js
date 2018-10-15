@@ -12,7 +12,12 @@ class CBlockUseCase {
   }
 
   async setInstanceLabel(objectID, instanceID, label) {
-    return await this.registry.setInstanceLabel(objectID, instanceID, label);
+    const o = await this.registry.getObject(objectID);
+    o.getInstance(instanceID).label = label;
+
+    console.log(o);
+
+    return await this.registry.updateObject(o);
   }
 }
 

@@ -10,6 +10,8 @@ module.exports = {
       'schema': {
         'type': 'number',
         'additionalProperties': false,
+        'minimum': 0,
+        'maximum': 100,
       },
     },
     '1': {
@@ -20,6 +22,8 @@ module.exports = {
       'schema': {
         'type': 'number',
         'additionalProperties': false,
+        'minimum': 0,
+        'maximum': 100,
       },
     },
   },

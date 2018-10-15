@@ -36,10 +36,11 @@ class MappingsUseCase {
   }
 
   async _check(mapping) {
-    await this.registry.getInstance(mapping.objectID, mapping.instanceID);
+    const o = await this.registry.getObject(mapping.objectID);
 
-    const r = (await this.registry.getObject(mapping.objectID))
-      .getResource(mapping.resourceID);
+    o.getInstance(mapping.instanceID);
+
+    const r = o.getResource(mapping.resourceID);
 
     this._checkType(mapping, r);
   }
