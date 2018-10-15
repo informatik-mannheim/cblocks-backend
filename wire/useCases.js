@@ -3,12 +3,11 @@ const ResourceWriteUseCase =
 const CBlockUseCase = require('../use-cases/registry/cblockUseCase.js');
 const MappingsUseCase = require(
   '../use-cases/mappings/mappingsUseCase.js');
-const validateWrite = require('../use-cases/resource-write/validateWrite.js');
 
 module.exports = (messaging, dataProvider, core) => {
   return {
     'resourceWriteUseCase': new ResourceWriteUseCase(
-      dataProvider.registry, messaging.mqttWriter, validateWrite),
+      dataProvider.registry, messaging.mqttWriter),
     'cBlockUseCase': new CBlockUseCase(dataProvider.registry),
     'categoryMappingsUseCase': new MappingsUseCase(
       dataProvider.categoryMappingsDataProvider,

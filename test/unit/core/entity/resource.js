@@ -25,6 +25,23 @@ describe('Resource', () => {
       shouldReturn(false);
     });
   });
+
+  describe('validateWrite', () => {
+    it('should do nothing if data is valid', () => {
+      givenOnOffResource();
+
+      whenValidate(true);
+
+      // should do nothing
+    });
+
+    it('should throw error if data is not valid', () => {
+      givenOnOffResource();
+
+      shouldThrow(
+        whenValidate.bind(null, 25.5));
+    });
+  });
 });
 
 function givenTemperatureResource() {
@@ -41,4 +58,12 @@ function shouldReturn(val) {
 
 function givenOnOffResource() {
   res = resource.make(stubs.led['resources'][0]);
+}
+
+function whenValidate(data) {
+  res.validateWrite(data);
+}
+
+function shouldThrow(fn) {
+  expect(fn).to.throw;
 }
