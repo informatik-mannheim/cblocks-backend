@@ -23,24 +23,6 @@ class Registry {
     return cblocks;
   }
 
-  async getResource(objectID, resourceID) {
-    const o = await this.getObject(objectID);
-
-    if (this._objectHasResource(o, resourceID)) {
-      return o.resources[resourceID];
-    }
-
-    throw new EntityNotFoundError('Resource not found.');
-  }
-
-  _objectHasResource(object, resourceID) {
-    if (object.hasOwnProperty('resources')
-      && object.resources.hasOwnProperty(resourceID)) {
-      return true;
-    }
-    return false;
-  }
-
   async setInstanceLabel(objectID, instanceID, label) {
     const o = await this.getObject(objectID);
 

@@ -2,7 +2,8 @@ const makeResource = require('./resource.js').make;
 
 class Cblock {
   getResource(id) {
-    if (this.resources.hasOwnProperty(id)) {
+    if (this.hasOwnProperty('resources')
+      && this.resources.hasOwnProperty(id)) {
       return this.resources[id];
     }
 

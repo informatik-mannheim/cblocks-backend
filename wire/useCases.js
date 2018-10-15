@@ -14,19 +14,16 @@ module.exports = (messaging, dataProvider, core) => {
       dataProvider.categoryMappingsDataProvider,
       dataProvider.registry,
       core.entities.categoryMapping.make,
-      null,
-      core.entities.resource.make),
+      null),
     'rangeMappingsUseCase': new MappingsUseCase(
       dataProvider.rangeMappingsDataProvider,
       dataProvider.registry,
       core.entities.rangeMapping.makeOutput,
-      core.entities.rangeMapping.makeInput,
-      core.entities.resource.make),
+      core.entities.rangeMapping.makeInput),
     'labelMappingsUseCase': new MappingsUseCase(
       dataProvider.labelMappingsDataProvider,
       dataProvider.registry,
       core.entities.valueToLabelMapping.make,
-      core.entities.labelToValueMapping.make,
-      core.entities.resource.make),
+      core.entities.labelToValueMapping.make),
   };
 };
