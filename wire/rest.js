@@ -10,6 +10,9 @@ const CategoryMappingsRoutes = require(
 const RangeMappingsRoutes = require('../rest/routes/rangeMappingsRoutes.js');
 const LabelMappingsRoutes = require('../rest/routes/labelMappingsRoutes.js');
 
+const IftttTestRoutes = require('../rest/routes/ifttt/testRoutes.js');
+const IftttTestController = require('../rest/controller/ifttt/testController.js');
+
 const Validator = require('../rest/controller/validator.js');
 
 const putCategoryMappingSchema = require(
@@ -50,6 +53,13 @@ module.exports = (
       hapiServer,
       new MappingsController(
         useCases.labelMappingsUseCase, Boom, putLabelMappingValidator));
+
+    r.ifft = {
+      'test': new IftttTestRoutes(
+          hapiServer,
+          new IftttTestController()
+      ),
+    };
 
     return r;
 };

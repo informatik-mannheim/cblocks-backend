@@ -49,7 +49,7 @@ exports.sendRequest = async (request) => {
   try {
     payload = JSON.parse(response.payload);
   } catch (e) {
-
+    console.log(e);
   }
 
   return {
