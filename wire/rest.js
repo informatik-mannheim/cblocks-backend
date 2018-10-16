@@ -54,8 +54,8 @@ module.exports = (
       new MappingsController(
         useCases.labelMappingsUseCase, Boom, putLabelMappingValidator));
 
-    r.ifft = {
-      'test': new IftttTestRoutes(
+    r.ifttt = {
+      'testRoutes': new IftttTestRoutes(
           hapiServer,
           new IftttTestController()
       ),

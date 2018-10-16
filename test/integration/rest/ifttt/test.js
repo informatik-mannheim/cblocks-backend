@@ -28,7 +28,7 @@ describe('REST IFTTT Test Setup', () => {
     db = mongoClient.db('test');
 
     const app = wire(mongoClient, mqttClient, db, hapiServer);
-    app.rest.ifft.test.start();
+    app.rest.ifttt.testRoutes.start();
   });
 
   beforeEach(async () => {
