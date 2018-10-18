@@ -2,6 +2,7 @@ const config = require('config');
 const mqttConfig = config.get('mqtt');
 const mongoConfig = config.get('mongo');
 const hapiConfig = config.get('hapi');
+const iftttConfig = config.get('ifttt');
 
 const mqtt = require('async-mqtt');
 const Hapi = require('hapi');
@@ -53,7 +54,7 @@ const init = async () => {
     await hapiServer.start();
     console.log(`REST Server running at: ${hapiServer.info.uri}`);
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, iftttConfig);
 
     app.messaging.inbound.mqttWriteAgent.start();
     app.messaging.inbound.mqttRangeMappingAgent.start();
@@ -65,6 +66,7 @@ const init = async () => {
     app.rest.rangeMappingsRoutes.start();
     app.rest.labelMappingsRoutes.start();
     app.rest.ifttt.testRoutes.start();
+    app.rest.ifttt.statusRoutes.start();
 
     console.log('Application bootstrapped.');
   } catch (e) {

@@ -2,7 +2,6 @@ const chai = require('chai');
 const expect = chai.expect;
 const util = require('../../util.js');
 const wire = require('../../../../wire');
-const examples = require('../../../../rest/controller/ifttt/testExamples.js');
 const config = require('config');
 const iftttConfig = config.get('ifttt');
 
@@ -10,10 +9,9 @@ let hapiServer;
 let db;
 let response;
 
-const postTestSetupDefaults = {
-  'method': 'POST',
-  'url': '/ifttt/v1/test/setup',
-  'payload': {},
+const getStatusDefaults = {
+  'method': 'GET',
+  'url': '/ifttt/v1/status',
   'headers': {
     'ifttt-service-key': iftttConfig['service-key'],
     'ifttt-channel-key': iftttConfig['service-key'],
@@ -23,7 +21,7 @@ const postTestSetupDefaults = {
   },
 };
 
-describe('REST IFTTT Test Setup', () => {
+describe('REST IFTTT Status', () => {
   before(async () => {
     const mongoClient = await util.getMongo();
     const mqttClient = await util.getMQTT();
@@ -31,7 +29,7 @@ describe('REST IFTTT Test Setup', () => {
     db = mongoClient.db('test');
 
     const app = wire(mongoClient, mqttClient, db, hapiServer, iftttConfig);
-    app.rest.ifttt.testRoutes.start();
+    app.rest.ifttt.statusRoutes.start();
   });
 
   beforeEach(async () => {
@@ -40,18 +38,32 @@ describe('REST IFTTT Test Setup', () => {
     payload = {};
   });
 
-  describe('POST /ifttt/v1/test/setup', () => {
-    it('should return all trigger examples', async () => {
-      await whenRequest(postTestSetupDefaults);
+  describe('GET /ifttt/v1/status', () => {
+    it('should return status code 200', async () => {
+      await whenRequest(getStatusDefaults);
 
-      shouldContain(examples.triggers);
+      statusCodeShouldBe(200);
+    });
+
+    it('should return 401 if channel key is invalid', async () => {
+      const getStatusWithInvalidChannelKey = {
+        ...getStatusDefaults,
+        'headers': {
+          'ifttt-channel-key': 'INVALID',
+        },
+      };
+
+      await whenRequest(getStatusWithInvalidChannelKey);
+
+      statusCodeShouldBe(401);
     });
   });
 });
+
 async function whenRequest(r) {
   response = await util.sendRequest(r);
 }
 
-function shouldContain(data) {
-  expect(response.payload.data.samples.triggers).to.deep.equal(data);
+function statusCodeShouldBe(code) {
+  expect(response.raw.statusCode).to.equal(code);
 }

@@ -12,6 +12,10 @@ const LabelMappingsRoutes = require('../rest/routes/labelMappingsRoutes.js');
 
 const IftttTestRoutes = require('../rest/routes/ifttt/testRoutes.js');
 const IftttTestController = require('../rest/controller/ifttt/testController.js');
+const IftttStatusRoutes = require('../rest/routes/ifttt/statusRoutes.js');
+const IftttStatusController = require('../rest/controller/ifttt/statusController.js');
+const makeIftttHeaderValidation = require('../rest/routes/ifttt/validateHeaders.js')
+  .makeHandler;
 
 const Validator = require('../rest/controller/validator.js');
 
@@ -31,7 +35,7 @@ const putLabelMappingValidator = new Validator(
   JsonValidator, putLabelMappingSchema);
 
 module.exports = (
-  hapiServer, useCases) => {
+  hapiServer, useCases, iftttConfig) => {
     let r = {};
 
     r.cblocksRoutes = new CblocksRoutes(
@@ -56,8 +60,14 @@ module.exports = (
 
     r.ifttt = {
       'testRoutes': new IftttTestRoutes(
-          hapiServer,
-          new IftttTestController()
+        hapiServer,
+        new IftttTestController(),
+        makeIftttHeaderValidation(iftttConfig['service-key'], Boom)
+      ),
+      'statusRoutes': new IftttStatusRoutes(
+        hapiServer,
+        new IftttStatusController(),
+        makeIftttHeaderValidation(iftttConfig['service-key'], Boom)
       ),
     };
 

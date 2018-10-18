@@ -9,10 +9,10 @@ class Routes {
 
   start() {
     this.hapiServer.route({
-      'method': 'POST',
-      'path': '/ifttt/v1/test/setup',
+      'method': 'GET',
+      'path': '/ifttt/v1/status',
       'handler':
-        compose(this.controller.postTestSetup.bind(this.controller), this.validateHeaders),
+        compose(this.controller.getStatus.bind(this.controller), this.validateHeaders),
     });
   }
 }
