@@ -33,7 +33,7 @@ describe('Resource Output Recorder Agent', () => {
 
       await whenPublishTemperature(25.5);
 
-      await shouldHaveRecords([25.5]);
+      await shouldHaveRecords([25.5]); // TODO: add timestamps
   });
 
   it('should save multiple values', async () => {
@@ -62,5 +62,7 @@ async function shouldHaveRecords(items) {
     'resourceID': 0,
   });
 
-  expect(records).to.deep.equal(items);
+  const values = records.map((x) => x.value);
+
+  expect(values).to.deep.equal(items);
 }

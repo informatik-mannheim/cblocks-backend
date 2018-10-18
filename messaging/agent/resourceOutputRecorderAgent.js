@@ -6,7 +6,7 @@ class ResourceOutputRecorderAgent {
   }
 
   start() {
-    this.client.subscribe('#/output');
+    this.client.subscribe('+/+/+/output');
     this.client.on('message', this._onMessage.bind(this));
   }
 

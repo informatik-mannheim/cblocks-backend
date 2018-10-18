@@ -4,7 +4,12 @@ class RecordResourceOutputUseCase {
   }
 
   record(ipso, value) {
-    return this.resourceOutput.record(ipso, value);
+    const timestamp = Date.now();
+
+    return this.resourceOutput.record(ipso, {
+      timestamp,
+      value,
+    });
   }
 }
 
