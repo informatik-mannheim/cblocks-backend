@@ -3,6 +3,8 @@ const ResourceWriteUseCase =
 const CBlockUseCase = require('../use-cases/registry/cblockUseCase.js');
 const MappingsUseCase = require(
   '../use-cases/mappings/mappingsUseCase.js');
+const RecordResourceOutputUseCase = require(
+  '../use-cases/recordResourceOutputUseCase.js');
 
 module.exports = (messaging, dataProvider, core) => {
   return {
@@ -24,5 +26,8 @@ module.exports = (messaging, dataProvider, core) => {
       dataProvider.registry,
       core.entities.valueToLabelMapping.make,
       core.entities.labelToValueMapping.make),
+    'recordResourceOutputUseCase': new RecordResourceOutputUseCase(
+      dataProvider.resourceOutputDataProvider
+    ),
   };
 };

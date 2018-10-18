@@ -3,6 +3,8 @@ const MQTTWriter = require('../messaging/writer/mqttWriter.js');
 const MQTTMappingAgent = require(
   '../messaging/agent/mqttMappingAgent.js');
 const MQTTUtil = require('../messaging/util/mqttUtil.js');
+const ResourceOutputRecorderAgent = require(
+  '../messaging/agent/resourceOutputRecorderAgent.js');
 
 const config = require('config');
 const writeConfig = config.get('write');
@@ -24,6 +26,10 @@ exports.inbound = (mqttClient, useCases) => {
 
     r.mqttLabelMappingAgent = new MQTTMappingAgent(
       'label', mqttClient, MQTTUtil, useCases.labelMappingsUseCase
+    );
+
+    r.resourceOutputRecorderAgent = new ResourceOutputRecorderAgent(
+      mqttClient, MQTTUtil, useCases.recordResourceOutputUseCase
     );
 
     return r;

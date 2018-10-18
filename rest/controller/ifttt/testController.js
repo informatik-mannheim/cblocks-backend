@@ -5,7 +5,7 @@ class Controller {
     return {
       'data': {
         'samples': {
-          'triggers': examples.triggers,
+          'triggers': examples.triggers.samples,
         },
       },
     };

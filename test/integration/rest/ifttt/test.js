@@ -44,7 +44,7 @@ describe('REST IFTTT Test Setup', () => {
     it('should return all trigger examples', async () => {
       await whenRequest(postTestSetupDefaults);
 
-      shouldContain(examples.triggers);
+      shouldContain(examples.triggers.samples);
     });
   });
 });
