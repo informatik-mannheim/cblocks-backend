@@ -35,6 +35,16 @@ describe('Resource Output Recorder Agent', () => {
 
       await shouldHaveRecords([25.5]);
   });
+
+  it('should save multiple values', async () => {
+    await givenAgent();
+
+    await whenPublishTemperature(25.5);
+    await whenPublishTemperature(27);
+    await whenPublishTemperature(28);
+
+    await shouldHaveRecords([25.5, 27, 28]);
+  });
 });
 
 async function givenAgent() {
