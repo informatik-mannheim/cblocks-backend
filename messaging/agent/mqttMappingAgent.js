@@ -18,7 +18,7 @@ class MQTTMappingAgent {
 
     mappings.forEach((m) =>
       this._client.subscribe(this._util.getResourceOutputTopic(
-        m.objectID, m.resourceID, m.instanceID)));
+        m.objectID, m.instanceID, m.resourceID)));
   }
 
   async _subscribeToInputs() {

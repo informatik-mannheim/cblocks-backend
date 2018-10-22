@@ -9,20 +9,20 @@ class MappingsUseCase {
     this._onUpdateMappings = () => {};
   }
 
-  async getMapping(id) {
-    return await this.dataProvider.getMapping(id);
+  getMapping(id) {
+    return this.dataProvider.getMapping(id);
   }
 
-  async getMappings() {
-    return await this.dataProvider.getMappings();
+  getMappings() {
+    return this.dataProvider.getMappings();
   }
 
-  async getMappingsFor(ipso) {
-    return await this.dataProvider.getMappingsFor(ipso);
+  getMappingsFor(ipso) {
+    return this.dataProvider.getMappingsFor(ipso);
   }
 
-  async deleteMapping(id) {
-    return await this.dataProvider.deleteMapping(id);
+  deleteMapping(id) {
+    return this.dataProvider.deleteMapping(id);
   }
 
   async updateMapping(id, mapping) {
