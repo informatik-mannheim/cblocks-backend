@@ -1,9 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
-const stubs = require('../../stubs/cblocks');
 const util = require('../util.js');
 const wire = require('../../../wire');
-const sinon = require('sinon');
 
 let dataProvider;
 let agent;

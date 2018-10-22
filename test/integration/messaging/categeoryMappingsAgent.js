@@ -36,13 +36,22 @@ describe('Category mapping agent', () => {
     mqttClient.publish.restore();
   });
 
-  it('should publish mapped value if resource has mapping', async () => {
-    await givenMapping();
+  it('should publish mapped value for temperature', async () => {
+    await givenMapping(mappingStubs.temperatureCategoryMapping);
     await givenAgent();
 
-    await whenResourcePublishesValue(15);
+    await whenResourcePublishesValue(0, 15);
 
     await shouldPublishMappedValue('Low');
+  });
+
+  it('should publish mapped value for humidity', async () => {
+    await givenMapping(mappingStubs.humidityCategoryMapping);
+    await givenAgent();
+
+    await whenResourcePublishesValue(1, 31);
+
+    await shouldPublishMappedValue('Medium');
   });
 
   it('should do nothing if resource has no mapping', async () => {
@@ -54,18 +63,19 @@ describe('Category mapping agent', () => {
   });
 });
 
-async function givenMapping() {
-  let m = await registry.updateObject(cblockStubs.temperature);
+async function givenMapping(mapping) {
+  await registry.updateObject(cblockStubs.temperature);
+
+  let m = await dataProvider.createMapping(mapping);
   mappingID = m.mappingID;
-  await dataProvider.createMapping(mappingStubs.temperatureCategoryMapping);
 }
 
 async function givenAgent() {
   await agent.start();
 }
 
-async function whenResourcePublishesValue(val) {
-  await agent.onMessage('3303/0/0/output', String(val));
+async function whenResourcePublishesValue(resourceID, val) {
+  await agent.onMessage(`3303/0/${resourceID}/output`, String(val));
 }
 
 async function shouldPublishMappedValue(val) {

@@ -6,9 +6,10 @@ class ResourceOutputDataProvider {
   }
 
   async record(ipso, value) {
-    const r = Object.assign(ipso, {
-      'value': value,
-    });
+    const r = {
+      ...ipso,
+      ...value,
+    };
 
     await this.collection.insert(r);
   }
@@ -18,7 +19,12 @@ class ResourceOutputDataProvider {
 
     const records = await (this.collection.find(ipso).limit(limit)).toArray();
 
-    return records.map((item) => item.value);
+    return records.map((item) => {
+      return {
+          'timestamp': item.timestamp,
+          'value': item.value,
+      };
+    });
   }
 }
 

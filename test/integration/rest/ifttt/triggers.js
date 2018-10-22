@@ -45,6 +45,8 @@
 //     db = mongoClient.db('test');
 //
 //     const app = wire(mongoClient, mqttClient, db, hapiServer, iftttConfig);
+//
+//     dataProvider = app.dataProviders.resourceOutputDataProvider;
 //     app.rest.ifttt.triggerRoutes.start();
 //   });
 //
@@ -55,14 +57,32 @@
 //   });
 //
 //   describe('POST /ifttt/v1/triggers/new_sensor_data', () => {
-//     it('should return examples', async () => {
-//       await whenRequest(getStatusDefaults);
+//     it('should return latest readings', async () => {
+//       const records = [25, 26, 27, 28, 23];
+//       await givenRecords(records);
+//
+//       await whenRequest(postNewSensorDataDefaults);
 //
 //       statusCodeShouldBe(200);
-//       shouldReturn(examples.triggers.readings);
+//       shouldReturnRecords(records);
 //     });
 //   });
 // });
+//
+// function givenRecords(records) {
+//   const recordPromises = records.map((x) => {
+//     dataProvider.record({
+//       'objectID': 3303,
+//       'instanceID': 0,
+//       'resourceID': 0,
+//     }, {
+//       'timestamp': Date.now(),
+//       'value': x,
+//     });
+//   });
+//
+//   return recordPromises;
+// }
 //
 // async function whenRequest(r) {
 //   response = await util.sendRequest(r);
@@ -70,4 +90,8 @@
 //
 // function statusCodeShouldBe(code) {
 //   expect(response.raw.statusCode).to.equal(code);
+// }
+//
+// function shouldReturnRecords(records) {
+//   console.log(response.payload);
 // }
