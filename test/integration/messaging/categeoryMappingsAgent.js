@@ -79,7 +79,8 @@ async function whenResourcePublishesValue(resourceID, val) {
 }
 
 async function shouldPublishMappedValue(val) {
-  expect(mqttClient.publish.calledWith(`mappings/category/${mappingID}/output`, val));
+  expect(mqttClient.publish.calledWith(`mappings/category/${mappingID}/output`, val))
+    .to.be.true;
 }
 
 function shouldNotMap() {
