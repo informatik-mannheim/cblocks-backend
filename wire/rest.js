@@ -14,8 +14,9 @@ const IftttTestRoutes = require('../rest/routes/ifttt/testRoutes.js');
 const IftttTestController = require('../rest/controller/ifttt/testController.js');
 const IftttStatusRoutes = require('../rest/routes/ifttt/statusRoutes.js');
 const IftttStatusController = require('../rest/controller/ifttt/statusController.js');
-const makeIftttHeaderValidation = require('../rest/routes/ifttt/validateHeaders.js')
-  .makeHandler;
+const IftttTriggersRoutes = require('../rest/routes/ifttt/triggersRoutes.js');
+const IftttTriggersController = require('../rest/controller/ifttt/triggersController.js');
+const validateHeaders = require('../rest/routes/ifttt/validateHeaders.js');
 
 const Validator = require('../rest/controller/validator.js');
 
@@ -62,12 +63,17 @@ module.exports = (
       'testRoutes': new IftttTestRoutes(
         hapiServer,
         new IftttTestController(),
-        makeIftttHeaderValidation(iftttConfig['service-key'], Boom)
+        validateHeaders(iftttConfig['service-key'], Boom)
       ),
       'statusRoutes': new IftttStatusRoutes(
         hapiServer,
         new IftttStatusController(),
-        makeIftttHeaderValidation(iftttConfig['service-key'], Boom)
+        validateHeaders(iftttConfig['service-key'], Boom),
+      ),
+      'triggersRoutes': new IftttTriggersRoutes(
+        hapiServer,
+        new IftttTriggersController(useCases.triggersUseCase),
+        validateHeaders(iftttConfig['service-key'], Boom)
       ),
     };
 

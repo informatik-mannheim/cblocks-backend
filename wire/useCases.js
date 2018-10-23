@@ -5,6 +5,7 @@ const MappingsUseCase = require(
   '../use-cases/mappings/mappingsUseCase.js');
 const RecordResourceOutputUseCase = require(
   '../use-cases/recordResourceOutputUseCase.js');
+const TriggersUseCase = require('../use-cases/ifttt/triggersUseCase.js');
 
 module.exports = (messaging, dataProvider, core) => {
   return {
@@ -27,7 +28,8 @@ module.exports = (messaging, dataProvider, core) => {
       core.entities.valueToLabelMapping.make,
       core.entities.labelToValueMapping.make),
     'recordResourceOutputUseCase': new RecordResourceOutputUseCase(
-      dataProvider.resourceOutputDataProvider
-    ),
+      dataProvider.resourceOutputDataProvider),
+    'triggersUseCase': new TriggersUseCase(
+      dataProvider.resourceOutputDataProvider),
   };
 };

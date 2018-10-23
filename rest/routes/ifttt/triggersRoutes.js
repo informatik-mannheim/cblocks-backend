@@ -1,5 +1,3 @@
-const compose = require('lodash/fp').compose;
-
 class Routes {
   constructor(hapiServer, controller, validateHeaders) {
     this.hapiServer = hapiServer;
@@ -11,10 +9,12 @@ class Routes {
     this.hapiServer.route({
       'method': 'POST',
       'path': '/ifttt/v1/triggers/new_sensor_data',
-      'handler':
-        compose(
-          this.controller.postNewSensorData.bind(this.controller),
-          this.validateHeaders),
+      'handler': this.controller.postNewSensorData.bind(this.controller),
+      'options': {
+        'validate': {
+          'headers': this.validateHeaders,
+        },
+      },
     });
   }
 }

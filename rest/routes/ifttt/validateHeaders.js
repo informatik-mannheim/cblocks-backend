@@ -1,21 +1,13 @@
-const validateHeaders = (headers, serviceKey) => {
-  if (headers['ifttt-channel-key'] !== serviceKey) {
-    throw Error('Channel key invalid.');
-  }
-
-  if (headers['ifttt-service-key'] !== serviceKey) {
-    throw Error('Service key invalid.');
-  }
-};
-
-exports.validateHeaders = validateHeaders;
-
-exports.makeHandler = (serviceKey, errorRenderer) => {
-  return (request) => {
-    try {
-      validateHeaders(request.headers, serviceKey);
-    } catch (e) {
-      throw errorRenderer.boomify(e, {statusCode: 401});
+module.exports = (serviceKey, ErrorRenderer) => {
+  return (headers) => {
+    if (headers['ifttt-channel-key'] !== serviceKey) {
+      throw new ErrorRenderer('Channel key invalid.', {statusCode: 401});
     }
+
+    if (headers['ifttt-service-key'] !== serviceKey) {
+      throw new ErrorRenderer('Service key invalid.', {statusCode: 401});
+    }
+
+    return headers;
   };
 };

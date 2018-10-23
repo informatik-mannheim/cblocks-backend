@@ -1,8 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const validateHeaders = require('../../../../rest/routes/ifttt/validateHeaders.js')
-  .validateHeaders;
+const validateHeaders = require('../../../../rest/routes/ifttt/validateHeaders.js');
 const serviceKey = '4711';
 
 let val;
@@ -37,7 +36,7 @@ describe('IFTT validate header', () => {
 });
 
 function whenValidate(headers, serviceKey) {
-  val = validateHeaders(headers, serviceKey);
+  val = validateHeaders(serviceKey, Error)(headers);
 }
 
 function shouldThrow(message, fn) {

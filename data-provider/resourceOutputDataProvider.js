@@ -1,4 +1,5 @@
 const DEFAULT_RECORD_LIMIT = 50;
+const ObjectID = require('mongodb').ObjectID;
 
 class ResourceOutputDataProvider {
   constructor(collection) {
@@ -9,6 +10,7 @@ class ResourceOutputDataProvider {
     const r = {
       ...ipso,
       ...value,
+      'id': new ObjectID(),
     };
 
     await this.collection.insert(r);
@@ -23,6 +25,7 @@ class ResourceOutputDataProvider {
       return {
           'timestamp': item.timestamp,
           'value': item.value,
+          'id': item.id,
       };
     });
   }
