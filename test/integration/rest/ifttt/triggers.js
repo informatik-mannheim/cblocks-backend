@@ -4,7 +4,6 @@ const util = require('../../util.js');
 const wire = require('../../../../wire');
 const config = require('config');
 const iftttConfig = config.get('ifttt');
-const examples = require('../../../../rest/controller/ifttt/testExamples.js');
 
 let hapiServer;
 let db;
@@ -59,13 +58,30 @@ describe('REST IFTTT Triggers', () => {
   describe('POST /ifttt/v1/triggers/new_sensor_data', () => {
     it('should return latest readings', async () => {
       const records = [25, 26, 27, 28, 23];
-
       await Promise.all(givenRecords(records));
 
       await whenRequest(postNewSensorDataDefaults);
 
       statusCodeShouldBe(200);
-      shouldReturnRecords(records);
+      shouldReturnRecords(5);
+    });
+
+    it('should return 2 if limit is 2', async () => {
+      const records = [25, 26, 27, 28, 23];
+      await Promise.all(givenRecords(records));
+
+      const request = {
+        ...postNewSensorDataDefaults,
+        'payload': {
+          ...postNewSensorDataDefaults.payload,
+          'limit': 2,
+        },
+      };
+
+      await whenRequest(request);
+
+      statusCodeShouldBe(200);
+      shouldReturnRecords(2);
     });
   });
 });
@@ -93,8 +109,8 @@ function statusCodeShouldBe(code) {
   expect(response.raw.statusCode).to.equal(code);
 }
 
-function shouldReturnRecords(records) {
-  expect(response.payload.data.length).to.equal(records.length);
+function shouldReturnRecords(numberOfRecords) {
+  expect(response.payload.data.length).to.equal(numberOfRecords);
 
   response.payload.data.forEach((x) => {
     expect(x['object_id']).to.equal(3303);

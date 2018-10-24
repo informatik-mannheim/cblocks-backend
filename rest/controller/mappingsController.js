@@ -1,9 +1,9 @@
 const EntityNotFoundError = require('../../core/entityNotFoundError.js');
 
 class Controller {
-  constructor(mappingsUseCase, errorRenderer, putMappingValidator) {
+  constructor(mappingsUseCase, renderError, putMappingValidator) {
     this.mappingsUseCase = mappingsUseCase;
-    this.errorRenderer = errorRenderer;
+    this.renderError = renderError;
     this.putMappingValidator = putMappingValidator;
   }
 
@@ -15,7 +15,7 @@ class Controller {
 
       if ( e instanceof EntityNotFoundError) statusCode = 404;
 
-      throw this.errorRenderer.boomify(e, {statusCode: statusCode});
+      throw this.renderError(e, {statusCode: statusCode});
     }
   }
 
@@ -49,7 +49,7 @@ class Controller {
 
       if ( e instanceof EntityNotFoundError) statusCode = 404;
 
-      throw this.errorRenderer.boomify(e, {statusCode: statusCode});
+      throw this.renderError(e, {statusCode: statusCode});
     }
   }
 
@@ -57,7 +57,7 @@ class Controller {
     try {
       this.putMappingValidator.validate(payload);
     } catch (e) {
-      throw this.errorRenderer.boomify(e, {statusCode: 400});
+      throw this.renderError(e, {statusCode: 400});
     }
   }
 
@@ -75,7 +75,7 @@ class Controller {
 
       if ( e instanceof EntityNotFoundError) statusCode = 404;
 
-      throw this.errorRenderer.boomify(e, {statusCode: statusCode});
+      throw this.renderError(e, {statusCode: statusCode});
     }
   }
 }

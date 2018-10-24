@@ -1,5 +1,4 @@
 const DEFAULT_RECORD_LIMIT = 50;
-const ObjectID = require('mongodb').ObjectID;
 
 class ResourceOutputDataProvider {
   constructor(collection) {
@@ -10,22 +9,29 @@ class ResourceOutputDataProvider {
     const r = {
       ...ipso,
       ...value,
-      'id': new ObjectID(),
     };
 
     await this.collection.insert(r);
   }
 
   async getRecords(ipso, limit) {
+    if (limit === 0) return [];
+
     limit = limit || DEFAULT_RECORD_LIMIT;
 
-    const records = await (this.collection.find(ipso).limit(limit)).toArray();
+    const records = await (this.collection
+      .find(ipso)
+      .sort({
+        'timestamp': -1,
+      })
+      .limit(limit)
+    ).toArray();
 
     return records.map((item) => {
       return {
           'timestamp': item.timestamp,
           'value': item.value,
-          'id': item.id,
+          'id': item._id,
       };
     });
   }

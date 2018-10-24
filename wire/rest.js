@@ -1,5 +1,6 @@
 const JsonValidator = require('jsonschema').Validator;
 const Boom = require('boom');
+const renderError = Boom.boomify;
 
 const CblocksController = require('../rest/controller/cblockController.js');
 const MappingsController = require('../rest/controller/mappingsController.js');
@@ -16,7 +17,8 @@ const IftttStatusRoutes = require('../rest/routes/ifttt/statusRoutes.js');
 const IftttStatusController = require('../rest/controller/ifttt/statusController.js');
 const IftttTriggersRoutes = require('../rest/routes/ifttt/triggersRoutes.js');
 const IftttTriggersController = require('../rest/controller/ifttt/triggersController.js');
-const validateHeaders = require('../rest/routes/ifttt/validateHeaders.js');
+const iftttValidateHeaders = require('../rest/routes/ifttt/validateHeaders.js');
+const iftttRenderError = require('../rest/util/iftttErrorRenderer.js')(Boom.boomify);
 
 const Validator = require('../rest/controller/validator.js');
 
@@ -42,38 +44,38 @@ module.exports = (
     r.cblocksRoutes = new CblocksRoutes(
       hapiServer,
       new CblocksController(
-        useCases.cBlockUseCase, Boom));
+        useCases.cBlockUseCase, renderError));
 
     r.categoryMappingsRoutes = new CategoryMappingsRoutes(
       hapiServer,
       new MappingsController(
-        useCases.categoryMappingsUseCase, Boom, putCategoryMappingValidator));
+        useCases.categoryMappingsUseCase, renderError, putCategoryMappingValidator));
 
     r.rangeMappingsRoutes = new RangeMappingsRoutes(
       hapiServer,
       new MappingsController(
-        useCases.rangeMappingsUseCase, Boom, putRangeMappingValidator));
+        useCases.rangeMappingsUseCase, renderError, putRangeMappingValidator));
 
     r.labelMappingsRoutes = new LabelMappingsRoutes(
       hapiServer,
       new MappingsController(
-        useCases.labelMappingsUseCase, Boom, putLabelMappingValidator));
+        useCases.labelMappingsUseCase, renderError, putLabelMappingValidator));
 
     r.ifttt = {
       'testRoutes': new IftttTestRoutes(
         hapiServer,
-        new IftttTestController(),
-        validateHeaders(iftttConfig['service-key'], Boom)
+        new IftttTestController(useCases.recordResourceOutputUseCase),
+        iftttValidateHeaders(iftttConfig['service-key'], iftttRenderError)
       ),
       'statusRoutes': new IftttStatusRoutes(
         hapiServer,
         new IftttStatusController(),
-        validateHeaders(iftttConfig['service-key'], Boom),
+        iftttValidateHeaders(iftttConfig['service-key'], iftttRenderError),
       ),
       'triggersRoutes': new IftttTriggersRoutes(
         hapiServer,
-        new IftttTriggersController(useCases.triggersUseCase),
-        validateHeaders(iftttConfig['service-key'], Boom)
+        new IftttTriggersController(useCases.triggersUseCase, iftttRenderError),
+        iftttValidateHeaders(iftttConfig['service-key'], iftttRenderError)
       ),
     };
 

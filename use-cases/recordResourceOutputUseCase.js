@@ -4,7 +4,8 @@ class RecordResourceOutputUseCase {
   }
 
   record(ipso, value) {
-    const timestamp = Date.now();
+    const timestampMs = Date.now();
+    const timestamp = Math.round(timestampMs / 1000);
 
     return this.resourceOutput.record(ipso, {
       timestamp,

@@ -1,9 +1,9 @@
 const EntityNotFoundError = require('../../core/entityNotFoundError.js');
 
 class Controller {
-  constructor(cBlockUseCase, errorRenderer) {
+  constructor(cBlockUseCase, renderError) {
     this.cBlockUseCase = cBlockUseCase;
-    this.errorRenderer = errorRenderer;
+    this.renderError = renderError;
   }
 
   async handleGetCBlocks(request, h) {
@@ -14,7 +14,7 @@ class Controller {
 
       if ( e instanceof EntityNotFoundError) statusCode = 404;
 
-      throw this.errorRenderer.boomify(e, {statusCode: statusCode});
+      throw this.renderError(e, {statusCode: statusCode});
     }
   }
 
