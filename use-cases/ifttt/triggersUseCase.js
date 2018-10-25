@@ -1,11 +1,13 @@
 class TriggersUseCase {
-  constructor(dataProvider, realTimeApi) {
-    this.dataProvider = dataProvider;
+  constructor(resourceOutputDataProvider, triggersDataProvider, realTimeApi) {
+    this.resourceOutputDataProvider = resourceOutputDataProvider;
+    this.triggersDataProvider = triggersDataProvider;
     this.realTimeApi = realTimeApi;
   }
 
   async getNewSensorData(ipso, limit) {
-    const readings = await this.dataProvider.getRecords(ipso, limit);
+    const readings = await this.resourceOutputDataProvider
+      .getRecords(ipso, limit);
 
     const readingsOutputFormat = readings.map((x) => {
       return {
@@ -23,8 +25,28 @@ class TriggersUseCase {
     return readingsOutputFormat;
   }
 
-  notifyNewSensorData() {
-    return this.realTimeApi.notifyNewSensorData();
+  updateTriggerIdentity(triggerName, triggerIdentity) {
+    return this.triggersDataProvider
+      .updateTriggerIdentity(triggerName, triggerIdentity);
+  }
+
+  async notifyNewSensorData() {
+    const triggerIdentities =
+      await this._getTriggerIdentites('new_sensor_data');
+
+    await this.realTimeApi.notifyNewSensorData(triggerIdentities);
+  }
+
+  async _getTriggerIdentites(triggerName) {
+    const data = await this.triggersDataProvider
+      .getTriggerIdentities(triggerName);
+
+    return data.map((x) => x.triggerIdentity);
+  }
+
+  deleteTriggerIdentity(triggerName, triggerIdentity) {
+    return this.triggersDataProvider.deleteTriggerIdentity(
+      triggerName, triggerIdentity);
   }
 }
 

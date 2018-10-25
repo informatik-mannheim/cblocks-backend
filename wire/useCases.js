@@ -31,6 +31,7 @@ module.exports = (messaging, rest, dataProvider, core) => {
       dataProvider.resourceOutputDataProvider),
     'triggersUseCase': new TriggersUseCase(
       dataProvider.resourceOutputDataProvider,
+      dataProvider.triggersDataProvider,
       rest.ifttt.realTimeApi),
   };
 };

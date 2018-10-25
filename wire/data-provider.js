@@ -3,6 +3,8 @@ const MappingsDataProvider = require(
   '../data-provider/mappingsDataProvider.js');
 const ResourceOutputDataProvider = require(
   '../data-provider/resourceOutputDataProvider.js');
+const TriggersDataProvider = require(
+  '../data-provider/triggersDataProvider.js');
 
 module.exports = (db, core) => {
   let r = {};
@@ -22,6 +24,10 @@ module.exports = (db, core) => {
 
   r.resourceOutputDataProvider = new ResourceOutputDataProvider(
     db.collection('resource-outputs')
+  );
+
+  r.triggersDataProvider = new TriggersDataProvider(
+    db.collection('ifttt-triggers')
   );
 
   return r;

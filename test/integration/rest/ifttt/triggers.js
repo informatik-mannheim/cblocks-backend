@@ -36,6 +36,18 @@ const postNewSensorDataDefaults = {
   },
 };
 
+const deleteNewSensorDataDefaults = {
+  'method': 'DELETE',
+  'url': '/ifttt/v1/triggers/new_sensor_data/trigger_identity/737ea7ac0bf6b45236002b72e7a6e99a5bf1c1d8',
+  'headers': {
+    'ifttt-service-key': iftttConfig['service-key'],
+    'ifttt-channel-key': iftttConfig['service-key'],
+    'Accept': 'application/json',
+    'Accept-Charset': 'utf-8',
+    'Accept-Encoding': 'gzip, deflate',
+  },
+};
+
 describe('REST IFTTT Triggers', () => {
   before(async () => {
     const mongoClient = await util.getMongo();
@@ -46,6 +58,7 @@ describe('REST IFTTT Triggers', () => {
     const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub, iftttConfig);
 
     dataProvider = app.dataProviders.resourceOutputDataProvider;
+    triggersDataProvider = app.dataProviders.triggersDataProvider;
     app.rest.inbound.ifttt.triggersRoutes.start();
   });
 
@@ -83,6 +96,39 @@ describe('REST IFTTT Triggers', () => {
       statusCodeShouldBe(200);
       shouldReturnRecords(2);
     });
+
+    it('should save trigger identity to database', async () => {
+      await whenRequest(postNewSensorDataDefaults);
+
+      await shouldHaveTriggerIdentites(
+        'new_sensor_data',
+        ['737ea7ac0bf6b45236002b72e7a6e99a5bf1c1d8']
+      );
+    });
+
+    it('should only save one trigger identity for same requests', async () => {
+      await whenRequest(postNewSensorDataDefaults);
+      await whenRequest(postNewSensorDataDefaults);
+
+      await shouldHaveTriggerIdentites(
+        'new_sensor_data',
+        ['737ea7ac0bf6b45236002b72e7a6e99a5bf1c1d8']
+      );
+
+      await nummberOfTriggerIdentiesShouldBe('new_sensor_data', 1);
+    });
+  });
+
+  describe('DELETE /ifttt/v1/triggers/new_sensor_data/trigger_identity/{id}', () => {
+    it('should delete existing', async () => {
+      await whenRequest(postNewSensorDataDefaults);
+
+      await nummberOfTriggerIdentiesShouldBe('new_sensor_data', 1);
+
+      await whenRequest(deleteNewSensorDataDefaults);
+
+      await nummberOfTriggerIdentiesShouldBe('new_sensor_data', 0);
+    });
   });
 });
 
@@ -119,4 +165,19 @@ function shouldReturnRecords(numberOfRecords) {
     expect(x['meta']['id']).not.to.be.null;
     expect(x['meta']['meta']).not.to.be.null;
   });
+}
+
+async function shouldHaveTriggerIdentites(triggerName, triggerIdentities) {
+  const data = await triggersDataProvider.getTriggerIdentities(triggerName);
+  const triggerIdentitiesDb = data.map((x) => x.triggerIdentity);
+
+  triggerIdentities.forEach(
+    (v) => expect(triggerIdentitiesDb.includes(v)).to.be.true
+  );
+}
+
+async function nummberOfTriggerIdentiesShouldBe(triggerName, number) {
+  const data = await triggersDataProvider.getTriggerIdentities(triggerName);
+
+  expect(data.length).to.equal(number);
 }

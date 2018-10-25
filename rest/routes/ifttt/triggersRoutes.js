@@ -16,6 +16,17 @@ class Routes {
         },
       },
     });
+
+    this.hapiServer.route({
+      'method': 'DELETE',
+      'path': '/ifttt/v1/triggers/{triggerName}/trigger_identity/{triggerIdentity}',
+      'handler': this.controller.deleteTriggerIdentity.bind(this.controller),
+      'options': {
+        'validate': {
+          'headers': this.validateHeaders,
+        },
+      },
+    });
   }
 }
 

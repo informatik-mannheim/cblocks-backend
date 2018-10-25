@@ -11,7 +11,15 @@ class Controller {
       const ipso = this._getIpso(request.payload.triggerFields);
       const limit = this._getLimit(request.payload);
 
-      const data = await this.useCase.getNewSensorData(ipso, limit);
+      const promises = [];
+
+      promises.push(this.useCase.updateTriggerIdentity(
+        'new_sensor_data',
+        request.payload.trigger_identity
+      ));
+      promises.push(this.useCase.getNewSensorData(ipso, limit));
+
+      const data = (await Promise.all(promises))[1];
 
       return {data};
     } catch (e) {
@@ -43,6 +51,19 @@ class Controller {
   _getLimit(payload) {
     if (typeof payload.limit !== 'undefined') return parseInt(payload.limit);
     return DEFAULT_LIMIT;
+  }
+
+  async deleteTriggerIdentity(request, h) {
+    try {
+      const triggerName = request.params.triggerName;
+      const triggerIdentity = request.params.triggerIdentity;
+
+      await this.useCase.deleteTriggerIdentity(triggerName, triggerIdentity);
+
+      return {message: 'Ok'};
+    } catch (e) {
+      console.log(e);
+    }
   }
 };
 
