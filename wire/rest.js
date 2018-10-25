@@ -1,6 +1,7 @@
 const JsonValidator = require('jsonschema').Validator;
 const Boom = require('boom');
 const renderError = Boom.boomify;
+const ObjectID = require('mongodb').ObjectID;
 
 const CblocksController = require('../rest/controller/cblockController.js');
 const MappingsController = require('../rest/controller/mappingsController.js');
@@ -19,6 +20,8 @@ const IftttTriggersRoutes = require('../rest/routes/ifttt/triggersRoutes.js');
 const IftttTriggersController = require('../rest/controller/ifttt/triggersController.js');
 const iftttValidateHeaders = require('../rest/routes/ifttt/validateHeaders.js');
 const iftttRenderError = require('../rest/util/iftttErrorRenderer.js')(Boom.boomify);
+const IftttRealTimeApi = require('../rest/controller/ifttt/realTimeApi.js');
+const iftttRequest = require('../rest/controller/ifttt/requestIfttt.js');
 
 const Validator = require('../rest/controller/validator.js');
 
@@ -37,7 +40,7 @@ const putLabelMappingSchema = require(
 const putLabelMappingValidator = new Validator(
   JsonValidator, putLabelMappingSchema);
 
-module.exports = (
+exports.inbound = (
   hapiServer, useCases, iftttConfig) => {
     let r = {};
 
@@ -80,4 +83,17 @@ module.exports = (
     };
 
     return r;
+};
+
+exports.outbound = (request, iftttConfig) => {
+  return {
+    'ifttt': {
+      'realTimeApi': new IftttRealTimeApi(
+        iftttRequest(
+          iftttConfig['service-key'],
+          () => new ObjectID().toHexString(),
+          request)
+      ),
+    },
+  };
 };

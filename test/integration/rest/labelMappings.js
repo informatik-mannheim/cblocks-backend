@@ -37,10 +37,10 @@ describe('REST label mappings', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub);
     registry = app.dataProviders.registry;
     dataProvider = app.dataProviders.labelMappingsDataProvider;
-    app.rest.labelMappingsRoutes.start();
+    app.rest.inbound.labelMappingsRoutes.start();
   });
 
   beforeEach(async () => {

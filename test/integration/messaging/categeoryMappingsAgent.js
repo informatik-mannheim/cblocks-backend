@@ -19,7 +19,7 @@ describe('Category mapping agent', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub);
     registry = app.dataProviders.registry;
     dataProvider = app.dataProviders.categoryMappingsDataProvider;
     agent = app.messaging.inbound.mqttCategoryMappingAgent;

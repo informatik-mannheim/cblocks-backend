@@ -4,7 +4,7 @@ const wireMessaging = require('./messaging.js');
 const wireRest = require('./rest.js');
 const wireUseCases = require('./useCases.js');
 
-module.exports = (mongoClient, mqttClient, db, hapiServer, iftttConfig) => {
+module.exports = (mongoClient, mqttClient, db, hapiServer, request, iftttConfig) => {
   const core = wireCore();
   const dataProviders = wireDataProviders(db, core);
   iftttConfig = iftttConfig || {
@@ -14,13 +14,17 @@ module.exports = (mongoClient, mqttClient, db, hapiServer, iftttConfig) => {
   let messaging = {};
   messaging.outbound = wireMessaging.outbound(mqttClient);
 
+  let rest = {};
+  rest.outbound = wireRest.outbound(request, iftttConfig);
+
   const useCases = wireUseCases(
     messaging.outbound,
+    rest.outbound,
     dataProviders,
     core
   );
 
-  const rest = wireRest(
+  rest.inbound = wireRest.inbound(
     hapiServer,
     useCases,
     iftttConfig

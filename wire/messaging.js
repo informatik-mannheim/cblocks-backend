@@ -29,7 +29,10 @@ exports.inbound = (mqttClient, useCases) => {
     );
 
     r.resourceOutputRecorderAgent = new ResourceOutputRecorderAgent(
-      mqttClient, MQTTUtil, useCases.recordResourceOutputUseCase
+      mqttClient,
+      MQTTUtil,
+      useCases.recordResourceOutputUseCase,
+      useCases.triggersUseCase
     );
 
     return r;

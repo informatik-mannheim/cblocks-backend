@@ -1,6 +1,7 @@
 class TriggersUseCase {
-  constructor(dataProvider) {
+  constructor(dataProvider, realTimeApi) {
     this.dataProvider = dataProvider;
+    this.realTimeApi = realTimeApi;
   }
 
   async getNewSensorData(ipso, limit) {
@@ -20,6 +21,10 @@ class TriggersUseCase {
     });
 
     return readingsOutputFormat;
+  }
+
+  notifyNewSensorData() {
+    return this.realTimeApi.notifyNewSensorData();
   }
 }
 

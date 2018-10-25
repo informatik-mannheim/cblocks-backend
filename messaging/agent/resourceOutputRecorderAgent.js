@@ -1,8 +1,9 @@
 class ResourceOutputRecorderAgent {
-  constructor(client, util, triggerUseCase) {
+  constructor(client, util, recordUseCase, triggersUseCase) {
     this.client = client;
     this.util = util;
-    this.useCase = triggerUseCase;
+    this.recordUseCase = recordUseCase;
+    this.triggersUseCase = triggersUseCase;
   }
 
   start() {
@@ -16,7 +17,8 @@ class ResourceOutputRecorderAgent {
     try {
       const ipso = this.util.decomposeResourceOutputTopic(topic);
 
-      await this.useCase.record(ipso, message);
+      await this.recordUseCase.record(ipso, JSON.parse(message));
+      await this.triggersUseCase.notifyNewSensorData();
     } catch (e) {
       console.log(e);
     }

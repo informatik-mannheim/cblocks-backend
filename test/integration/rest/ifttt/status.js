@@ -28,8 +28,8 @@ describe('REST IFTTT Status', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, iftttConfig);
-    app.rest.ifttt.statusRoutes.start();
+    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub, iftttConfig);
+    app.rest.inbound.ifttt.statusRoutes.start();
   });
 
   beforeEach(async () => {

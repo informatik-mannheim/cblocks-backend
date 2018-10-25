@@ -37,10 +37,10 @@ describe('REST category mappings', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub);
     registry = app.dataProviders.registry;
     dataProvider = app.dataProviders.categoryMappingsDataProvider;
-    app.rest.categoryMappingsRoutes.start();
+    app.rest.inbound.categoryMappingsRoutes.start();
   });
 
   beforeEach(async () => {

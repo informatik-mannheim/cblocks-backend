@@ -60,3 +60,7 @@ exports.sendRequest = async (request) => {
 exports.shouldReturnStatusCode = (statusCode) => {
   expect(response.statusCode).to.equal(statusCode);
 };
+
+exports.requestStub = {
+  'post': async () => {},
+};

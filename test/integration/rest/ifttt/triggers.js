@@ -43,10 +43,10 @@ describe('REST IFTTT Triggers', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, iftttConfig);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub, iftttConfig);
 
     dataProvider = app.dataProviders.resourceOutputDataProvider;
-    app.rest.ifttt.triggersRoutes.start();
+    app.rest.inbound.ifttt.triggersRoutes.start();
   });
 
   beforeEach(async () => {

@@ -6,6 +6,7 @@ const iftttConfig = config.get('ifttt');
 
 const mqtt = require('async-mqtt');
 const Hapi = require('hapi');
+const request = require('request-promise-native');
 
 const wire = require('./wire');
 
@@ -54,20 +55,21 @@ const init = async () => {
     await hapiServer.start();
     console.log(`REST Server running at: ${hapiServer.info.uri}`);
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, iftttConfig);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, request, iftttConfig);
 
     app.messaging.inbound.mqttWriteAgent.start();
     app.messaging.inbound.mqttRangeMappingAgent.start();
     app.messaging.inbound.mqttCategoryMappingAgent.start();
     app.messaging.inbound.mqttLabelMappingAgent.start();
+    app.messaging.inbound.resourceOutputRecorderAgent.start();
 
-    app.rest.cblocksRoutes.start();
-    app.rest.categoryMappingsRoutes.start();
-    app.rest.rangeMappingsRoutes.start();
-    app.rest.labelMappingsRoutes.start();
-    app.rest.ifttt.testRoutes.start();
-    app.rest.ifttt.statusRoutes.start();
-    app.rest.ifttt.triggersRoutes.start();
+    app.rest.inbound.cblocksRoutes.start();
+    app.rest.inbound.categoryMappingsRoutes.start();
+    app.rest.inbound.rangeMappingsRoutes.start();
+    app.rest.inbound.labelMappingsRoutes.start();
+    app.rest.inbound.ifttt.testRoutes.start();
+    app.rest.inbound.ifttt.statusRoutes.start();
+    app.rest.inbound.ifttt.triggersRoutes.start();
 
     console.log('Application bootstrapped.');
   } catch (e) {

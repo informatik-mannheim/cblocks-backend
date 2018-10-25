@@ -7,7 +7,7 @@ const RecordResourceOutputUseCase = require(
   '../use-cases/recordResourceOutputUseCase.js');
 const TriggersUseCase = require('../use-cases/ifttt/triggersUseCase.js');
 
-module.exports = (messaging, dataProvider, core) => {
+module.exports = (messaging, rest, dataProvider, core) => {
   return {
     'resourceWriteUseCase': new ResourceWriteUseCase(
       dataProvider.registry, messaging.mqttWriter),
@@ -30,6 +30,7 @@ module.exports = (messaging, dataProvider, core) => {
     'recordResourceOutputUseCase': new RecordResourceOutputUseCase(
       dataProvider.resourceOutputDataProvider),
     'triggersUseCase': new TriggersUseCase(
-      dataProvider.resourceOutputDataProvider),
+      dataProvider.resourceOutputDataProvider,
+      rest.ifttt.realTimeApi),
   };
 };
