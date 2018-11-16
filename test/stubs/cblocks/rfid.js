@@ -1,23 +1,20 @@
 module.exports = {
-  'objectID': 3306,
-  'name': 'Scale',
+  'objectID': 3305,
+  'name': 'RFID Reader',
   'resources': {
     '0': {
       'resourceID': 0,
-      'name': 'Weight',
+      'name': 'Tag ID',
       'is_writeable': false,
-      'unit': 'grams',
       'schema': {
-        'type': 'number',
-        'minimum': -500,
-        'maximum': 500,
+        'type': 'string',
         'additionalProperties': false,
       },
     },
   },
   'instances': {
     '0': {
-        'label': 'Scale',
+        'label': 'RFID Reader',
     },
   },
 };
