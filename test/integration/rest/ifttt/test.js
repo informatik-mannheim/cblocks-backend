@@ -40,6 +40,10 @@ describe('REST IFTTT Test Setup', () => {
     payload = {};
   });
 
+  after(async () => {
+    await util.stop();
+  });
+
   describe('POST /ifttt/v1/test/setup', () => {
     it('should return all trigger examples', async () => {
       await whenRequest(postTestSetupDefaults);

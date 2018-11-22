@@ -32,6 +32,7 @@ const Hapi = require('hapi');
 const Boom = require('boom');
 const hapiPort = 8080;
 const hapiServer = new Hapi.Server({
+  'host': 'localhost',
   'port': hapiPort,
 });
 
@@ -39,6 +40,10 @@ exports.getHapi = async () => {
   if (!hapiServer.info.started) await hapiServer.start();
 
   return hapiServer;
+};
+
+exports.stop = async () => {
+  await hapiServer.stop();
 };
 
 exports.errorRenderer = Boom;

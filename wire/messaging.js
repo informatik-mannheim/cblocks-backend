@@ -32,7 +32,7 @@ exports.inbound = (mqttClient, useCases) => {
       mqttClient,
       MQTTUtil,
       useCases.recordResourceOutputUseCase,
-      useCases.triggersUseCase
+      useCases.triggers.newSensorDataUseCase
     );
 
     return r;

@@ -1,7 +1,7 @@
 const chai = require('chai');
 const expect = chai.expect;
-const util = require('../../util.js');
-const wire = require('../../../../wire');
+const util = require('../../../util.js');
+const wire = require('../../../../../wire');
 const config = require('config');
 const iftttConfig = config.get('ifttt');
 
@@ -9,15 +9,14 @@ let hapiServer;
 let db;
 let response;
 
-const postNewSensorDataDefaults = {
+const postMappingDefaults = {
   'method': 'POST',
-  'url': '/ifttt/v1/triggers/new_sensor_data',
+  'url': '/ifttt/v1/triggers/category-mappings',
   'payload': {
     'trigger_identity': '737ea7ac0bf6b45236002b72e7a6e99a5bf1c1d8',
     'triggerFields': {
-      'object_id': '3303',
-      'instance_id': '0',
-      'resource_id': '0',
+      'mapping_id': '4711',
+      'label': 'hot',
     },
     'user': {
       'timezone': 'America/Los_Angeles',
@@ -36,9 +35,9 @@ const postNewSensorDataDefaults = {
   },
 };
 
-const deleteNewSensorDataDefaults = {
+const deleteMappingDefaults = {
   'method': 'DELETE',
-  'url': '/ifttt/v1/triggers/new_sensor_data/trigger_identity/737ea7ac0bf6b45236002b72e7a6e99a5bf1c1d8',
+  'url': '/ifttt/v1/triggers/category_mappings/trigger_identity/737ea7ac0bf6b45236002b72e7a6e99a5bf1c1d8',
   'headers': {
     'ifttt-service-key': iftttConfig['service-key'],
     'ifttt-channel-key': iftttConfig['service-key'],
@@ -48,7 +47,7 @@ const deleteNewSensorDataDefaults = {
   },
 };
 
-describe('REST IFTTT Triggers', () => {
+describe('REST IFTTT Category Mapping Trigger', () => {
   before(async () => {
     const mongoClient = await util.getMongo();
     const mqttClient = await util.getMQTT();
@@ -57,9 +56,9 @@ describe('REST IFTTT Triggers', () => {
 
     const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub, iftttConfig);
 
-    dataProvider = app.dataProviders.resourceOutputDataProvider;
+    dataProvider = app.dataProviders.categoryMappingsOutputDataProvider;
     triggersDataProvider = app.dataProviders.triggersDataProvider;
-    app.rest.inbound.ifttt.triggersRoutes.start();
+    app.rest.inbound.ifttt.triggers.categoryMappingsRoutes.start();
   });
 
   beforeEach(async () => {
@@ -68,37 +67,41 @@ describe('REST IFTTT Triggers', () => {
     payload = {};
   });
 
-  describe('POST /ifttt/v1/triggers/new_sensor_data', () => {
-    it('should return latest readings', async () => {
-      const records = [25, 26, 27, 28, 23];
-      await Promise.all(givenRecords(records));
+  after(async () => {
+    await util.stop();
+  });
 
-      await whenRequest(postNewSensorDataDefaults);
-
-      statusCodeShouldBe(200);
-      shouldReturnRecords(5);
-    });
-
-    it('should return 2 if limit is 2', async () => {
-      const records = [25, 26, 27, 28, 23];
-      await Promise.all(givenRecords(records));
-
-      const request = {
-        ...postNewSensorDataDefaults,
-        'payload': {
-          ...postNewSensorDataDefaults.payload,
-          'limit': 2,
-        },
-      };
-
-      await whenRequest(request);
-
-      statusCodeShouldBe(200);
-      shouldReturnRecords(2);
-    });
+  describe('POST /ifttt/v1/triggers/category_mappings', () => {
+    // it('should return latest readings', async () => {
+    //   const records = [25, 26, 27, 28, 23];
+    //   await Promise.all(givenRecords(records));
+    //
+    //   await whenRequest(postMappingDefaults);
+    //
+    //   statusCodeShouldBe(200);
+    //   shouldReturnRecords(5);
+    // });
+    //
+    // it('should return 2 if limit is 2', async () => {
+    //   const records = [25, 26, 27, 28, 23];
+    //   await Promise.all(givenRecords(records));
+    //
+    //   const request = {
+    //     ...postMappingDefaults,
+    //     'payload': {
+    //       ...postMappingDefaults.payload,
+    //       'limit': 2,
+    //     },
+    //   };
+    //
+    //   await whenRequest(request);
+    //
+    //   statusCodeShouldBe(200);
+    //   shouldReturnRecords(2);
+    // });
 
     it('should save trigger identity to database', async () => {
-      await whenRequest(postNewSensorDataDefaults);
+      await whenRequest(postMappingDefaults);
 
       await shouldHaveTriggerIdentites(
         'new_sensor_data',
@@ -107,8 +110,8 @@ describe('REST IFTTT Triggers', () => {
     });
 
     it('should only save one trigger identity for same requests', async () => {
-      await whenRequest(postNewSensorDataDefaults);
-      await whenRequest(postNewSensorDataDefaults);
+      await whenRequest(postMappingDefaults);
+      await whenRequest(postMappingDefaults);
 
       await shouldHaveTriggerIdentites(
         'new_sensor_data',
@@ -121,11 +124,11 @@ describe('REST IFTTT Triggers', () => {
 
   describe('DELETE /ifttt/v1/triggers/new_sensor_data/trigger_identity/{id}', () => {
     it('should delete existing', async () => {
-      await whenRequest(postNewSensorDataDefaults);
+      await whenRequest(postMappingDefaults);
 
       await nummberOfTriggerIdentiesShouldBe('new_sensor_data', 1);
 
-      await whenRequest(deleteNewSensorDataDefaults);
+      await whenRequest(deleteMappingDefaults);
 
       await nummberOfTriggerIdentiesShouldBe('new_sensor_data', 0);
     });

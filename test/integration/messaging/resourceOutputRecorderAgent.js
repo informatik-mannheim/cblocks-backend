@@ -25,6 +25,10 @@ describe('Resource Output Recorder Agent', () => {
     payload = {};
   });
 
+  after(async () => {
+    await util.stop();
+  });
+
   it('should save value to database',
     async () => {
       await givenAgent();

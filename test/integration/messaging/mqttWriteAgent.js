@@ -34,6 +34,10 @@ describe('MQTT Write Agent', () => {
     mqttClient.publish.restore();
   });
 
+  after(async () => {
+    await util.stop();
+  });
+
   it('should publish an internal command and do nothing if sensor responds',
     async () => {
       await givenLEDCBlock();

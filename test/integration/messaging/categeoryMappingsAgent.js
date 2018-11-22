@@ -22,6 +22,7 @@ describe('Category mapping agent', () => {
     const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub);
     registry = app.dataProviders.registry;
     dataProvider = app.dataProviders.categoryMappingsDataProvider;
+    outputDataProvider = app.dataProviders.categoryMappingsOutputDataProvider;
     agent = app.messaging.inbound.mqttCategoryMappingAgent;
 });
 
@@ -34,6 +35,10 @@ describe('Category mapping agent', () => {
 
   afterEach(() => {
     mqttClient.publish.restore();
+  });
+
+  after(async () => {
+    await util.stop();
   });
 
   it('should publish mapped value for temperature', async () => {
@@ -61,6 +66,15 @@ describe('Category mapping agent', () => {
 
     shouldNotMap();
   });
+
+  it('should save mapping to database', async () => {
+    await givenMapping(mappingStubs.humidityCategoryMapping);
+    await givenAgent();
+
+    await whenResourcePublishesValue(1, 15);
+
+    await shouldSaveMapping(15, 'Low');
+  });
 });
 
 async function givenMapping(mapping) {
@@ -86,4 +100,13 @@ async function shouldPublishMappedValue(val) {
 function shouldNotMap() {
   expect(mqttClient.publish.calledWith(
     `mappings/category/${mappingID}/output`, sinon.match.any)).to.be.false;
+}
+
+async function shouldSaveMapping(value, label) {
+  let mappings = (await outputDataProvider.getRecords(mappingID))
+    .filter(({from, to}) =>
+      (from === String(value) && to === label)
+    );
+
+  expect(mappings.length).to.equal(1);
 }

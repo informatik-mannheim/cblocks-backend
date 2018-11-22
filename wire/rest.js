@@ -16,9 +16,11 @@ const IftttTestRoutes = require('../rest/routes/ifttt/testRoutes.js');
 const IftttTestController = require('../rest/controller/ifttt/testController.js');
 const IftttStatusRoutes = require('../rest/routes/ifttt/statusRoutes.js');
 const IftttStatusController = require('../rest/controller/ifttt/statusController.js');
-const IftttTriggersRoutes = require('../rest/routes/ifttt/triggersRoutes.js');
-const IftttTriggersController = require('../rest/controller/ifttt/triggersController.js');
-const iftttValidateHeaders = require('../rest/routes/ifttt/validateHeaders.js');
+const makeIftttTriggersRoutes = require('../rest/routes/ifttt/triggers/triggersRoutes.js');
+const makeIftttNewSensorDataRoutes = require('../rest/routes/ifttt/triggers/newSensorDataRoutes.js');
+const makeIftttTriggersController = require('../rest/controller/ifttt/triggers/triggersController.js');
+const makeIftttNewSensorDataController = require('../rest/controller/ifttt/triggers/newSensorDataController.js');
+const makeIftttValidateHeaders = require('../rest/routes/ifttt/validateHeaders.js');
 const iftttRenderError = require('../rest/util/iftttErrorRenderer.js')(Boom.boomify);
 const IftttRealTimeApi = require('../rest/controller/ifttt/realTimeApi.js');
 const iftttRequest = require('../rest/controller/ifttt/requestIfttt.js');
@@ -44,6 +46,19 @@ exports.inbound = (
   hapiServer, useCases, iftttConfig) => {
     let r = {};
 
+    const iftttTriggersController = makeIftttTriggersController(
+      useCases.triggers.triggerIdentities
+    );
+
+    const iftttValidateHeaders = makeIftttValidateHeaders(
+      iftttConfig['service-key'], iftttRenderError);
+
+    const iftttTriggersRoutes = makeIftttTriggersRoutes(
+      hapiServer,
+      iftttTriggersController,
+      iftttValidateHeaders
+    );
+
     r.cblocksRoutes = new CblocksRoutes(
       hapiServer,
       new CblocksController(
@@ -68,18 +83,25 @@ exports.inbound = (
       'testRoutes': new IftttTestRoutes(
         hapiServer,
         new IftttTestController(useCases.recordResourceOutputUseCase),
-        iftttValidateHeaders(iftttConfig['service-key'], iftttRenderError)
+        iftttValidateHeaders
       ),
       'statusRoutes': new IftttStatusRoutes(
         hapiServer,
         new IftttStatusController(),
-        iftttValidateHeaders(iftttConfig['service-key'], iftttRenderError),
+        iftttValidateHeaders
       ),
-      'triggersRoutes': new IftttTriggersRoutes(
-        hapiServer,
-        new IftttTriggersController(useCases.triggersUseCase, iftttRenderError),
-        iftttValidateHeaders(iftttConfig['service-key'], iftttRenderError)
-      ),
+      'triggers': {
+        'newSensorDataRoutes': makeIftttNewSensorDataRoutes(
+          hapiServer,
+          makeIftttNewSensorDataController(
+            useCases.triggers.newSensorDataUseCase,
+            iftttRenderError,
+            iftttTriggersController,
+          ),
+          iftttValidateHeaders,
+          iftttTriggersRoutes
+        ),
+      },
     };
 
     return r;

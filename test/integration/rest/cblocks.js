@@ -33,6 +33,10 @@ describe('REST cBlocks', () => {
     payload = {};
   });
 
+  after(async () => {
+    await util.stop();
+  });
+
   describe('GET /cblocks', () => {
     it('should get all cblocks if there are some',
       getCBlocksShouldGetAllCBlocksIfThereAreSome);

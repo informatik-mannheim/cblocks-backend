@@ -1,8 +1,9 @@
 class MappingsUseCase {
   constructor(
-    dataProvider, registry, makeOutputMapping, makeInputMapping) {
+    dataProvider, registry, outputDataProvider, makeOutputMapping, makeInputMapping) {
     this.dataProvider = dataProvider;
     this.registry = registry;
+    this.outputDataProvider = outputDataProvider;
     this.makeOutputMapping = makeOutputMapping;
     this.makeInputMapping = makeInputMapping;
 
@@ -64,8 +65,14 @@ class MappingsUseCase {
 
   applyMapping(mapping, value) {
     const map = this.makeOutputMapping(mapping);
+    const output = map.apply(value);
 
-    return map.apply(value);
+    const timestampMs = Date.now();
+    const timestamp = Math.round(timestampMs / 1000);
+
+    this.outputDataProvider.record(mapping.mappingID, value, output, timestamp);
+
+    return output;
   }
 
   applyInputMapping(mapping, value) {

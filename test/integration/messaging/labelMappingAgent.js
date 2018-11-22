@@ -36,6 +36,10 @@ describe('Label mapping agent', () => {
     mqttClient.publish.restore();
   });
 
+  after(async () => {
+    await util.stop();
+  });
+
   describe('output', () => {
     it('should publish mapped value if resource has mapping', async () => {
       await givenLedMapping();

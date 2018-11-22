@@ -38,6 +38,10 @@ describe('REST IFTTT Status', () => {
     payload = {};
   });
 
+  after(async () => {
+    await util.stop();
+  });
+
   describe('GET /ifttt/v1/status', () => {
     it('should return status code 200', async () => {
       await whenRequest(getStatusDefaults);

@@ -49,6 +49,10 @@ describe('REST range mappings', () => {
     payload = {};
   });
 
+  after(async () => {
+    await util.stop();
+  });
+
   describe('GET mappings', () => {
     it('should return mappings',
       getMappingsShouldReturnMappings);

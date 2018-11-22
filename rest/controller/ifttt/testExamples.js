@@ -5,6 +5,10 @@ exports.triggers = {
       'instance_id': 0,
       'resource_id': 0,
     },
+    'category': {
+      'mapping_id': 4711,
+      'label': 'hot',
+    },
   },
   'readings': [25, 26, 25.5, 28, 30, 29],
 };
