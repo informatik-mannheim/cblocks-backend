@@ -1,7 +1,6 @@
 module.exports = (hapiServer, controller, validateHeaders) => {
   return {
     start: () => {
-      console.log(controller);
       hapiServer.route({
         'method': 'DELETE',
         'path': '/ifttt/v1/triggers/{triggerName}/trigger_identity/{triggerIdentity}',

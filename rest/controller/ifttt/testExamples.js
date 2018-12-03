@@ -5,10 +5,12 @@ exports.triggers = {
       'instance_id': 0,
       'resource_id': 0,
     },
-    'category': {
-      'mapping_id': 4711,
-      'label': 'hot',
+    'new_category_mappings': {
+      'to': 'Medium',
     },
   },
-  'readings': [25, 26, 25.5, 28, 30, 29],
+  'data': {
+    'new_sensor_data': [25, 26, 25.5, 28, 30, 29],
+    'new_category_mappings': [18, 35, 25.5, 28, 31, 29],
+  },
 };

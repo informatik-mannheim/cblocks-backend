@@ -1,3 +1,4 @@
+const ObjectID = require('mongodb').ObjectID;
 const DEFAULT_RECORD_LIMIT = 50;
 
 class MappingsOutputDataProvider {
@@ -17,7 +18,30 @@ class MappingsOutputDataProvider {
     limit = limit || DEFAULT_RECORD_LIMIT;
 
     const records = await (this.collection
-      .find({mappingID})
+      .find({
+        'mappingID': new ObjectID(mappingID),
+      })
+      .sort({
+        'timestamp': -1,
+      })
+      .limit(limit)
+    ).toArray();
+
+    return records.map(({_id: id, ...rest}) => ({
+      id, ...rest,
+    }));
+  }
+
+  async getRecordsByTo(mappingID, to, limit) {
+    if (limit === 0) return [];
+
+    limit = limit || DEFAULT_RECORD_LIMIT;
+
+    const records = await (this.collection
+      .find({
+        'mappingID': new ObjectID(mappingID),
+        to}
+      )
       .sort({
         'timestamp': -1,
       })

@@ -63,14 +63,14 @@ class MappingsUseCase {
     return r;
   }
 
-  applyMapping(mapping, value) {
+  async applyMapping(mapping, value) {
     const map = this.makeOutputMapping(mapping);
     const output = map.apply(value);
 
     const timestampMs = Date.now();
     const timestamp = Math.round(timestampMs / 1000);
 
-    this.outputDataProvider.record(mapping.mappingID, value, output, timestamp);
+    await this.outputDataProvider.record(mapping.mappingID, value, output, timestamp);
 
     return output;
   }

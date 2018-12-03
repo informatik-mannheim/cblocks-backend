@@ -7,6 +7,7 @@ const RecordResourceOutputUseCase = require(
   '../use-cases/recordResourceOutputUseCase.js');
 const makeTriggerIdentities = require('../use-cases/ifttt/triggers/triggerIdentities.js');
 const makeNewSensorDataUseCase = require('../use-cases/ifttt/triggers/newSensorDataUseCase.js');
+const makeIftttMappingsUseCase = require('../use-cases/ifttt/triggers/mappingsUseCase.js');
 
 module.exports = (messaging, rest, dataProvider, core) => {
   const triggerIdentities = makeTriggerIdentities(dataProvider.triggersDataProvider);
@@ -39,6 +40,11 @@ module.exports = (messaging, rest, dataProvider, core) => {
       triggerIdentities,
       'newSensorDataUseCase': makeNewSensorDataUseCase(
         dataProvider.resourceOutputDataProvider,
+        rest.ifttt.realTimeApi,
+        triggerIdentities
+      ),
+      'categoryMappingsUseCase': makeIftttMappingsUseCase(
+        dataProvider.categoryMappingsOutputDataProvider,
         rest.ifttt.realTimeApi,
         triggerIdentities
       ),

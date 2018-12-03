@@ -18,8 +18,10 @@ const IftttStatusRoutes = require('../rest/routes/ifttt/statusRoutes.js');
 const IftttStatusController = require('../rest/controller/ifttt/statusController.js');
 const makeIftttTriggersRoutes = require('../rest/routes/ifttt/triggers/triggersRoutes.js');
 const makeIftttNewSensorDataRoutes = require('../rest/routes/ifttt/triggers/newSensorDataRoutes.js');
+const makeIftttMappingsRoutes = require('../rest/routes/ifttt/triggers/mappingsRoutes.js');
 const makeIftttTriggersController = require('../rest/controller/ifttt/triggers/triggersController.js');
 const makeIftttNewSensorDataController = require('../rest/controller/ifttt/triggers/newSensorDataController.js');
+const makeIftttMappingsController = require('../rest/controller/ifttt/triggers/mappingsController.js');
 const makeIftttValidateHeaders = require('../rest/routes/ifttt/validateHeaders.js');
 const iftttRenderError = require('../rest/util/iftttErrorRenderer.js')(Boom.boomify);
 const IftttRealTimeApi = require('../rest/controller/ifttt/realTimeApi.js');
@@ -53,12 +55,6 @@ exports.inbound = (
     const iftttValidateHeaders = makeIftttValidateHeaders(
       iftttConfig['service-key'], iftttRenderError);
 
-    const iftttTriggersRoutes = makeIftttTriggersRoutes(
-      hapiServer,
-      iftttTriggersController,
-      iftttValidateHeaders
-    );
-
     r.cblocksRoutes = new CblocksRoutes(
       hapiServer,
       new CblocksController(
@@ -82,7 +78,10 @@ exports.inbound = (
     r.ifttt = {
       'testRoutes': new IftttTestRoutes(
         hapiServer,
-        new IftttTestController(useCases.recordResourceOutputUseCase),
+        new IftttTestController(
+          useCases.recordResourceOutputUseCase,
+          useCases.categoryMappingsUseCase
+        ),
         iftttValidateHeaders
       ),
       'statusRoutes': new IftttStatusRoutes(
@@ -91,6 +90,11 @@ exports.inbound = (
         iftttValidateHeaders
       ),
       'triggers': {
+        'triggersRoutes': makeIftttTriggersRoutes(
+          hapiServer,
+          iftttTriggersController,
+          iftttValidateHeaders
+        ),
         'newSensorDataRoutes': makeIftttNewSensorDataRoutes(
           hapiServer,
           makeIftttNewSensorDataController(
@@ -98,8 +102,18 @@ exports.inbound = (
             iftttRenderError,
             iftttTriggersController,
           ),
+          iftttValidateHeaders
+        ),
+        'categoryMappingsRoutes': makeIftttMappingsRoutes(
+          hapiServer,
+          makeIftttMappingsController(
+            useCases.triggers.categoryMappingsUseCase,
+            iftttRenderError,
+            'category',
+            iftttTriggersController,
+          ),
           iftttValidateHeaders,
-          iftttTriggersRoutes
+          'category'
         ),
       },
     };

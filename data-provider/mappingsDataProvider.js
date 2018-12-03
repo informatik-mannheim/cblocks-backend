@@ -78,7 +78,7 @@ class MappingsDataProvider { // TODO inject entity factory to make actual entiti
 
     let r = {
       ...object,
-      'mappingID': object._id,
+      'mappingID': object._id.toHexString(),
     };
 
     delete r._id;

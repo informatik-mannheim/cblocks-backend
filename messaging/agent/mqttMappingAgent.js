@@ -41,11 +41,13 @@ class MQTTMappingAgent {
   async _handleOutput(topic, message) {
     const mappings = await this._getMappingsForTopic(topic);
 
-    await mappings.forEach(async (m) => {
+    const promises = mappings.map(async (m) => {
       const v = String(await this._useCase.applyMapping(m, message));
 
       this._client.publish(`mappings/${this._mappingName}/${m.mappingID}/output`, v);
     });
+
+    await Promise.all(promises);
   }
 
   async _getMappingsForTopic(topic) {

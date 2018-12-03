@@ -15,8 +15,6 @@ class CBlockUseCase {
     const o = await this.registry.getObject(objectID);
     o.getInstance(instanceID).label = label;
 
-    console.log(o);
-
     return await this.registry.updateObject(o);
   }
 }

@@ -69,7 +69,9 @@ const init = async () => {
     app.rest.inbound.labelMappingsRoutes.start();
     app.rest.inbound.ifttt.testRoutes.start();
     app.rest.inbound.ifttt.statusRoutes.start();
-    app.rest.inbound.ifttt.triggersRoutes.start();
+    app.rest.inbound.ifttt.triggers.triggersRoutes.start();
+    app.rest.inbound.ifttt.triggers.newSensorDataRoutes.start();
+    app.rest.inbound.ifttt.triggers.categoryMappingsRoutes.start();
 
     console.log('Application bootstrapped.');
   } catch (e) {

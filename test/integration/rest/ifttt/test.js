@@ -3,11 +3,13 @@ const expect = chai.expect;
 const util = require('../../util.js');
 const wire = require('../../../../wire');
 const examples = require('../../../../rest/controller/ifttt/testExamples.js');
+const cblockStubs = require('../../../stubs/cblocks');
 const config = require('config');
 const iftttConfig = config.get('ifttt');
 
 let hapiServer;
 let db;
+let registry;
 let response;
 
 const postTestSetupDefaults = {
@@ -31,6 +33,7 @@ describe('REST IFTTT Test Setup', () => {
     db = mongoClient.db('test');
 
     const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub, iftttConfig);
+    registry = app.dataProviders.registry;
     app.rest.inbound.ifttt.testRoutes.start();
   });
 
@@ -46,12 +49,19 @@ describe('REST IFTTT Test Setup', () => {
 
   describe('POST /ifttt/v1/test/setup', () => {
     it('should return all trigger examples', async () => {
+      await givenCBlock(cblockStubs.temperature);
+
       await whenRequest(postTestSetupDefaults);
 
       shouldContain(examples.triggers.samples);
     });
   });
 });
+
+async function givenCBlock(block) {
+  await registry.updateObject(block);
+}
+
 async function whenRequest(r) {
   response = await util.sendRequest(r);
 }

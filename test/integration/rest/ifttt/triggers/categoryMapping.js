@@ -1,5 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
+const ObjectID = require('mongodb').ObjectID;
 const util = require('../../../util.js');
 const wire = require('../../../../../wire');
 const config = require('config');
@@ -11,12 +12,12 @@ let response;
 
 const postMappingDefaults = {
   'method': 'POST',
-  'url': '/ifttt/v1/triggers/category-mappings',
+  'url': '/ifttt/v1/triggers/new_category_mappings',
   'payload': {
     'trigger_identity': '737ea7ac0bf6b45236002b72e7a6e99a5bf1c1d8',
     'triggerFields': {
       'mapping_id': '4711',
-      'label': 'hot',
+      'to': 'hot',
     },
     'user': {
       'timezone': 'America/Los_Angeles',
@@ -37,7 +38,7 @@ const postMappingDefaults = {
 
 const deleteMappingDefaults = {
   'method': 'DELETE',
-  'url': '/ifttt/v1/triggers/category_mappings/trigger_identity/737ea7ac0bf6b45236002b72e7a6e99a5bf1c1d8',
+  'url': '/ifttt/v1/triggers/new_category_mappings/trigger_identity/737ea7ac0bf6b45236002b72e7a6e99a5bf1c1d8',
   'headers': {
     'ifttt-service-key': iftttConfig['service-key'],
     'ifttt-channel-key': iftttConfig['service-key'],
@@ -59,6 +60,7 @@ describe('REST IFTTT Category Mapping Trigger', () => {
     dataProvider = app.dataProviders.categoryMappingsOutputDataProvider;
     triggersDataProvider = app.dataProviders.triggersDataProvider;
     app.rest.inbound.ifttt.triggers.categoryMappingsRoutes.start();
+    app.rest.inbound.ifttt.triggers.triggersRoutes.start();
   });
 
   beforeEach(async () => {
@@ -71,40 +73,71 @@ describe('REST IFTTT Category Mapping Trigger', () => {
     await util.stop();
   });
 
-  describe('POST /ifttt/v1/triggers/category_mappings', () => {
-    // it('should return latest readings', async () => {
-    //   const records = [25, 26, 27, 28, 23];
-    //   await Promise.all(givenRecords(records));
-    //
-    //   await whenRequest(postMappingDefaults);
-    //
-    //   statusCodeShouldBe(200);
-    //   shouldReturnRecords(5);
-    // });
-    //
-    // it('should return 2 if limit is 2', async () => {
-    //   const records = [25, 26, 27, 28, 23];
-    //   await Promise.all(givenRecords(records));
-    //
-    //   const request = {
-    //     ...postMappingDefaults,
-    //     'payload': {
-    //       ...postMappingDefaults.payload,
-    //       'limit': 2,
-    //     },
-    //   };
-    //
-    //   await whenRequest(request);
-    //
-    //   statusCodeShouldBe(200);
-    //   shouldReturnRecords(2);
-    // });
+  describe('POST /ifttt/v1/triggers/new_category_mappings', () => {
+    it('should return latest mappings', async () => {
+      const mappingID = new ObjectID();
+
+      const records = [{
+        mappingID,
+        from: 33,
+        to: 'hot',
+      }, {
+        mappingID,
+        from: 25,
+        to: 'medium',
+      },
+      {
+        mappingID,
+        from: 34,
+        to: 'hot',
+      }];
+
+      await givenRecords(records);
+
+      const request = {...postMappingDefaults};
+      request.payload.triggerFields.mapping_id = mappingID;
+
+      await whenRequest(request);
+
+      statusCodeShouldBe(200);
+      shouldReturnRecords(mappingID, 2);
+    });
+
+    it('should return 1 if limit is 1', async () => {
+      const mappingID = new ObjectID();
+
+      const records = [{
+        mappingID,
+        from: 33,
+        to: 'hot',
+      }, {
+        mappingID,
+        from: 25,
+        to: 'medium',
+      },
+      {
+        mappingID,
+        from: 34,
+        to: 'hot',
+      }];
+
+      await givenRecords(records);
+
+      const request = {...postMappingDefaults};
+      request.payload.triggerFields.mapping_id = mappingID;
+      request.payload.limit = 1;
+
+      await whenRequest(request);
+
+      statusCodeShouldBe(200);
+      shouldReturnRecords(mappingID, 1);
+    });
 
     it('should save trigger identity to database', async () => {
       await whenRequest(postMappingDefaults);
 
       await shouldHaveTriggerIdentites(
-        'new_sensor_data',
+        'new_category_mappings',
         ['737ea7ac0bf6b45236002b72e7a6e99a5bf1c1d8']
       );
     });
@@ -114,40 +147,31 @@ describe('REST IFTTT Category Mapping Trigger', () => {
       await whenRequest(postMappingDefaults);
 
       await shouldHaveTriggerIdentites(
-        'new_sensor_data',
+        'new_category_mappings',
         ['737ea7ac0bf6b45236002b72e7a6e99a5bf1c1d8']
       );
 
-      await nummberOfTriggerIdentiesShouldBe('new_sensor_data', 1);
+      await nummberOfTriggerIdentiesShouldBe('new_category_mappings', 1);
     });
   });
 
-  describe('DELETE /ifttt/v1/triggers/new_sensor_data/trigger_identity/{id}', () => {
+  describe('DELETE /ifttt/v1/triggers/new_category_mappings/trigger_identity/{id}', () => {
     it('should delete existing', async () => {
       await whenRequest(postMappingDefaults);
 
-      await nummberOfTriggerIdentiesShouldBe('new_sensor_data', 1);
+      await nummberOfTriggerIdentiesShouldBe('new_category_mappings', 1);
 
       await whenRequest(deleteMappingDefaults);
 
-      await nummberOfTriggerIdentiesShouldBe('new_sensor_data', 0);
+      await nummberOfTriggerIdentiesShouldBe('new_category_mappings', 0);
     });
   });
 });
 
-function givenRecords(records) {
-  const recordPromises = records.map((x) => {
-    return dataProvider.record({
-      'objectID': 3303,
-      'instanceID': 0,
-      'resourceID': 0,
-    }, {
-      'timestamp': Date.now(),
-      'value': x,
-    });
+async function givenRecords(records) {
+  records.forEach(async ({mappingID, from, to, timestamp = Date.now()}) => {
+    await dataProvider.record(mappingID, from, to, timestamp);
   });
-
-  return recordPromises;
 }
 
 async function whenRequest(r) {
@@ -158,13 +182,14 @@ function statusCodeShouldBe(code) {
   expect(response.raw.statusCode).to.equal(code);
 }
 
-function shouldReturnRecords(numberOfRecords) {
+function shouldReturnRecords(mappingID, numberOfRecords) {
   expect(response.payload.data.length).to.equal(numberOfRecords);
 
   response.payload.data.forEach((x) => {
-    expect(x['object_id']).to.equal(3303);
-    expect(x['instance_id']).to.equal(0);
-    expect(x['resource_id']).to.equal(0);
+    expect(x['mapping_id']).to.equal(mappingID.toHexString());
+    expect(x['to']).not.to.be.null;
+    expect(x['from']).not.to.be.null;
+    expect(x['created_at']).not.to.be.null;
     expect(x['meta']['id']).not.to.be.null;
     expect(x['meta']['meta']).not.to.be.null;
   });

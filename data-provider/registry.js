@@ -7,6 +7,8 @@ class Registry {
   }
 
   async getObject(objectID) {
+    console.log(objectID);
+
     const o = await this.collection.findOne({'objectID': objectID});
 
     if (o === null) {
