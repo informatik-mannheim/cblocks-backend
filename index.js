@@ -13,6 +13,9 @@ const wire = require('./wire');
 const hapiServer = Hapi.server({
     port: hapiConfig.port,
     host: hapiConfig.host,
+    routes: {
+      cors: Object.assign({}, hapiConfig.cors) || false,
+    },
 });
 
 const getMQTTConfig = () => {

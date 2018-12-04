@@ -8,7 +8,10 @@
   },
   "hapi": {
     "port": 3000,
-    "host": "localhost"
+    "host": "localhost",
+    "cors": {
+      "origin": ["*"]
+    }
   },
   "write": {
     "timeout_ms": 2000
