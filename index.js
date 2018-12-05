@@ -7,16 +7,30 @@ const iftttConfig = config.get('ifttt');
 const mqtt = require('async-mqtt');
 const Hapi = require('hapi');
 const request = require('request-promise-native');
+const Fs = require('fs');
 
 const wire = require('./wire');
 
-const hapiServer = Hapi.server({
-    port: hapiConfig.port,
-    host: hapiConfig.host,
-    routes: {
-      cors: Object.assign({}, hapiConfig.cors) || false,
-    },
-});
+const getHapiConfig = () => {
+  const config = {
+      port: hapiConfig.port,
+      host: hapiConfig.host,
+      routes: {
+        cors: Object.assign({}, hapiConfig.cors) || false,
+      },
+    };
+
+  if (typeof hapiConfig.tls !== 'undefined') {
+    config.tls = {
+      'key': Fs.readFileSync(hapiConfig.tls.key_path),
+      'cert': Fs.readFileSync(hapiConfig.tls.cert_path),
+    };
+  }
+
+  return config;
+};
+
+const hapiServer = Hapi.server(getHapiConfig());
 
 const initMQTT = () => {
   const client = mqtt.connect(mqttConfig.uri, mqttConfig.options || {});
