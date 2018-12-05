@@ -1,6 +1,6 @@
 {
   "mqtt": {
-    "host": "localhost"
+    "uri": "mqtt://localhost:1883"
   },
   "mongo": {
     "url": "mongodb://localhost:27017",

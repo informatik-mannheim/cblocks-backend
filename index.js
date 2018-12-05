@@ -18,24 +18,8 @@ const hapiServer = Hapi.server({
     },
 });
 
-const getMQTTConfig = () => {
-  let data = {
-    host: mqttConfig.host,
-  };
-
-  if (mqttConfig.user !== undefined) {
-    data.user = mqttConfig.user;
-  }
-
-  if (mqttConfig.password !== undefined ) {
-    data.password = mqttConfig.password;
-  }
-
-  return data;
-};
-
 const initMQTT = () => {
-  const client = mqtt.connect(getMQTTConfig());
+  const client = mqtt.connect(mqttConfig.uri, mqttConfig.options || {});
 
   return new Promise((resolve, reject) => {
     client.on('connect', () => resolve(client));
