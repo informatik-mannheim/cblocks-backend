@@ -16,10 +16,14 @@ module.exports = (useCase, renderError, triggersController) => {
 
         const data = (await Promise.all(promises))[1];
 
+        console.log('IFTTT Trigger Request: ', request.url.pathname);
+        console.log('Payload: ', request.payload);
+        console.log('Data: ', data);
+
         return {data};
       } catch (e) {
         const statusCode = 400;
-        console.log(e);
+        console.error(e);
         throw renderError(e, {statusCode});
       }
     },

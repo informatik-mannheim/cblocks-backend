@@ -34,7 +34,8 @@ module.exports = (useCase) => {
 
         return {message: 'Ok'};
       } catch (e) {
-        console.log(e);
+        console.error(e);
+        throw e;
       }
     },
   };

@@ -42,7 +42,7 @@ module.exports = (useCase, renderError, mappingType, triggersController) => {
       return {data};
     } catch (e) {
       const statusCode = 400;
-      console.log(e);
+      console.error(e);
       throw renderError(e, {statusCode});
     }
   };

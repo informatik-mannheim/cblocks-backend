@@ -20,7 +20,7 @@ class ResourceOutputRecorderAgent {
       await this.recordUseCase.record(ipso, JSON.parse(message));
       await this.triggersUseCase.notifyNewSensorData();
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }
 }

@@ -76,7 +76,7 @@ const init = async () => {
 
     console.log('Application bootstrapped.');
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 };
 

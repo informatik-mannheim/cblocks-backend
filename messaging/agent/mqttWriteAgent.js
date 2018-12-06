@@ -29,7 +29,7 @@ class MQTTWriteAgent {
       if (this._isWriteError(e)) {
         this._onWriteError(ipso.clientID, data.requestID, e);
       } else {
-        console.log(e.message);
+        console.error(e);
       }
     }
   }
