@@ -31,7 +31,7 @@ class ResourceOutputDataProvider {
       return {
           'timestamp': item.timestamp,
           'value': item.value,
-          'id': item._id,
+          'id': item._id.toHexString(),
       };
     });
   }

@@ -28,8 +28,10 @@ class MappingsOutputDataProvider {
       .limit(limit)
     ).toArray();
 
-    return records.map(({_id: id, ...rest}) => ({
-      id, ...rest,
+    return records.map(({_id, mappingID, ...rest}) => ({
+      id: _id.toHexString(),
+      mappingID: mappingID.toHexString(),
+      ...rest,
     }));
   }
 
@@ -49,8 +51,10 @@ class MappingsOutputDataProvider {
       .limit(limit)
     ).toArray();
 
-    return records.map(({_id: id, ...rest}) => ({
-      id, ...rest,
+    return records.map(({_id, mappingID, ...rest}) => ({
+      id: _id.toHexString(),
+      mappingID: mappingID.toHexString(),
+      ...rest,
     }));
   }
 }
