@@ -116,9 +116,7 @@ describe('Category mapping agent', () => {
 
   async function shouldSaveMapping(value, label) {
     let mappings = (await outputDataProvider.getRecords(mappingID))
-      .filter(({from, to}) =>
-        (from === String(value) && to === label)
-      );
+      .filter(({from, to}) => (from === value && to === label));
 
     expect(mappings.length).to.equal(1);
   }
