@@ -7,8 +7,8 @@ module.exports = (dataProvider, mappingType, realTimeApi, triggerIdentities) => 
 
     return records.map((x) => ({
       'created_at': new Date(x.timestamp).toISOString(),
-      'from': x.from,
-      'to': x.from,
+      'from': String(x.from),
+      'to': String(x.to),
       'mappingID': x.mappingID,
       'meta': {
         'id': x.id,
