@@ -39,6 +39,10 @@ module.exports = (useCase, renderError, mappingType, triggersController) => {
         ...rest,
       }));
 
+      console.log('IFTTT Trigger Request: ', request.url.pathname);
+      console.log('Payload: ', request.payload);
+      console.log('Data: ', data);
+
       return {data};
     } catch (e) {
       const statusCode = 400;
