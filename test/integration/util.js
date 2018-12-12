@@ -1,5 +1,6 @@
 const chai = require('chai');
 const expect = chai.expect;
+const sinon = require('sinon');
 
 const MongoClient = require('mongodb').MongoClient;
 
@@ -30,7 +31,7 @@ exports.getMQTT = async () => {
 
 const Hapi = require('hapi');
 const Boom = require('boom');
-const hapiPort = 8080;
+const hapiPort = 3000;
 const hapiServer = new Hapi.Server({
   'host': 'localhost',
   'port': hapiPort,
@@ -66,6 +67,6 @@ exports.shouldReturnStatusCode = (statusCode) => {
   expect(response.statusCode).to.equal(statusCode);
 };
 
-exports.requestStub = {
+exports.requestStub = () => ({
   'post': async () => {},
-};
+});

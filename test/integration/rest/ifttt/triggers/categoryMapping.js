@@ -55,7 +55,7 @@ describe('REST IFTTT Category Mapping Trigger', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub, iftttConfig);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub(), iftttConfig);
 
     dataProvider = app.dataProviders.categoryMappingsOutputDataProvider;
     triggersDataProvider = app.dataProviders.triggersDataProvider;

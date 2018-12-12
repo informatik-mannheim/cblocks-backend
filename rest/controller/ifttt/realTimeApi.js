@@ -3,7 +3,7 @@ class Controller {
     this.request = request;
   }
 
-  async notifyNewSensorData(triggerIdentities) { // TODO: test it
+  async notify(triggerIdentities) { // TODO: test it
     const data = triggerIdentities
       .map((triggerIdentity) => ({
         'trigger_identity': triggerIdentity,

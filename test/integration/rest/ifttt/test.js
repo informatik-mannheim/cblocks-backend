@@ -32,7 +32,7 @@ describe('REST IFTTT Test Setup', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub, iftttConfig);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub(), iftttConfig);
     registry = app.dataProviders.registry;
     app.rest.inbound.ifttt.testRoutes.start();
   });

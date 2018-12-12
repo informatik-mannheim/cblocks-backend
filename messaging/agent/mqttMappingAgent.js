@@ -1,9 +1,12 @@
 class MQTTMappingAgent {
-  constructor(mappingName, client, util, useCase) {
+  constructor(mappingName, client, util, useCase, triggersUseCase) {
     this._mappingName = mappingName;
     this._client = client;
     this._util = util;
     this._useCase = useCase;
+    this._triggersUseCase = triggersUseCase || {
+      'notify': () => {},
+    };
   }
 
   async start() {
@@ -43,6 +46,8 @@ class MQTTMappingAgent {
 
     const promises = mappings.map(async (m) => {
       const v = String(await this._useCase.applyMapping(m, message));
+
+      await this._triggersUseCase.notify();
 
       this._client.publish(`mappings/${this._mappingName}/${m.mappingID}/output`, v);
     });

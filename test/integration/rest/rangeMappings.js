@@ -37,7 +37,7 @@ describe('REST range mappings', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub());
     registry = app.dataProviders.registry;
     dataProvider = app.dataProviders.rangeMappingsDataProvider;
     app.rest.inbound.rangeMappingsRoutes.start();

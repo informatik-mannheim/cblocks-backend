@@ -19,11 +19,11 @@ module.exports = (resourceOutputDataProvider, realTimeApi, triggerIdentities) =>
 
       return readingsOutputFormat;
     },
-    notifyNewSensorData: async () => {
+    notify: async () => {
       const identities =
         await triggerIdentities.getTriggerIdentites('new_sensor_data');
 
-      await realTimeApi.notifyNewSensorData(identities);
+      await realTimeApi.notify(identities);
     },
   };
 

@@ -18,7 +18,7 @@ class ResourceOutputRecorderAgent {
       const ipso = this.util.decomposeResourceOutputTopic(topic);
 
       await this.recordUseCase.record(ipso, JSON.parse(message));
-      await this.triggersUseCase.notifyNewSensorData();
+      await this.triggersUseCase.notify();
     } catch (e) {
       console.error(e);
     }

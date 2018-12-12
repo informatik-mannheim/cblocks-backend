@@ -55,7 +55,7 @@ describe('REST IFTTT New Sensor Data Trigger', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub, iftttConfig);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub(), iftttConfig);
 
     dataProvider = app.dataProviders.resourceOutputDataProvider;
     triggersDataProvider = app.dataProviders.triggersDataProvider;

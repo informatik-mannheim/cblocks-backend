@@ -17,15 +17,25 @@ exports.inbound = (mqttClient, useCases) => {
     );
 
     r.mqttCategoryMappingAgent = new MQTTMappingAgent(
-      'category', mqttClient, MQTTUtil, useCases.categoryMappingsUseCase
+      'category',
+      mqttClient,
+      MQTTUtil,
+      useCases.categoryMappingsUseCase,
+      useCases.triggers.categoryMappingsUseCase
     );
 
     r.mqttRangeMappingAgent = new MQTTMappingAgent(
-      'range', mqttClient, MQTTUtil, useCases.rangeMappingsUseCase
+      'range',
+      mqttClient,
+      MQTTUtil,
+      useCases.rangeMappingsUseCase
     );
 
     r.mqttLabelMappingAgent = new MQTTMappingAgent(
-      'label', mqttClient, MQTTUtil, useCases.labelMappingsUseCase
+      'label',
+      mqttClient,
+      MQTTUtil,
+      useCases.labelMappingsUseCase
     );
 
     r.resourceOutputRecorderAgent = new ResourceOutputRecorderAgent(

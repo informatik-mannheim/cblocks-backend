@@ -45,6 +45,7 @@ module.exports = (messaging, rest, dataProvider, core) => {
       ),
       'categoryMappingsUseCase': makeIftttMappingsUseCase(
         dataProvider.categoryMappingsOutputDataProvider,
+        'category',
         rest.ifttt.realTimeApi,
         triggerIdentities
       ),

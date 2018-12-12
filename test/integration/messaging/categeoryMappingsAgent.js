@@ -13,13 +13,15 @@ let mqttClient;
 let mappingID;
 
 describe('Category mapping agent', () => {
+  const requestStub = util.requestStub();
+
   before(async () => {
     const mongoClient = await util.getMongo();
     mqttClient = await util.getMQTT();
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, requestStub);
     registry = app.dataProviders.registry;
     dataProvider = app.dataProviders.categoryMappingsDataProvider;
     outputDataProvider = app.dataProviders.categoryMappingsOutputDataProvider;
@@ -28,6 +30,7 @@ describe('Category mapping agent', () => {
 
   beforeEach(async () => {
     sinon.spy(mqttClient, 'publish');
+    sinon.spy(requestStub, 'post');
     await util.clearDataBase(db);
     response = {};
     payload = {};
@@ -35,6 +38,7 @@ describe('Category mapping agent', () => {
 
   afterEach(() => {
     mqttClient.publish.restore();
+    requestStub.post.restore();
   });
 
   after(async () => {
@@ -75,38 +79,51 @@ describe('Category mapping agent', () => {
 
     await shouldSaveMapping(15, 'Low');
   });
+
+  it('should call realtime api', async () => {
+    await givenMapping(mappingStubs.humidityCategoryMapping);
+    await givenAgent();
+
+    await whenResourcePublishesValue(1, 15);
+
+    shouldCallRealtimeApi();
+  });
+
+  async function givenMapping(mapping) {
+    await registry.updateObject(cblockStubs.temperature);
+
+    let m = await dataProvider.createMapping(mapping);
+    mappingID = m.mappingID;
+  }
+
+  async function givenAgent() {
+    await agent.start();
+  }
+
+  async function whenResourcePublishesValue(resourceID, val) {
+    await agent.onMessage(`3303/0/${resourceID}/output`, String(val));
+  }
+
+  async function shouldPublishMappedValue(val) {
+    expect(mqttClient.publish.calledWith(`mappings/category/${mappingID}/output`, val))
+      .to.be.true;
+  }
+
+  function shouldNotMap() {
+    expect(mqttClient.publish.calledWith(
+      `mappings/category/${mappingID}/output`, sinon.match.any)).to.be.false;
+  }
+
+  async function shouldSaveMapping(value, label) {
+    let mappings = (await outputDataProvider.getRecords(mappingID))
+      .filter(({from, to}) =>
+        (from === String(value) && to === label)
+      );
+
+    expect(mappings.length).to.equal(1);
+  }
+
+  function shouldCallRealtimeApi() {
+    expect(requestStub.post.called).to.be.true;
+  }
 });
-
-async function givenMapping(mapping) {
-  await registry.updateObject(cblockStubs.temperature);
-
-  let m = await dataProvider.createMapping(mapping);
-  mappingID = m.mappingID;
-}
-
-async function givenAgent() {
-  await agent.start();
-}
-
-async function whenResourcePublishesValue(resourceID, val) {
-  await agent.onMessage(`3303/0/${resourceID}/output`, String(val));
-}
-
-async function shouldPublishMappedValue(val) {
-  expect(mqttClient.publish.calledWith(`mappings/category/${mappingID}/output`, val))
-    .to.be.true;
-}
-
-function shouldNotMap() {
-  expect(mqttClient.publish.calledWith(
-    `mappings/category/${mappingID}/output`, sinon.match.any)).to.be.false;
-}
-
-async function shouldSaveMapping(value, label) {
-  let mappings = (await outputDataProvider.getRecords(mappingID))
-    .filter(({from, to}) =>
-      (from === String(value) && to === label)
-    );
-
-  expect(mappings.length).to.equal(1);
-}

@@ -2,28 +2,38 @@ const chai = require('chai');
 const expect = chai.expect;
 const util = require('../util.js');
 const wire = require('../../../wire');
+const sinon = require('sinon');
 
 let dataProvider;
 let agent;
 let mqttClient;
 
 describe('Resource Output Recorder Agent', () => {
+  const requestStub = util.requestStub();
+
   before(async () => {
     const mongoClient = await util.getMongo();
     mqttClient = await util.getMQTT();
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, requestStub);
     dataProvider = app.dataProviders.resourceOutputDataProvider;
     agent = app.messaging.inbound.resourceOutputRecorderAgent;
   });
 
   beforeEach(async () => {
+    sinon.spy(requestStub, 'post');
+
     await util.clearDataBase(db);
     response = {};
     payload = {};
   });
+
+  afterEach(() => {
+    requestStub.post.restore();
+  });
+
 
   after(async () => {
     await util.stop();
@@ -47,24 +57,36 @@ describe('Resource Output Recorder Agent', () => {
 
     await shouldHaveRecords([28, 27, 25.5]);
   });
-});
 
-async function givenAgent() {
-  await agent.start();
-}
+  it('should call realtime api', async () => {
+    await givenAgent();
 
-function whenPublishTemperature(value) {
-  return agent._onMessage('3303/0/0/output', value);
-}
+    await whenPublishTemperature(25.5);
 
-async function shouldHaveRecords(items) {
-  const records = await dataProvider.getRecords({
-    'objectID': 3303,
-    'instanceID': 0,
-    'resourceID': 0,
+    shouldCallRealtimeApi();
   });
 
-  const values = records.map((x) => x.value);
+  async function givenAgent() {
+    await agent.start();
+  }
 
-  items.forEach((v) => expect(values.includes(v)).to.be.true);
-}
+  function whenPublishTemperature(value) {
+    return agent._onMessage('3303/0/0/output', value);
+  }
+
+  async function shouldHaveRecords(items) {
+    const records = await dataProvider.getRecords({
+      'objectID': 3303,
+      'instanceID': 0,
+      'resourceID': 0,
+    });
+
+    const values = records.map((x) => x.value);
+
+    items.forEach((v) => expect(values.includes(v)).to.be.true);
+  }
+
+  function shouldCallRealtimeApi() {
+    expect(requestStub.post.called).to.be.true;
+  }
+});

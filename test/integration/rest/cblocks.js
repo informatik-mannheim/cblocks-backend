@@ -22,7 +22,7 @@ describe('REST cBlocks', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub());
     dataProvider = app.dataProviders.registry;
     app.rest.inbound.cblocksRoutes.start();
   });

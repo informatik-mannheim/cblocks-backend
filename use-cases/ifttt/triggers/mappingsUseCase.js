@@ -1,4 +1,4 @@
-module.exports = (dataProvider, realTimeApi, triggerIdentities) => {
+module.exports = (dataProvider, mappingType, realTimeApi, triggerIdentities) => {
   let self = {};
 
   self.getMappings = async (mappingID, toValue, limit) => {
@@ -15,6 +15,13 @@ module.exports = (dataProvider, realTimeApi, triggerIdentities) => {
         'timestamp': x.timestamp,
       },
     }));
+  };
+
+  self.notify = async () => {
+    const identities =
+      await triggerIdentities.getTriggerIdentites(`new_${mappingType}_mappings`);
+
+    await realTimeApi.notify(identities);
   };
 
   return Object.assign(self, triggerIdentities);
