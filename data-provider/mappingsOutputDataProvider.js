@@ -8,7 +8,8 @@ class MappingsOutputDataProvider {
 
   async record(mappingID, from, to, timestamp) {
     await this.collection.insert({
-      mappingID, from, to, timestamp,
+      'mappingID': new ObjectID(mappingID),
+      from, to, timestamp,
     });
   }
 
