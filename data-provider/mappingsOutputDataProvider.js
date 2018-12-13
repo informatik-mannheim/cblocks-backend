@@ -6,10 +6,10 @@ class MappingsOutputDataProvider {
     this.collection = collection;
   }
 
-  async record(mappingID, from, to, timestamp) {
+  async record(mappingID, from, to, timestamp, createdAt) {
     await this.collection.insert({
       'mappingID': new ObjectID(mappingID),
-      from, to, timestamp,
+      from, to, timestamp, createdAt,
     });
   }
 

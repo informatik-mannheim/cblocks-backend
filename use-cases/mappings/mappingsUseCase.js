@@ -67,10 +67,7 @@ class MappingsUseCase {
     const map = this.makeOutputMapping(mapping);
     const output = map.apply(value);
 
-    const timestampMs = Date.now();
-    const timestamp = Math.round(timestampMs / 1000);
-
-    await this.outputDataProvider.record(mapping.mappingID, value, output, timestamp);
+    await this.recordOutputMapping(mapping.mappingID, value, output);
 
     return output;
   }
@@ -79,6 +76,14 @@ class MappingsUseCase {
     const map = this.makeInputMapping(mapping);
 
     return map.apply(value);
+  }
+
+  async recordOutputMapping(mappingID, from, to) {
+    const timestampMs = Date.now();
+    const timestamp = Math.round(timestampMs / 1000);
+    const createdAt = new Date(timestampMs).toISOString();
+
+    await this.outputDataProvider.record(mappingID, from, to, timestamp, createdAt);
   }
 
   registerOnUpdateMappings(cb) {

@@ -1,4 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectID;
 const DB = 'cblocks';
 const cblocks = require('../test/stubs/cblocks');
 const categoryMappings = require('../test/stubs/categoryMappings');
@@ -27,12 +28,16 @@ async function bootstrap() {
   await collectionNames.map((c) => db.collection(c).drop());
 
   const insertOne = (collection, item) => db.collection(collection).insertOne(item);
+  const insertMapping = (collection, item) => {
+    delete item.mappingID;
+    insertOne(collection, item);
+  };
 
   await cblocks.all.map((c) => insertOne('registry', c));
 
-  await _.forOwn(categoryMappings, (c) => insertOne('category-mappings', c));
-  await _.forOwn(rangeMappings, (c) => insertOne('range-mappings', c));
-  await _.forOwn(labelMappings, (c) => insertOne('label-mappings', c));
+  await _.forOwn(categoryMappings, (c) => insertMapping('category-mappings', c));
+  await _.forOwn(rangeMappings, (c) => insertMapping('range-mappings', c));
+  await _.forOwn(labelMappings, (c) => insertMapping('label-mappings', c));
 }
 
 bootstrap()

@@ -6,7 +6,7 @@ module.exports = (dataProvider, mappingType, realTimeApi, triggerIdentities) => 
       .getRecordsByTo(mappingID, toValue, limit);
 
     return records.map((x) => ({
-      'created_at': new Date(x.timestamp).toISOString(),
+      'created_at': x.createdAt,
       'from': x.from,
       'to': x.to,
       'mappingID': x.mappingID,

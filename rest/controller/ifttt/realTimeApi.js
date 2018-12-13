@@ -3,16 +3,22 @@ class Controller {
     this.request = request;
   }
 
-  async notify(triggerIdentities) { // TODO: test it
-    const data = triggerIdentities
-      .map((triggerIdentity) => ({
-        'trigger_identity': triggerIdentity,
-      }));
+  async notify(triggerIdentities) {
+    try {
+      if (!triggerIdentities.length) return;
 
-    await this.request
-      .post(
-        'https://realtime.ifttt.com/v1/notifications', {data}
-      );
+      const data = triggerIdentities
+        .map((triggerIdentity) => ({
+          'trigger_identity': triggerIdentity,
+        }));
+
+      await this.request
+        .post(
+          'https://realtime.ifttt.com/v1/notifications', {data}
+        );
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
 
