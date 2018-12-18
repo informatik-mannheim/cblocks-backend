@@ -3,6 +3,7 @@ const expect = chai.expect;
 const util = require('../util.js');
 const wire = require('../../../wire');
 const sinon = require('sinon');
+const config = require('../../../config.js');
 
 let dataProvider;
 let agent;
@@ -17,8 +18,9 @@ describe('Resource Output Recorder Agent', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, requestStub);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, requestStub, config);
     dataProvider = app.dataProviders.resourceOutputDataProvider;
+    triggersDataProvider = app.dataProviders.triggersDataProvider;
     agent = app.messaging.inbound.resourceOutputRecorderAgent;
   });
 
@@ -60,6 +62,7 @@ describe('Resource Output Recorder Agent', () => {
 
   it('should call realtime api', async () => {
     await givenAgent();
+    await givenTriggerIdentities();
 
     await whenPublishTemperature(25.5);
 
@@ -84,6 +87,10 @@ describe('Resource Output Recorder Agent', () => {
     const values = records.map((x) => x.value);
 
     items.forEach((v) => expect(values.includes(v)).to.be.true);
+  }
+
+  function givenTriggerIdentities(){
+    return triggersDataProvider.updateTriggerIdentity('new_sensor_data', '4711');
   }
 
   function shouldCallRealtimeApi() {

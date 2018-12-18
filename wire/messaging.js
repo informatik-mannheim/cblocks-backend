@@ -6,10 +6,7 @@ const MQTTUtil = require('../messaging/util/mqttUtil.js');
 const ResourceOutputRecorderAgent = require(
   '../messaging/agent/resourceOutputRecorderAgent.js');
 
-const config = require('config');
-const writeConfig = config.get('write');
-
-exports.inbound = (mqttClient, useCases) => {
+exports.inbound = (mqttClient, useCases, messagingConfig) => {
     let r = {};
 
     r.mqttWriteAgent = new MQTTWriteAgent(
@@ -48,10 +45,10 @@ exports.inbound = (mqttClient, useCases) => {
     return r;
 };
 
-exports.outbound = (mqttClient) => {
+exports.outbound = (mqttClient, config) => {
     let r = {};
 
-    r.mqttWriter = new MQTTWriter(mqttClient, MQTTUtil, writeConfig.timeout_ms);
+    r.mqttWriter = new MQTTWriter(mqttClient, MQTTUtil, config.timeoutMs);
 
     return r;
 };

@@ -5,6 +5,7 @@ const mappingStubs = require('../../stubs/categoryMappings');
 const util = require('../util.js');
 const ObjectID = require('mongodb').ObjectID;
 const wire = require('../../../wire');
+const config = require('../../../config.js');
 
 let hapiServer;
 let registry;
@@ -37,7 +38,7 @@ describe('REST category mappings', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub());
+    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub(), config);
     registry = app.dataProviders.registry;
     dataProvider = app.dataProviders.categoryMappingsDataProvider;
     app.rest.inbound.categoryMappingsRoutes.start();

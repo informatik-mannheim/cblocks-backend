@@ -4,6 +4,7 @@ const stubs = require('../../stubs/cblocks');
 const util = require('../util.js');
 const wire = require('../../../wire');
 const sinon = require('sinon');
+const config = require('../../../config.js');
 
 let registry;
 let agent;
@@ -16,7 +17,7 @@ describe('MQTT Write Agent', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub());
+    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub(), config);
     registry = app.dataProviders.registry;
     agent = app.messaging.inbound.mqttWriteAgent;
     writer = app.messaging.outbound.mqttWriter;

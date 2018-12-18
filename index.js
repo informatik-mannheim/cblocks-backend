@@ -1,39 +1,15 @@
-const config = require('config');
-const mqttConfig = config.get('mqtt');
-const mongoConfig = config.get('mongo');
-const hapiConfig = config.get('hapi');
-const iftttConfig = config.get('ifttt');
-
 const mqtt = require('async-mqtt');
 const Hapi = require('hapi');
 const request = require('request-promise-native');
 const Fs = require('fs');
 
+const config = require('./config.js');
 const wire = require('./wire');
 
-const getHapiConfig = () => {
-  const config = {
-      port: hapiConfig.port,
-      host: hapiConfig.host,
-      routes: {
-        cors: Object.assign({}, hapiConfig.cors) || false,
-      },
-    };
-
-  if (typeof hapiConfig.tls !== 'undefined') {
-    config.tls = {
-      'key': Fs.readFileSync(hapiConfig.tls.key_path),
-      'cert': Fs.readFileSync(hapiConfig.tls.cert_path),
-    };
-  }
-
-  return config;
-};
-
-const hapiServer = Hapi.server(getHapiConfig());
+const hapiServer = Hapi.server(config.hapi);
 
 const initMQTT = () => {
-  const client = mqtt.connect(mqttConfig.uri, mqttConfig.options || {});
+  const client = mqtt.connect(config.mqtt.url);
 
   return new Promise((resolve, reject) => {
     client.on('connect', () => resolve(client));
@@ -46,8 +22,8 @@ const MongoClient = require('mongodb').MongoClient;
 
 const init = async () => {
   try {
-    const mongoClient = await MongoClient.connect(mongoConfig.url);
-    const db = mongoClient.db(mongoConfig.db);
+    const mongoClient = await MongoClient.connect(config.mongo.url);
+    const db = mongoClient.db(config.mongo.db);
     console.log('Connected to mongo.');
 
     const mqttClient = await initMQTT();
@@ -56,7 +32,7 @@ const init = async () => {
     await hapiServer.start();
     console.log(`REST Server running at: ${hapiServer.info.uri}`);
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, request, iftttConfig);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, request, config);
 
     app.messaging.inbound.mqttWriteAgent.start();
     app.messaging.inbound.mqttRangeMappingAgent.start();

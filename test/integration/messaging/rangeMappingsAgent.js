@@ -5,6 +5,7 @@ const mappingStubs = require('../../stubs/rangeMappings');
 const util = require('../util.js');
 const wire = require('../../../wire');
 const sinon = require('sinon');
+const config = require('../../../config.js');
 
 let registry;
 let dataProvider;
@@ -19,7 +20,7 @@ describe('Range mapping agent', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub());
+    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub(), config);
     registry = app.dataProviders.registry;
     dataProvider = app.dataProviders.rangeMappingsDataProvider;
     agent = app.messaging.inbound.mqttRangeMappingAgent;

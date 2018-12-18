@@ -4,9 +4,7 @@ const util = require('../../util.js');
 const wire = require('../../../../wire');
 const examples = require('../../../../rest/controller/ifttt/testExamples.js');
 const cblockStubs = require('../../../stubs/cblocks');
-const config = require('config');
-const iftttConfig = config.get('ifttt');
-
+const config = require('../../../../config.js');
 let hapiServer;
 let db;
 let registry;
@@ -17,8 +15,8 @@ const postTestSetupDefaults = {
   'url': '/ifttt/v1/test/setup',
   'payload': {},
   'headers': {
-    'ifttt-service-key': iftttConfig['service-key'],
-    'ifttt-channel-key': iftttConfig['service-key'],
+    'ifttt-service-key': config.ifttt['service-key'],
+    'ifttt-channel-key': config.ifttt['service-key'],
     'Accept': 'application/json',
     'Accept-Charset': 'utf-8',
     'Accept-Encoding': 'gzip, deflate',
@@ -32,7 +30,7 @@ describe('REST IFTTT Test Setup', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub(), iftttConfig);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub(), config);
     registry = app.dataProviders.registry;
     app.rest.inbound.ifttt.testRoutes.start();
   });

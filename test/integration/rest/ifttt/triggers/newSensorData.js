@@ -2,8 +2,7 @@ const chai = require('chai');
 const expect = chai.expect;
 const util = require('../../../util.js');
 const wire = require('../../../../../wire');
-const config = require('config');
-const iftttConfig = config.get('ifttt');
+const config = require('../../../../../config.js');
 
 let hapiServer;
 let db;
@@ -28,8 +27,8 @@ const postNewSensorDataDefaults = {
     },
   },
   'headers': {
-    'ifttt-service-key': iftttConfig['service-key'],
-    'ifttt-channel-key': iftttConfig['service-key'],
+    'ifttt-service-key': config.ifttt['service-key'],
+    'ifttt-channel-key': config.ifttt['service-key'],
     'Accept': 'application/json',
     'Accept-Charset': 'utf-8',
     'Accept-Encoding': 'gzip, deflate',
@@ -40,8 +39,8 @@ const deleteNewSensorDataDefaults = {
   'method': 'DELETE',
   'url': '/ifttt/v1/triggers/new_sensor_data/trigger_identity/737ea7ac0bf6b45236002b72e7a6e99a5bf1c1d8',
   'headers': {
-    'ifttt-service-key': iftttConfig['service-key'],
-    'ifttt-channel-key': iftttConfig['service-key'],
+    'ifttt-service-key': config.ifttt['service-key'],
+    'ifttt-channel-key': config.ifttt['service-key'],
     'Accept': 'application/json',
     'Accept-Charset': 'utf-8',
     'Accept-Encoding': 'gzip, deflate',
@@ -55,7 +54,7 @@ describe('REST IFTTT New Sensor Data Trigger', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub(), iftttConfig);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, util.requestStub(), config);
 
     dataProvider = app.dataProviders.resourceOutputDataProvider;
     triggersDataProvider = app.dataProviders.triggersDataProvider;

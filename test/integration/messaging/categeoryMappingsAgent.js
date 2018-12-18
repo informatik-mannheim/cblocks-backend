@@ -5,6 +5,7 @@ const mappingStubs = require('../../stubs/categoryMappings');
 const util = require('../util.js');
 const wire = require('../../../wire');
 const sinon = require('sinon');
+const config = require('../../../config.js');
 
 let registry;
 let dataProvider;
@@ -13,6 +14,7 @@ let mqttClient;
 let mappingID;
 
 describe('Category mapping agent', () => {
+  let triggersDataProvider;
   const requestStub = util.requestStub();
 
   before(async () => {
@@ -21,10 +23,11 @@ describe('Category mapping agent', () => {
     hapiServer = await util.getHapi();
     db = mongoClient.db('test');
 
-    const app = wire(mongoClient, mqttClient, db, hapiServer, requestStub);
+    const app = wire(mongoClient, mqttClient, db, hapiServer, requestStub, config);
     registry = app.dataProviders.registry;
     dataProvider = app.dataProviders.categoryMappingsDataProvider;
     outputDataProvider = app.dataProviders.categoryMappingsOutputDataProvider;
+    triggersDataProvider = app.dataProviders.triggersDataProvider;
     agent = app.messaging.inbound.mqttCategoryMappingAgent;
 });
 
@@ -82,6 +85,7 @@ describe('Category mapping agent', () => {
 
   it('should call realtime api', async () => {
     await givenMapping(mappingStubs.humidityCategoryMapping);
+    await givenTriggerIdentities();
     await givenAgent();
 
     await whenResourcePublishesValue(1, 15);
@@ -119,6 +123,10 @@ describe('Category mapping agent', () => {
       .filter(({from, to}) => (from === value && to === label));
 
     expect(mappings.length).to.equal(1);
+  }
+
+  function givenTriggerIdentities(){
+    return triggersDataProvider.updateTriggerIdentity('new_category_mappings', '4711');
   }
 
   function shouldCallRealtimeApi() {
