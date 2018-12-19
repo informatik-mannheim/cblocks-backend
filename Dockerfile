@@ -8,8 +8,10 @@ COPY . /app/
 
 WORKDIR /app
 
+VOLUME [ "./src" ]
+
 RUN npm install
 
 EXPOSE 3000
 
-CMD ["node", "index.js"]
+CMD ["npm", "start"]

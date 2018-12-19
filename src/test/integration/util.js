@@ -5,7 +5,7 @@ const sinon = require('sinon');
 const MongoClient = require('mongodb').MongoClient;
 
 exports.getMongo = async () => {
-  return await MongoClient.connect('mongodb://localhost:27017');
+  return await MongoClient.connect('mongodb://mongo:27017');
 };
 
 exports.clearDataBase = async (db) => {
@@ -20,7 +20,7 @@ const mqtt = require('async-mqtt');
 let mqttClient;
 
 exports.getMQTT = async () => {
-  mqttClient = mqtt.connect('mqtt://localhost:1883');
+  mqttClient = mqtt.connect('mqtt://mqtt:1883');
 
   return new Promise((resolve, reject) => {
     mqttClient.on('connect', () => resolve(mqttClient));
@@ -31,9 +31,9 @@ exports.getMQTT = async () => {
 
 const Hapi = require('hapi');
 const Boom = require('boom');
-const hapiPort = 3000;
+const hapiPort = 3001;
 const hapiServer = new Hapi.Server({
-  'host': 'localhost',
+  'host': '0.0.0.0',
   'port': hapiPort,
 });
 

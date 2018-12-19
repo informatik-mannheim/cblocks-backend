@@ -1,7 +1,9 @@
-version: '3'
+version: '3.2'
 services:
   app:
     build: .
+    volumes:
+      - ./src:/app/src
     depends_on: 
       - mongo
       - mqtt
@@ -9,8 +11,6 @@ services:
       - "8081:3000"
   mongo:
     image: "mongo"
-    ports:
-      - "27017:27017"
   mqtt:
     image: "eclipse-mosquitto"
     ports:
