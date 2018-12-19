@@ -31,7 +31,7 @@ module.exports = (messaging, rest, dataProvider, core) => {
     'labelMappingsUseCase': new MappingsUseCase(
       dataProvider.labelMappingsDataProvider,
       dataProvider.registry,
-      dataProvider.categoryMappingsOutputDataProvider,
+      dataProvider.labelMappingsOutputDataProvider,
       core.entities.valueToLabelMapping.make,
       core.entities.labelToValueMapping.make),
     'recordResourceOutputUseCase': new RecordResourceOutputUseCase(
@@ -49,6 +49,12 @@ module.exports = (messaging, rest, dataProvider, core) => {
         rest.ifttt.realTimeApi,
         triggerIdentities
       ),
+      'labelMappingsUseCase': makeIftttMappingsUseCase(
+        dataProvider.labelMappingsOutputDataProvider,
+        'label',
+        rest.ifttt.realTimeApi,
+        triggerIdentities
+      )
     },
   };
 };

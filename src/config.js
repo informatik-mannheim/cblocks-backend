@@ -23,5 +23,5 @@ exports.messaging =  {
 
 exports.ifttt = {
     "enabled": (process.env.NODE_ENV === 'production'),
-    "service-key": (process.env.NODE_ENV === 'production') ? "4Crt0huozALk7UOl-D5V6gEajUfN6twav9m2i8NGJ5x6i1Gy2fSHm8R_cpMEab-M": "test"
+    "service-key": (process.env.NODE_ENV !== 'test') ? "4Crt0huozALk7UOl-D5V6gEajUfN6twav9m2i8NGJ5x6i1Gy2fSHm8R_cpMEab-M": "test"
 }

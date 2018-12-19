@@ -2,6 +2,7 @@ version: '3.2'
 services:
   app:
     build: .
+    entrypoint: npm run debug
     volumes:
       - ./src:/app/src
     depends_on: 
@@ -9,6 +10,7 @@ services:
       - mqtt
     ports:
       - "3000:3000"
+      - "9229:9229"
   mongo:
     image: "mongo"
   mqtt:

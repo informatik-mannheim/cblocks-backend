@@ -1,19 +1,22 @@
 const examples = require('./testExamples.js');
 const categoryMappingsStubs = require('../../../test/stubs/categoryMappings');
+const labelMappingStubs = require('../../../test/stubs/labelMappings');
 
 class Controller {
-  constructor(recordResourceOutputUseCase, categoryMappingsUseCase) {
+  constructor(recordResourceOutputUseCase, categoryMappingsUseCase, labelMappingsUseCase) {
     this.recordResourceOutputUseCase = recordResourceOutputUseCase;
     this.categoryMappingsUseCase = categoryMappingsUseCase;
+    this.labelMappingsUseCase = labelMappingsUseCase;
   }
 
   async postTestSetup(request, h) {
     try {
       await this._createNewSensorDataSamples();
       const categoryMappingID = await this._createCategoryMappingsSamples();
+      const labelMappingID = await this._createLabelMappingsSamples();
 
-      examples.triggers.samples.new_category_mappings
-        .mapping_id = categoryMappingID;
+      examples.triggers.samples.new_category_mappings.mapping_id = categoryMappingID;
+      examples.triggers.samples.new_label_mappings.mapping_id = labelMappingID;
 
       return {
         'data': {
@@ -55,6 +58,22 @@ class Controller {
     await Promise.all(recordPromises);
 
     await this.categoryMappingsUseCase.deleteMapping(m.mappingID);
+
+    return m.mappingID;
+  }
+
+  async _createLabelMappingsSamples() {
+    const m = await this.labelMappingsUseCase.createMapping(
+      labelMappingStubs.ledLabelMapping);
+
+    const recordPromises = examples.triggers.data.new_label_mappings
+      .map((value) => {
+        return this.labelMappingsUseCase.applyMapping(m, value);
+      });
+
+    await Promise.all(recordPromises);
+
+    await this.labelMappingsUseCase.deleteMapping(m.mappingID);
 
     return m.mappingID;
   }

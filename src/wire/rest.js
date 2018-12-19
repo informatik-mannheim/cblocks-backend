@@ -80,7 +80,8 @@ exports.inbound = (
         hapiServer,
         new IftttTestController(
           useCases.recordResourceOutputUseCase,
-          useCases.categoryMappingsUseCase
+          useCases.categoryMappingsUseCase,
+          useCases.labelMappingsUseCase
         ),
         iftttValidateHeaders
       ),
@@ -114,6 +115,17 @@ exports.inbound = (
           ),
           iftttValidateHeaders,
           'category'
+        ),
+        'labelMappingsRoutes': makeIftttMappingsRoutes(
+          hapiServer,
+          makeIftttMappingsController(
+            useCases.triggers.labelMappingsUseCase,
+            iftttRenderError,
+            'label',
+            iftttTriggersController,
+          ),
+          iftttValidateHeaders,
+          'label'
         ),
       },
     };
