@@ -2,11 +2,13 @@ FROM node:10.14.2-slim
 
 RUN useradd -ms /bin/bash cblocks
 
-USER cblocks:cblocks
-
-COPY . /app/
-
 WORKDIR /app
+
+COPY . .
+
+RUN chown -R cblocks:cblocks .
+
+USER cblocks:cblocks
 
 VOLUME [ "./src" ]
 

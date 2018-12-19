@@ -8,7 +8,7 @@ services:
       - mongo
       - mqtt
     ports:
-      - "8081:3000"
+      - "3000:3000"
   mongo:
     image: "mongo"
   mqtt:

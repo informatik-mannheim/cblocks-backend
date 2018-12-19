@@ -1,3 +1,4 @@
 node_modules/
 config/default.json
 cblocks_backend.service
+.vscode
