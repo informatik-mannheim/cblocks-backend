@@ -2,6 +2,7 @@ const JsonValidator = require('jsonschema').Validator;
 const Boom = require('boom');
 const renderError = Boom.boomify;
 const ObjectID = require('mongodb').ObjectID;
+const makeUUID = () => new ObjectID().toHexString()
 
 const CblocksController = require('../rest/controller/cblockController.js');
 const MappingsController = require('../rest/controller/mappingsController.js');
@@ -16,13 +17,18 @@ const IftttTestRoutes = require('../rest/routes/ifttt/testRoutes.js');
 const IftttTestController = require('../rest/controller/ifttt/testController.js');
 const IftttStatusRoutes = require('../rest/routes/ifttt/statusRoutes.js');
 const IftttStatusController = require('../rest/controller/ifttt/statusController.js');
+
 const makeIftttTriggersRoutes = require('../rest/routes/ifttt/triggers/triggersRoutes.js');
 const makeIftttNewSensorDataRoutes = require('../rest/routes/ifttt/triggers/newSensorDataRoutes.js');
-const makeIftttMappingsRoutes = require('../rest/routes/ifttt/triggers/mappingsRoutes.js');
+const makeIftttTriggerMappingsRoutes = require('../rest/routes/ifttt/triggers/mappingsRoutes.js');
 const makeIftttTriggersController = require('../rest/controller/ifttt/triggers/triggersController.js');
 const makeIftttNewSensorDataController = require('../rest/controller/ifttt/triggers/newSensorDataController.js');
-const makeIftttMappingsController = require('../rest/controller/ifttt/triggers/mappingsController.js');
+const makeIftttTriggerMappingsController = require('../rest/controller/ifttt/triggers/mappingsController.js');
 const makeIftttValidateHeaders = require('../rest/routes/ifttt/validateHeaders.js');
+
+const makeIftttActionMappingsRoutes = require('../rest/routes/ifttt/actions/mappingsRoutes.js');
+const makeIftttActionMappingsController = require('../rest/controller/ifttt/actions/mappingsController.js');
+
 const iftttRenderError = require('../rest/util/iftttErrorRenderer.js')(Boom.boomify);
 const IftttRealTimeApi = require('../rest/controller/ifttt/realTimeApi.js');
 const iftttRequest = require('../rest/controller/ifttt/requestIfttt.js');
@@ -63,25 +69,26 @@ exports.inbound = (
     r.categoryMappingsRoutes = new CategoryMappingsRoutes(
       hapiServer,
       new MappingsController(
-        useCases.categoryMappingsUseCase, renderError, putCategoryMappingValidator));
+        useCases.mappings.category.manage, renderError, putCategoryMappingValidator));
 
     r.rangeMappingsRoutes = new RangeMappingsRoutes(
       hapiServer,
       new MappingsController(
-        useCases.rangeMappingsUseCase, renderError, putRangeMappingValidator));
+        useCases.mappings.range.manage, renderError, putRangeMappingValidator));
 
     r.labelMappingsRoutes = new LabelMappingsRoutes(
       hapiServer,
       new MappingsController(
-        useCases.labelMappingsUseCase, renderError, putLabelMappingValidator));
+        useCases.mappings.label.manage, renderError, putLabelMappingValidator));
 
     r.ifttt = {
       'testRoutes': new IftttTestRoutes(
         hapiServer,
         new IftttTestController(
           useCases.recordResourceOutputUseCase,
-          useCases.categoryMappingsUseCase,
-          useCases.labelMappingsUseCase
+          useCases.mappings.category.output,
+          useCases.mappings.label.input,
+          useCases.mappings.label.output
         ),
         iftttValidateHeaders
       ),
@@ -105,9 +112,9 @@ exports.inbound = (
           ),
           iftttValidateHeaders
         ),
-        'categoryMappingsRoutes': makeIftttMappingsRoutes(
+        'categoryMappingsRoutes': makeIftttTriggerMappingsRoutes(
           hapiServer,
-          makeIftttMappingsController(
+          makeIftttTriggerMappingsController(
             useCases.triggers.categoryMappingsUseCase,
             iftttRenderError,
             'category',
@@ -116,9 +123,9 @@ exports.inbound = (
           iftttValidateHeaders,
           'category'
         ),
-        'labelMappingsRoutes': makeIftttMappingsRoutes(
+        'labelMappingsRoutes': makeIftttTriggerMappingsRoutes(
           hapiServer,
-          makeIftttMappingsController(
+          makeIftttTriggerMappingsController(
             useCases.triggers.labelMappingsUseCase,
             iftttRenderError,
             'label',
@@ -128,6 +135,18 @@ exports.inbound = (
           'label'
         ),
       },
+      'actions': {
+        'labelMappingRoutes': makeIftttActionMappingsRoutes(
+          hapiServer,
+          makeIftttActionMappingsController(
+            useCases.mappings.label.input,
+            iftttRenderError,
+            makeUUID,
+          ),
+          iftttValidateHeaders,
+          'label'
+        ),
+      }
     };
 
     return r;
@@ -139,7 +158,7 @@ exports.outbound = (request, iftttConfig) => {
       'realTimeApi': new IftttRealTimeApi(
         iftttRequest(
           iftttConfig['service-key'],
-          () => new ObjectID().toHexString(),
+          makeUUID,
           request)
       ),
     },

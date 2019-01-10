@@ -1,23 +1,24 @@
 class MQTTMappingAgent {
-  constructor(mappingName, client, util, useCase, triggersUseCase) {
+  constructor(mappingName, client, util, inputUseCase, outputUseCase, triggersUseCase) {
     this._mappingName = mappingName;
     this._client = client;
     this._util = util;
-    this._useCase = useCase;
+    this._inputUseCase = inputUseCase;
+    this._outputUseCase = outputUseCase;
     this._triggersUseCase = triggersUseCase || {
       'notify': () => {},
     };
   }
 
   async start() {
-    this._useCase.registerOnUpdateMappings(this._onUpdateMappings.bind(this));
+    this._outputUseCase.registerOnUpdateMappings(this._onUpdateMappings.bind(this));
     await this._subscribeToResources();
     await this._subscribeToInputs();
     this._client.on('message', this.onMessage.bind(this));
   }
 
   async _subscribeToResources() {
-    const mappings = await this._useCase.getMappings();
+    const mappings = await this._outputUseCase.getMappings();
 
     mappings.forEach((m) =>
       this._client.subscribe(this._util.getResourceOutputTopic(
@@ -25,7 +26,7 @@ class MQTTMappingAgent {
   }
 
   async _subscribeToInputs() {
-    const mappings = await this._useCase.getMappings();
+    const mappings = await this._outputUseCase.getMappings();
 
     mappings.forEach((m) => {
       this._client.subscribe(this._util.getMappingsInputTopic(
@@ -45,7 +46,7 @@ class MQTTMappingAgent {
     const mappings = await this._getMappingsForTopic(topic);
 
     const promises = mappings.map(async (m) => {
-      const v = String(await this._useCase.applyMapping(m, JSON.parse(message)));
+      const v = String(await this._outputUseCase.apply(m, JSON.parse(message)));
 
       await this._triggersUseCase.notify();
 
@@ -58,24 +59,13 @@ class MQTTMappingAgent {
   async _getMappingsForTopic(topic) {
     const ipso = this._util.decomposeResourceOutputTopic(topic);
 
-    return this._useCase.getMappingsFor(ipso);
+    return this._outputUseCase.getMappingsFor(ipso);
   }
 
   async _handleInput(topic, message) {
     try {
       const m = await this._getMappingForMappingInput(topic);
-      let v = this._useCase.applyInputMapping(m, String(message));
-
-      if (v instanceof Object) {
-        v = JSON.stringify(v);
-      } else {
-        v = String(v);
-      }
-
-      this._client.publish(this._util.getInternalResourceInputTopic(
-        'service', m.objectID, m.instanceID, m.resourceID), JSON.stringify({
-          'data': v,
-        }));
+      this._inputUseCase.apply(m, String(message));
     } catch (e) {
       // TODO: some form of logging
     }
@@ -84,7 +74,7 @@ class MQTTMappingAgent {
   _getMappingForMappingInput(topic) {
     const id = this._util.getMappingIDInTopic(topic);
 
-    return this._useCase.getMapping(id);
+    return this._inputUseCase.getMapping(id);
   }
 
   async _onUpdateMappings() {

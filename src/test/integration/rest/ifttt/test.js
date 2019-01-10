@@ -48,6 +48,7 @@ describe('REST IFTTT Test Setup', () => {
   describe('POST /ifttt/v1/test/setup', () => {
     it('should return all trigger examples', async () => {
       await givenCBlock(cblockStubs.temperature);
+      await givenCBlock(cblockStubs.led);
 
       await whenRequest(postTestSetupDefaults);
 

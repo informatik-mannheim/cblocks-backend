@@ -31,3 +31,11 @@ exports.triggers = {
     'new_label_mappings': [ledSamples.on, ledSamples.on, ledSamples.off, ledSamples.on, ledSamples.off, ledSamples.off],
   },
 };
+
+exports.actions = {
+  'samples': {
+    'label_mappings': {
+      'from': 'On'
+    }
+  }
+}

@@ -3,10 +3,11 @@ const categoryMappingsStubs = require('../../../test/stubs/categoryMappings');
 const labelMappingStubs = require('../../../test/stubs/labelMappings');
 
 class Controller {
-  constructor(recordResourceOutputUseCase, categoryMappingsUseCase, labelMappingsUseCase) {
+  constructor(recordResourceOutputUseCase, categoryMappingsUseCase, labelInputMappingsUseCase, labelOutputMappingsUseCase) {
     this.recordResourceOutputUseCase = recordResourceOutputUseCase;
     this.categoryMappingsUseCase = categoryMappingsUseCase;
-    this.labelMappingsUseCase = labelMappingsUseCase;
+    this.labelInputMappingsUseCase = labelInputMappingsUseCase;
+    this.labelOutputMappingsUseCase = labelOutputMappingsUseCase;
   }
 
   async postTestSetup(request, h) {
@@ -17,11 +18,13 @@ class Controller {
 
       examples.triggers.samples.new_category_mappings.mapping_id = categoryMappingID;
       examples.triggers.samples.new_label_mappings.mapping_id = labelMappingID;
+      examples.actions.samples.label_mappings.mapping_id = labelMappingID;
 
       return {
         'data': {
           'samples': {
             'triggers': examples.triggers.samples,
+            'actions': examples.actions.samples
           },
         },
       };
@@ -52,7 +55,7 @@ class Controller {
 
     const recordPromises = examples.triggers.data.new_category_mappings
       .map((value) => {
-        return this.categoryMappingsUseCase.applyMapping(m, value);
+        return this.categoryMappingsUseCase.apply(m, value);
       });
 
     await Promise.all(recordPromises);
@@ -63,17 +66,17 @@ class Controller {
   }
 
   async _createLabelMappingsSamples() {
-    const m = await this.labelMappingsUseCase.createMapping(
+    const m = await this.labelInputMappingsUseCase.createMapping(
       labelMappingStubs.ledLabelMapping);
 
-    const recordPromises = examples.triggers.data.new_label_mappings
+    const recordOutputPromises = examples.triggers.data.new_label_mappings
       .map((value) => {
-        return this.labelMappingsUseCase.applyMapping(m, value);
+        return this.labelOutputMappingsUseCase.apply(m, value);
       });
 
-    await Promise.all(recordPromises);
+    await this.labelInputMappingsUseCase.apply(m, examples.actions.samples.label_mappings.from);
 
-    await this.labelMappingsUseCase.deleteMapping(m.mappingID);
+    await Promise.all(recordOutputPromises);
 
     return m.mappingID;
   }

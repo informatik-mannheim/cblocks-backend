@@ -5,6 +5,7 @@ const MQTTMappingAgent = require(
 const MQTTUtil = require('../messaging/util/mqttUtil.js');
 const ResourceOutputRecorderAgent = require(
   '../messaging/agent/resourceOutputRecorderAgent.js');
+const mqttMappingsWriter = require('../messaging/writer/mqttMappingsWriter.js');
 
 exports.inbound = (mqttClient, useCases, messagingConfig) => {
     let r = {};
@@ -17,7 +18,8 @@ exports.inbound = (mqttClient, useCases, messagingConfig) => {
       'category',
       mqttClient,
       MQTTUtil,
-      useCases.categoryMappingsUseCase,
+      null,
+      useCases.mappings.category.output,
       useCases.triggers.categoryMappingsUseCase
     );
 
@@ -25,14 +27,17 @@ exports.inbound = (mqttClient, useCases, messagingConfig) => {
       'range',
       mqttClient,
       MQTTUtil,
-      useCases.rangeMappingsUseCase
+      useCases.mappings.range.input,
+      useCases.mappings.range.output
     );
 
     r.mqttLabelMappingAgent = new MQTTMappingAgent(
       'label',
       mqttClient,
       MQTTUtil,
-      useCases.labelMappingsUseCase
+      useCases.mappings.label.input,
+      useCases.mappings.label.output,
+      useCases.triggers.labelMappingsUseCase
     );
 
     r.resourceOutputRecorderAgent = new ResourceOutputRecorderAgent(
@@ -48,6 +53,7 @@ exports.inbound = (mqttClient, useCases, messagingConfig) => {
 exports.outbound = (mqttClient, config) => {
     let r = {};
 
+    r.mqttMappingsWriter = mqttMappingsWriter(mqttClient, MQTTUtil);
     r.mqttWriter = new MQTTWriter(mqttClient, MQTTUtil, config.timeoutMs);
 
     return r;

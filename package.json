@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon src/index.js",
     "debug": "nodemon --inspect=0.0.0.0:9229 src/index.js",
-    "test": "nodemon -x 'mocha ./src/test --recursive'"
+    "test": "nodemon --inspect=0.0.0.0:9230 -x 'mocha ./src/test --recursive'"
   },
   "author": "",
   "license": "ISC",

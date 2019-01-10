@@ -1,94 +1,63 @@
-class MappingsUseCase {
-  constructor(
-    dataProvider, registry, outputDataProvider, makeOutputMapping, makeInputMapping) {
-    this.dataProvider = dataProvider;
-    this.registry = registry;
-    this.outputDataProvider = outputDataProvider;
-    this.makeOutputMapping = makeOutputMapping;
-    this.makeInputMapping = makeInputMapping;
+module.exports = (dataProvider, registry, makeMapping) => {
+    const self = {};
+    let _onUpdateMappings = () => {};
 
-    this._onUpdateMappings = () => {};
-  }
-
-  getMapping(id) {
-    return this.dataProvider.getMapping(id);
-  }
-
-  getMappings() {
-    return this.dataProvider.getMappings();
-  }
-
-  getMappingsFor(ipso) {
-    return this.dataProvider.getMappingsFor(ipso);
-  }
-
-  deleteMapping(id) {
-    return this.dataProvider.deleteMapping(id);
-  }
-
-  async updateMapping(id, mapping) {
-    await this._check(mapping);
-
-    const r = await this.dataProvider.updateMapping(id, mapping);
-
-    this._onUpdateMappings();
-
-    return r;
-  }
-
-  async _check(mapping) {
-    const o = await this.registry.getObject(mapping.objectID);
-
-    o.getInstance(mapping.instanceID);
-
-    const r = o.getResource(mapping.resourceID);
-
-    this._checkType(mapping, r);
-  }
-
-  _checkType(mappingDTO, resource) {
-    const map = this.makeOutputMapping(mappingDTO);
-
-    if (!map.isApplicableFor(resource)) {
-      throw Error('Mapping is not applicable for resource.');
+    self.getMapping = (id) => {
+        return dataProvider.getMapping(id);
     }
-  }
 
-  async createMapping(mapping) {
-    await this._check(mapping);
-    const r = await this.dataProvider.createMapping(mapping);
+    self.getMappings = () => {
+        return dataProvider.getMappings();
+    }
 
-    this._onUpdateMappings();
+    self.getMappingsFor = (ipso) => {
+        return dataProvider.getMappingsFor(ipso);
+    }
 
-    return r;
-  }
+    self.deleteMapping = (id) => {
+        return dataProvider.deleteMapping(id);
+    }
 
-  async applyMapping(mapping, value) {
-    const map = this.makeOutputMapping(mapping);
-    const output = map.apply(value);
+    self.updateMapping = async (id, mapping) => {
+        await _check(mapping);
 
-    await this.recordOutputMapping(mapping.mappingID, value, output);
+        const r = dataProvider.updateMapping(id, mapping);
 
-    return output;
-  }
+        _onUpdateMappings();
 
-  applyInputMapping(mapping, value) {
-    const map = this.makeInputMapping(mapping);
+        return r;
+    }
 
-    return map.apply(value);
-  }
+    const _check = async (mapping) => {
+        const o = await registry.getObject(mapping.objectID);
 
-  async recordOutputMapping(mappingID, from, to) {
-    const timestampMs = Date.now();
-    const timestamp = Math.round(timestampMs / 1000);
-    const createdAt = new Date(timestampMs).toISOString();
+        o.getInstance(mapping.instanceID);
 
-    await this.outputDataProvider.record(mappingID, from, to, timestamp, createdAt);
-  }
+        const r = o.getResource(mapping.resourceID);
 
-  registerOnUpdateMappings(cb) {
-    this._onUpdateMappings = cb;
-  }
+        _checkType(mapping, r);
+    }
+    
+    const _checkType = async (mappingDTO, resource) => {
+        const map = makeMapping(mappingDTO);
+    
+        if (!map.isApplicableFor(resource)) {
+          throw Error('Mapping is not applicable for resource.');
+        }
+    }
+
+    self.createMapping = async (mapping) => {
+        await _check(mapping);
+        const r = await dataProvider.createMapping(mapping);
+    
+        _onUpdateMappings();
+    
+        return r;
+    }
+
+    self.registerOnUpdateMappings = (cb) => {
+        _onUpdateMappings = cb;
+    }
+
+    return self;
 }
-
-module.exports = MappingsUseCase;
