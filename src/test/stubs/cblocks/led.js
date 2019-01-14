@@ -42,5 +42,8 @@ module.exports = {
     '0': {
         'label': 'Status LED',
     },
+    '1': {
+      'label': 'Status LED',
+    },
   },
 };

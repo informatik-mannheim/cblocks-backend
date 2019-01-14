@@ -74,11 +74,11 @@ class MappingsDataProvider { // TODO inject entity factory to make actual entiti
   }
 
   async createMapping(object) {
-    await this.collection.insert(object);
+    const result = await this.collection.insert(object);
 
     let r = {
       ...object,
-      'mappingID': object._id.toHexString(),
+      'mappingID': result.insertedIds[0].toHexString(),
     };
 
     delete r._id;

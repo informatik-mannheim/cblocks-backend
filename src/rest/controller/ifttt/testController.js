@@ -2,8 +2,6 @@ const examples = require('./testExamples.js');
 const categoryMappingsStubs = require('../../../test/stubs/categoryMappings');
 const labelMappingStubs = require('../../../test/stubs/labelMappings');
 
-const deepClone = o => JSON.parse(JSON.stringify(o));
-
 class Controller {
   constructor(recordResourceOutputUseCase, categoryMappingsUseCase, labelInputMappingsUseCase, labelOutputMappingsUseCase) {
     this.recordResourceOutputUseCase = recordResourceOutputUseCase;
@@ -53,7 +51,7 @@ class Controller {
 
   async _createCategoryMappingsSamples() {
     const m = await this.categoryMappingsUseCase.createMapping(
-      deepClone(categoryMappingsStubs.temperatureCategoryMapping));
+      this._createMapping(categoryMappingsStubs.temperatureCategoryMapping));
 
     const recordPromises = examples.triggers.data.new_category_mappings
       .map((value) => {
@@ -67,9 +65,17 @@ class Controller {
     return m.mappingID;
   }
 
+  _createMapping(m) {
+    const r = JSON.parse(JSON.stringify(m));
+
+    delete r._id;
+
+    return r
+  }
+
   async _createLabelMappingsSamples() {
     const m = await this.labelInputMappingsUseCase.createMapping(
-      deepClone(labelMappingStubs.ledLabelMapping));
+      this._createMapping(labelMappingStubs.ledLabelMapping));
 
     const recordOutputPromises = examples.triggers.data.new_label_mappings
       .map((value) => {

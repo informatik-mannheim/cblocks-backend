@@ -73,7 +73,7 @@ describe('Label mapping agent', () => {
         await whenServiceCallsInputWith('On');
 
         await shouldPublishCommand(1,
-          JSON.stringify(mappingStubs.ledLabelMapping.labels[1].value));
+          mappingStubs.ledLabelMapping.labels[1].value);
       });
 
       it('should publish no value if label does not exist', async () => {
@@ -110,7 +110,7 @@ async function givenAgent() {
 }
 
 async function whenResourcePublishes(res, val) {
-  await agent.onMessage(`3304/0/${res}/output`, String(val));
+  await agent.onMessage(`3304/1/${res}/output`, String(val));
 }
 
 async function shouldPublishMappedValue(val) {
@@ -128,11 +128,11 @@ async function whenServiceCallsInputWith(val) {
 
 async function shouldPublishCommand(res, val) {
   const commandValue = JSON.stringify({
-    'data': String(val),
+    'data': val,
   });
 
   expect(mqttClient.publish.calledWith(
-    `internal/service/3304/0/${res}/input`, commandValue)).to.be.true;
+    `internal/service/3304/1/${res}/input`, commandValue)).to.be.true;
 }
 
 async function shouldNotPublishCommand(res) {

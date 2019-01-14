@@ -87,7 +87,7 @@ describe('REST IFTTT Label Mapping Agent', () => {
 
       await whenRequest(request);
 
-      shouldPublish('internal/service/3304/0/1/input');
+      shouldPublish('internal/service/3304/1/1/input');
     })
   });
 });

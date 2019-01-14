@@ -132,7 +132,7 @@ async function whenServiceCallsInputWith(val) {
 
 async function shouldPublishCommand(res, val) {
   const commandValue = JSON.stringify({
-    'data': String(val),
+    'data': val,
   });
 
   expect(mqttClient.publish.calledWith(
