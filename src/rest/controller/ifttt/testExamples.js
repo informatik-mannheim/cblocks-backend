@@ -35,7 +35,7 @@ exports.triggers = {
 exports.actions = {
   'samples': {
     'label_mappings': {
-      'from': 'On'
+      'from': 'Off'
     }
   }
 }
