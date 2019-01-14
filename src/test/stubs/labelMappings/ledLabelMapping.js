@@ -3,7 +3,7 @@ module.exports = {
   'label': 'LED Label Mapping',
   'objectID': 3304,
   'resourceID': 1,
-  'instanceID': 0,
+  'instanceID': 1,
   'default': 'Undefined',
   'labels': [
     {
