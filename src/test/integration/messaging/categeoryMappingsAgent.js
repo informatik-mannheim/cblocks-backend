@@ -80,7 +80,7 @@ describe('Category mapping agent', () => {
 
     await whenResourcePublishesValue(1, 15);
 
-    await shouldSaveMapping("15", 'Low');
+    await shouldSaveMapping(15, 'Low');
   });
 
   it('should call realtime api', async () => {

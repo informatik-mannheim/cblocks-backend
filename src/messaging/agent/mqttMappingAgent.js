@@ -47,7 +47,7 @@ class MQTTMappingAgent {
 
     const promises = mappings.map(async (m) => {
       try {
-        message = String(JSON.parse(message));
+        message = JSON.parse(String(message));
       } catch (error) {
         //do nothing
       }
