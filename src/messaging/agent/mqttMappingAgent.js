@@ -46,8 +46,10 @@ class MQTTMappingAgent {
     const mappings = await this._getMappingsForTopic(topic);
 
     const promises = mappings.map(async (m) => {
-      if(typeof message === "object"){
-        message = JSON.parse(message);
+      try {
+        message = String(JSON.parse(message));
+      } catch (error) {
+        //do nothing
       }
 
       const v = String(await this._outputUseCase.apply(m, message));
