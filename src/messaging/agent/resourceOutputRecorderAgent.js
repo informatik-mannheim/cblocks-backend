@@ -18,7 +18,7 @@ class ResourceOutputRecorderAgent {
       const ipso = this.util.decomposeResourceOutputTopic(topic);
 
       try {
-        message = String(JSON.parse(message));
+        message = JSON.parse(String(message));
       } catch (error) {
         //do nothing
       }
