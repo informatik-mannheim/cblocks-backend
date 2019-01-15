@@ -80,7 +80,7 @@ describe('Category mapping agent', () => {
 
     await whenResourcePublishesValue(1, 15);
 
-    await shouldSaveMapping(15, 'Low');
+    await shouldSaveMapping("15", 'Low');
   });
 
   it('should call realtime api', async () => {
@@ -119,6 +119,7 @@ describe('Category mapping agent', () => {
   }
 
   async function shouldSaveMapping(value, label) {
+    const test = await outputDataProvider.getRecords(mappingID);
     let mappings = (await outputDataProvider.getRecords(mappingID))
       .filter(({from, to}) => (from === value && to === label));
 

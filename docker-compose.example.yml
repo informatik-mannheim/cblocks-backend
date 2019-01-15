@@ -16,11 +16,9 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - db:/data/db
+      - /data/db
   mqtt:
     image: "eclipse-mosquitto"
     ports:
       - "1883:1883"
       - "9001:9001"
-volumes:
-  db:

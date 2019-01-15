@@ -43,10 +43,10 @@ describe('Label mapping agent', () => {
 
   describe('output', () => {
     it('should publish mapped value if resource has mapping', async () => {
-      await givenLedMapping();
+      await givenMapping(cblockStubs.led, mappingStubs.ledLabelMapping);
       await givenAgent();
 
-      await whenResourcePublishes(1, JSON.stringify({
+      await whenResourcePublishes(3304, 1, 1, JSON.stringify({
         'red': 0,
         'green': 0,
         'blue': 0,
@@ -58,16 +58,25 @@ describe('Label mapping agent', () => {
     it('should do nothing if resource has no mapping', async () => {
       await givenAgent();
 
-      await whenResourcePublishes(0, true);
+      await whenResourcePublishes(3304, 1, 0, true);
 
       shouldNotMap();
+    });
+
+    it('should published mapped value for rfid mapping', async () => {
+      await givenMapping(cblockStubs.rfid, mappingStubs.wineLabelMapping);
+      await givenAgent();
+
+      await whenResourcePublishes(3305, 0, 0, "459b4c2d45481");
+
+      await shouldPublishMappedValue('Rotwein');
     });
   });
 
   describe('input', () => {
     describe('given mapping exists', () => {
       it('should publish mapped value if label exists', async () => {
-        await givenLedMapping();
+        await givenMapping(cblockStubs.led, mappingStubs.ledLabelMapping);
         await givenAgent();
 
         await whenServiceCallsInputWith('On');
@@ -77,7 +86,7 @@ describe('Label mapping agent', () => {
       });
 
       it('should publish no value if label does not exist', async () => {
-        await givenLedMapping();
+        await givenMapping(cblockStubs.led, mappingStubs.ledLabelMapping);
         await givenAgent();
 
         await whenServiceCallsInputWith('Something');
@@ -98,9 +107,9 @@ describe('Label mapping agent', () => {
   });
 });
 
-async function givenLedMapping() {
-  await registry.updateObject(cblockStubs.led);
-  const m = await dataProvider.createMapping(mappingStubs.ledLabelMapping);
+async function givenMapping(o, m) {
+  await registry.updateObject(o);
+  m = await dataProvider.createMapping(m);
 
   mappingID = m.mappingID;
 }
@@ -109,8 +118,8 @@ async function givenAgent() {
   await agent.start();
 }
 
-async function whenResourcePublishes(res, val) {
-  await agent.onMessage(`3304/1/${res}/output`, String(val));
+async function whenResourcePublishes(objectID, instance, resource, val) {
+  await agent.onMessage(`${objectID}/${instance}/${resource}/output`, String(val));
 }
 
 async function shouldPublishMappedValue(val) {
