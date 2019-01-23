@@ -2,6 +2,7 @@ exports.temperature = require('./temperature.js');
 exports.led = require('./led.js');
 exports.rfid = require('./rfid.js');
 exports.scale = require('./scale.js');
+exports.button = require('./button.js');
 
 exports.all = (() => {
   let result = [];
@@ -10,6 +11,7 @@ exports.all = (() => {
   result.push(exports.led);
   result.push(exports.rfid);
   result.push(exports.scale);
+  result.push(exports.button);
 
   return result;
 })();
