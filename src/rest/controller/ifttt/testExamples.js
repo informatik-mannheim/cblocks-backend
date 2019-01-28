@@ -8,8 +8,8 @@ const ledSamples = {
     'red': 255,
     'green': 255,
     'blue': 255,
-  })
-}
+  }),
+};
 
 exports.triggers = {
   'samples': {
@@ -22,8 +22,8 @@ exports.triggers = {
       'to': 'Medium',
     },
     'new_label_mappings': {
-      'to': 'On'
-    }
+      'to': 'On',
+    },
   },
   'data': {
     'new_sensor_data': [25, 26, 25.5, 28, 30, 29],
@@ -35,7 +35,7 @@ exports.triggers = {
 exports.actions = {
   'samples': {
     'label_mappings': {
-      'from': 'Off'
-    }
-  }
-}
+      'to': 'Off',
+    },
+  },
+};
