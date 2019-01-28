@@ -24,7 +24,7 @@ class Controller {
         'data': {
           'samples': {
             'triggers': examples.triggers.samples,
-            'actions': examples.actions.samples
+            'actions': examples.actions.samples,
           },
         },
       };
@@ -70,7 +70,7 @@ class Controller {
 
     delete r._id;
 
-    return r
+    return r;
   }
 
   async _createLabelMappingsSamples() {
@@ -82,7 +82,7 @@ class Controller {
         return this.labelOutputMappingsUseCase.apply(m, value);
       });
 
-    await this.labelInputMappingsUseCase.apply(m, examples.actions.samples.label_mappings.from);
+    await this.labelInputMappingsUseCase.apply(m, examples.actions.samples.label_mappings.to);
 
     await Promise.all(recordOutputPromises);
 
