@@ -1,6 +1,6 @@
 module.exports = {
   'objectID': 3303,
-  'name': 'Temperature Sensor',
+  'name': 'Room Sensor (DHT22)',
   'resources': {
     '0': {
       'resourceID': 0,
@@ -29,7 +29,7 @@ module.exports = {
   },
   'instances': {
     '0': {
-        'label': 'Temperature Sensor',
+        'label': 'Room Sensor',
     },
   },
 };

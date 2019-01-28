@@ -17,9 +17,9 @@ const postMappingDefaults = {
   'method': 'POST',
   'url': '/ifttt/v1/actions/label_mappings',
   'payload': {
-    "actionFields": {
-      "from": "On",
-      "mapping_id": "4711"
+    'actionFields': {
+      'to': 'On',
+      'mapping_id': '4711',
     },
     'user': {
       'timezone': 'America/Los_Angeles',
@@ -60,7 +60,7 @@ describe('REST IFTTT Label Mapping Agent', () => {
 
   afterEach(async () => {
     mqttClient.publish.restore();
-  })
+  });
 
   after(async () => {
     await util.stop();
@@ -68,7 +68,7 @@ describe('REST IFTTT Label Mapping Agent', () => {
 
   describe('POST /ifttt/v1/actions/label_mappings', () => {
     it('should respond with id', async () => {
-      const mappingID = await givenMapping(mappingStubs.ledLabelMapping)
+      const mappingID = await givenMapping(mappingStubs.ledLabelMapping);
 
       const request = {...postMappingDefaults};
       request.payload.actionFields.mapping_id = mappingID;
@@ -80,7 +80,7 @@ describe('REST IFTTT Label Mapping Agent', () => {
     });
 
     it('should publish command', async () => {
-      const mappingID = await givenMapping(mappingStubs.ledLabelMapping)
+      const mappingID = await givenMapping(mappingStubs.ledLabelMapping);
 
       const request = {...postMappingDefaults};
       request.payload.actionFields.mapping_id = mappingID;
@@ -88,7 +88,7 @@ describe('REST IFTTT Label Mapping Agent', () => {
       await whenRequest(request);
 
       shouldPublish('internal/service/3304/1/1/input');
-    })
+    });
   });
 });
 
@@ -107,10 +107,10 @@ function statusCodeShouldBe(code) {
   expect(response.raw.statusCode).to.equal(code);
 }
 
-function shouldOnlyContainID(){
-  response.payload.data.map(i => expect(i.id).not.to.be.null)
+function shouldOnlyContainID() {
+  response.payload.data.map((i) => expect(i.id).not.to.be.null);
 }
 
-function shouldPublish(topic){
+function shouldPublish(topic) {
   expect(mqttClient.publish.calledWith(topic)).to.be.true;
 }
