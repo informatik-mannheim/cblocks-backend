@@ -4,8 +4,10 @@ const sinon = require('sinon');
 
 const MongoClient = require('mongodb').MongoClient;
 
+process.env.NODE_ENV = 'test';
+
 exports.getMongo = async () => {
-  const uri = (process.env.NOD_ENV === 'docker') ? 'mongodb://mongo:27017' : 'mongodb://localhost:27017';
+  const uri = (process.env.DOCKERIZED) ? 'mongodb://mongo:27017' : 'mongodb://localhost:27017';
 
   return await MongoClient.connect(uri);
 };
@@ -22,7 +24,7 @@ const mqtt = require('async-mqtt');
 let mqttClient;
 
 exports.getMQTT = async () => {
-  const uri = (process.env.NOD_ENV === 'docker') ? 'mqtt://mqtt:1883' : 'mqtt://localhost:1883';
+  const uri = (process.env.DOCKERIZED) ? 'mqtt://mqtt:1883' : 'mqtt://localhost:1883';
   mqttClient = mqtt.connect(uri);
 
   return new Promise((resolve, reject) => {

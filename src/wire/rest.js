@@ -153,14 +153,24 @@ exports.inbound = (
 };
 
 exports.outbound = (request, iftttConfig) => {
+  let iftttRealtimeApi;
+
+  if(!iftttConfig.enabled){
+    iftttRealtimeApi = {
+      'notify': () => {}
+    };
+  }else {
+    iftttRealtimeApi = new IftttRealTimeApi(
+      iftttRequest(
+        iftttConfig['service-key'],
+        makeUUID,
+        request)
+    );
+  }
+
   return {
     'ifttt': {
-      'realTimeApi': new IftttRealTimeApi(
-        iftttRequest(
-          iftttConfig['service-key'],
-          makeUUID,
-          request)
-      ),
+      'realTimeApi': iftttRealtimeApi,
     },
   };
 };

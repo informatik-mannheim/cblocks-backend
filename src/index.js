@@ -44,14 +44,17 @@ const init = async () => {
     app.rest.inbound.categoryMappingsRoutes.start();
     app.rest.inbound.rangeMappingsRoutes.start();
     app.rest.inbound.labelMappingsRoutes.start();
-    app.rest.inbound.ifttt.testRoutes.start();
-    app.rest.inbound.ifttt.statusRoutes.start();
-    app.rest.inbound.ifttt.triggers.triggersRoutes.start();
-    app.rest.inbound.ifttt.triggers.newSensorDataRoutes.start();
-    app.rest.inbound.ifttt.triggers.categoryMappingsRoutes.start();
-    app.rest.inbound.ifttt.triggers.labelMappingsRoutes.start();
-    app.rest.inbound.ifttt.actions.labelMappingRoutes.start();
 
+    if(config.ifttt.enabled){
+      app.rest.inbound.ifttt.testRoutes.start();
+      app.rest.inbound.ifttt.statusRoutes.start();
+      app.rest.inbound.ifttt.triggers.triggersRoutes.start();
+      app.rest.inbound.ifttt.triggers.newSensorDataRoutes.start();
+      app.rest.inbound.ifttt.triggers.categoryMappingsRoutes.start();
+      app.rest.inbound.ifttt.triggers.labelMappingsRoutes.start();
+      app.rest.inbound.ifttt.actions.labelMappingRoutes.start();  
+    }
+    
     console.log('Application bootstrapped.');
   } catch (e) {
     console.error(e);
