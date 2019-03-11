@@ -8,7 +8,7 @@ module.exports = {
   'labels': [
     {
       'value': 'pressed',
-      'label': 'On',
+      'label': 'pressed',
     },
   ],
 };
