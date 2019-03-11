@@ -5,7 +5,7 @@ services:
     entrypoint: npm run debug
     volumes:
       - ./src:/app/src
-    depends_on: 
+    depends_on:
       - mongo
       - mqtt
     ports:
@@ -13,6 +13,7 @@ services:
       - "9229:9229"
     environment:
       - DOCKERIZED=true
+      - NODE_ENV=development
   mongo:
     image: "mongo"
     ports:

@@ -12,6 +12,7 @@ exports.all = (() => {
   result.push(exports.led);
   result.push(exports.rfid);
   result.push(exports.scale);
+  result.push(exports.button);
   result.push(exports.vibration);
 
   return result;
