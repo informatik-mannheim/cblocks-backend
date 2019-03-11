@@ -1,6 +1,6 @@
 module.exports = {
   'objectID': 3307,
-  'name': 'LED Stripe',
+  'name': 'Vibration Motor',
   'resources': {
     '0': {
       'resourceID': 0,
