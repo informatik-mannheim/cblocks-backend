@@ -1,0 +1,880 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "hello_world_5afa1c359c",
+    "version": "1.0.0"
+  },
+  "host": "37.61.204.167",
+  "schemes": [
+    "http"
+  ],
+  "basePath": "/ifttt/v1",
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/triggers/new_sensor_data": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/accept"
+          },
+          {
+            "$ref": "#/parameters/accept_charset"
+          },
+          {
+            "$ref": "#/parameters/accept_encoding"
+          },
+          {
+            "$ref": "#/parameters/x_request_id"
+          },
+          {
+            "$ref": "#/parameters/trigger_request_new_sensor_data"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trigger_response_new_sensor_data"
+          },
+          "400": {
+            "$ref": "#/responses/bad_request"
+          },
+          "401": {
+            "$ref": "#/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/not_found"
+          },
+          "429": {
+            "$ref": "#/responses/too_many_requests"
+          },
+          "500": {
+            "$ref": "#/responses/internal_server_error"
+          },
+          "503": {
+            "$ref": "#/responses/service_unavailable"
+          }
+        },
+        "tags": [
+          "Triggers"
+        ]
+      }
+    },
+    "/triggers/new_label_mappings": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/accept"
+          },
+          {
+            "$ref": "#/parameters/accept_charset"
+          },
+          {
+            "$ref": "#/parameters/accept_encoding"
+          },
+          {
+            "$ref": "#/parameters/x_request_id"
+          },
+          {
+            "$ref": "#/parameters/trigger_request_new_label_mappings"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trigger_response_new_label_mappings"
+          },
+          "400": {
+            "$ref": "#/responses/bad_request"
+          },
+          "401": {
+            "$ref": "#/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/not_found"
+          },
+          "429": {
+            "$ref": "#/responses/too_many_requests"
+          },
+          "500": {
+            "$ref": "#/responses/internal_server_error"
+          },
+          "503": {
+            "$ref": "#/responses/service_unavailable"
+          }
+        },
+        "tags": [
+          "Triggers"
+        ]
+      }
+    },
+    "/triggers/new_category_mappings": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/accept"
+          },
+          {
+            "$ref": "#/parameters/accept_charset"
+          },
+          {
+            "$ref": "#/parameters/accept_encoding"
+          },
+          {
+            "$ref": "#/parameters/x_request_id"
+          },
+          {
+            "$ref": "#/parameters/trigger_request_new_category_mappings"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/trigger_response_new_category_mappings"
+          },
+          "400": {
+            "$ref": "#/responses/bad_request"
+          },
+          "401": {
+            "$ref": "#/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/not_found"
+          },
+          "429": {
+            "$ref": "#/responses/too_many_requests"
+          },
+          "500": {
+            "$ref": "#/responses/internal_server_error"
+          },
+          "503": {
+            "$ref": "#/responses/service_unavailable"
+          }
+        },
+        "tags": [
+          "Triggers"
+        ]
+      }
+    },
+    "/actions/label_mappings": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/accept"
+          },
+          {
+            "$ref": "#/parameters/accept_charset"
+          },
+          {
+            "$ref": "#/parameters/accept_encoding"
+          },
+          {
+            "$ref": "#/parameters/x_request_id"
+          },
+          {
+            "$ref": "#/parameters/action_request_label_mappings"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/action_response"
+          },
+          "400": {
+            "$ref": "#/responses/action_bad_request"
+          },
+          "401": {
+            "$ref": "#/responses/unauthorized"
+          },
+          "404": {
+            "$ref": "#/responses/not_found"
+          },
+          "429": {
+            "$ref": "#/responses/too_many_requests"
+          },
+          "500": {
+            "$ref": "#/responses/internal_server_error"
+          },
+          "503": {
+            "$ref": "#/responses/service_unavailable"
+          }
+        },
+        "tags": [
+          "Actions"
+        ]
+      }
+    },
+    "/status": {
+      "get": {
+        "security": [
+          {
+            "ifttt_service_key": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/accept"
+          },
+          {
+            "$ref": "#/parameters/accept_charset"
+          },
+          {
+            "$ref": "#/parameters/accept_encoding"
+          },
+          {
+            "$ref": "#/parameters/x_request_id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "503": {
+            "$ref": "#/responses/service_unavailable"
+          }
+        },
+        "tags": [
+          "Service"
+        ]
+      }
+    }
+  },
+  "parameters": {
+    "trigger_request_new_sensor_data": {
+      "in": "body",
+      "name": "body",
+      "required": true,
+      "description": "Trigger request for new_sensor_data.",
+      "schema": {
+        "allOf": [
+          {
+            "type": "object",
+            "required": [
+              "triggerFields"
+            ],
+            "properties": {
+              "triggerFields": {
+                "type": "object",
+                "properties": {
+                  "object_id": {
+                    "$ref": "#/definitions/string_field"
+                  },
+                  "instance_id": {
+                    "$ref": "#/definitions/string_field"
+                  },
+                  "resource_id": {
+                    "$ref": "#/definitions/string_field"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$ref": "#/definitions/base_trigger_request"
+          }
+        ]
+      }
+    },
+    "trigger_request_new_label_mappings": {
+      "in": "body",
+      "name": "body",
+      "required": true,
+      "description": "Trigger request for new_label_mappings.",
+      "schema": {
+        "allOf": [
+          {
+            "type": "object",
+            "required": [
+              "triggerFields"
+            ],
+            "properties": {
+              "triggerFields": {
+                "type": "object",
+                "properties": {
+                  "mapping_id": {
+                    "$ref": "#/definitions/string_field"
+                  },
+                  "to": {
+                    "$ref": "#/definitions/string_field"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$ref": "#/definitions/base_trigger_request"
+          }
+        ]
+      }
+    },
+    "trigger_request_new_category_mappings": {
+      "in": "body",
+      "name": "body",
+      "required": true,
+      "description": "Trigger request for new_category_mappings.",
+      "schema": {
+        "allOf": [
+          {
+            "type": "object",
+            "required": [
+              "triggerFields"
+            ],
+            "properties": {
+              "triggerFields": {
+                "type": "object",
+                "properties": {
+                  "mapping_id": {
+                    "$ref": "#/definitions/string_field"
+                  },
+                  "to": {
+                    "$ref": "#/definitions/string_field"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$ref": "#/definitions/base_trigger_request"
+          }
+        ]
+      }
+    },
+    "action_request_label_mappings": {
+      "in": "body",
+      "name": "body",
+      "required": true,
+      "description": "Action request for label_mappings.",
+      "schema": {
+        "allOf": [
+          {
+            "type": "object",
+            "required": [
+              "actionFields"
+            ],
+            "properties": {
+              "actionFields": {
+                "type": "object",
+                "properties": {
+                  "to": {
+                    "description": "Label",
+                    "type": "string"
+                  },
+                  "mapping_id": {
+                    "description": "Mapping ID",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$ref": "#/definitions/base_action_request"
+          }
+        ]
+      }
+    },
+    "accept": {
+      "in": "header",
+      "name": "Accept",
+      "type": "string",
+      "enum": [
+        "application/json"
+      ]
+    },
+    "accept_charset": {
+      "in": "header",
+      "name": "Accept-Charset",
+      "type": "string",
+      "enum": [
+        "utf-8"
+      ]
+    },
+    "accept_encoding": {
+      "in": "header",
+      "name": "Accept-Encoding",
+      "type": "array",
+      "collectionFormat": "csv",
+      "items": {
+        "type": "string",
+        "enum": [
+          "gzip",
+          "deflate"
+        ]
+      }
+    },
+    "x_request_id": {
+      "in": "header",
+      "name": "X-Request-ID",
+      "type": "string"
+    }
+  },
+  "responses": {
+    "trigger_response_new_sensor_data": {
+      "description": "Trigger response for new_sensor_data.",
+      "schema": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "meta"
+              ],
+              "properties": {
+                "value": {
+                  "$ref": "#/definitions/string_field"
+                },
+                "object_id": {
+                  "$ref": "#/definitions/string_field"
+                },
+                "instance_id": {
+                  "$ref": "#/definitions/string_field"
+                },
+                "resource_id": {
+                  "$ref": "#/definitions/string_field"
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "trigger_response_new_label_mappings": {
+      "description": "Trigger response for new_label_mappings.",
+      "schema": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "meta"
+              ],
+              "properties": {
+                "created_at": {
+                  "$ref": "#/definitions/datetime_field"
+                },
+                "from": {
+                  "$ref": "#/definitions/string_field"
+                },
+                "to": {
+                  "$ref": "#/definitions/string_field"
+                },
+                "mapping_id": {
+                  "$ref": "#/definitions/string_field"
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "trigger_response_new_category_mappings": {
+      "description": "Trigger response for new_category_mappings.",
+      "schema": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "meta"
+              ],
+              "properties": {
+                "created_at": {
+                  "$ref": "#/definitions/datetime_field"
+                },
+                "from": {
+                  "$ref": "#/definitions/string_field"
+                },
+                "to": {
+                  "$ref": "#/definitions/string_field"
+                },
+                "mapping_id": {
+                  "$ref": "#/definitions/string_field"
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "validator_response": {
+      "description": "The field was validated.",
+      "schema": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/definitions/dynamic_validation"
+          }
+        }
+      }
+    },
+    "populator_response": {
+      "description": "Options for the field.",
+      "schema": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Swagger 2.0 does not support oneOf. Please use (label, value) or (label, values).",
+              "required": [
+                "label"
+              ],
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "values": {
+                  "type": "array",
+                  "minimum": 1,
+                  "items": {
+                    "$ref": "#/definitions/option"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "action_response": {
+      "description": "The action response.",
+      "schema": {
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "minimum": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "bad_request": {
+      "description": "There was something wrong with incoming data from IFTTT. Provide an error response body to clarify what went wrong.",
+      "schema": {
+        "$ref": "#/definitions/errors"
+      }
+    },
+    "action_bad_request": {
+      "description": "There was something wrong with incoming data from IFTTT. Provide an error response body to clarify what went wrong.",
+      "schema": {
+        "$ref": "#/definitions/action_errors"
+      }
+    },
+    "unauthorized": {
+      "description": "IFTTT sent an OAuth2 access token that isn’t valid.",
+      "schema": {
+        "$ref": "#/definitions/errors"
+      }
+    },
+    "not_found": {
+      "description": "IFTTT is trying to reach a URL that doesn’t exist.",
+      "schema": {
+        "$ref": "#/definitions/errors"
+      }
+    },
+    "too_many_requests": {
+      "description": "IFTTT has sent too many requests in a given amount of time.",
+      "schema": {
+        "$ref": "#/definitions/errors"
+      }
+    },
+    "internal_server_error": {
+      "description": "There was an error in your application logic.",
+      "schema": {
+        "$ref": "#/definitions/errors"
+      }
+    },
+    "service_unavailable": {
+      "description": "Your service is not available at the moment, but IFTTT should try again later.",
+      "schema": {
+        "$ref": "#/definitions/errors"
+      }
+    }
+  },
+  "definitions": {
+    "base_trigger_request": {
+      "type": "object",
+      "required": [
+        "trigger_identity"
+      ],
+      "properties": {
+        "trigger_identity": {
+          "description": "A unique identifier for this set of trigger fields for a given Applet.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Maximum number of items to be returned, default 50.",
+          "type": "integer",
+          "format": "int32",
+          "default": 50,
+          "minimum": 0
+        },
+        "user": {
+          "$ref": "#/definitions/user"
+        },
+        "ifttt_source": {
+          "$ref": "#/definitions/ifttt_source"
+        }
+      }
+    },
+    "base_action_request": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/user"
+        },
+        "ifttt_source": {
+          "$ref": "#/definitions/ifttt_source"
+        }
+      }
+    },
+    "user": {
+      "description": "Information about the IFTTT user related to this request.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "timezone": {
+          "type": "string"
+        }
+      }
+    },
+    "ifttt_source": {
+      "description": "Information about the personal Applet on IFTTT that triggered this request.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "meta": {
+      "description": "Trigger Meta data.",
+      "type": "object",
+      "required": [
+        "id",
+        "timestamp"
+      ],
+      "properties": {
+        "id": {
+          "description": "A unique identifier for the item.",
+          "type": "string"
+        },
+        "timestamp": {
+          "description": "A Unix timestamp in seconds.",
+          "type": "integer"
+        }
+      }
+    },
+    "option": {
+      "description": "Dynamic option",
+      "type": "object",
+      "required": [
+        "label",
+        "value"
+      ],
+      "properties": {
+        "label": {
+          "description": "A user-facing label.",
+          "type": "string"
+        },
+        "value": {
+          "description": "The actual field value.",
+          "type": "string"
+        }
+      }
+    },
+    "dynamic_validation": {
+      "description": "Field Dynamic validation.",
+      "type": "object",
+      "required": [
+        "valid"
+      ],
+      "properties": {
+        "valid": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string",
+          "description": "A user-facing message for an invalid field."
+        }
+      }
+    },
+    "string_field": {
+      "description": "String Field",
+      "type": "string"
+    },
+    "datetime_field": {
+      "description": "Datetime Field",
+      "type": "string",
+      "format": "date-time"
+    },
+    "date_field": {
+      "description": "Datetime Field",
+      "type": "string",
+      "format": "date"
+    },
+    "location_field": {
+      "description": "Location Field",
+      "type": "object",
+      "required": [
+        "lat",
+        "lng"
+      ],
+      "properties": {
+        "lat": {
+          "type": "number",
+          "format": "double"
+        },
+        "lng": {
+          "type": "number",
+          "format": "double"
+        },
+        "radius": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "errors": {
+      "description": "Errors",
+      "type": "object",
+      "required": [
+        "errors"
+      ],
+      "properties": {
+        "errors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "message"
+            ],
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "action_errors": {
+      "description": "Action Errors",
+      "type": "object",
+      "required": [
+        "errors"
+      ],
+      "properties": {
+        "errors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "message"
+            ],
+            "properties": {
+              "status": {
+                "type": "string",
+                "description": "Skip the action from retrying.",
+                "enum": [
+                  "SKIP"
+                ]
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "ifttt_service_key": {
+      "type": "apiKey",
+      "name": "IFTTT-Service-Key",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "ifttt_service_key": [
+
+      ]
+    }
+  ],
+  "tags": [
+    {
+      "name": "Triggers",
+      "description": "IFTTT Trigger Endpoints"
+    },
+    {
+      "name": "Actions",
+      "description": "IFTTT Action Endpoints"
+    },
+    {
+      "name": "Service",
+      "description": "IFTTT Service Endpoints"
+    }
+  ]
+}
